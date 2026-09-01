@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import ModalShell from "./ModalShell";
@@ -36,7 +36,7 @@ export default function InterestModal({
             Thank you for your interest!
           </h3>
           <p className="text-slate-soft text-[15px] leading-relaxed">
-            The EduWeCan team will help connect you with{" "}
+            The Edubeacon team will help connect you with{" "}
             <strong>{vendorName ?? "the right solution provider"}</strong>. You
             can expect to hear from us within 24–48 hours.
           </p>
@@ -62,7 +62,7 @@ export default function InterestModal({
         </div>
       )}
       <p className="text-slate-soft text-[14px] mb-5">
-        Share your details and EduWeCan will connect you with the solution provider.
+        Share your details and Edubeacon will connect you with the solution provider.
       </p>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>

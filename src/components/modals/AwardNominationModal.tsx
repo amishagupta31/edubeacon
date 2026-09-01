@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import ModalShell from "./ModalShell";
@@ -37,7 +37,7 @@ export default function AwardNominationModal({
             Thank you for your nomination!
           </h3>
           <p className="text-slate-soft text-[15px] leading-relaxed">
-            The EduWeCan Awards Committee will review your nomination and you
+            The Edubeacon Awards Committee will review your nomination and you
             will be notified of the shortlist by email.
           </p>
           <button
@@ -54,7 +54,7 @@ export default function AwardNominationModal({
   return (
     <ModalShell title="Award Nomination" onClose={onClose} size="lg">
       <p className="text-slate-soft text-[14px] mb-5">
-        Nominate an outstanding school, leader or company for an EduWeCan Award.
+        Nominate an outstanding school, leader or company for an Edubeacon Award.
       </p>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>

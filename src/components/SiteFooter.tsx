@@ -1,3 +1,5 @@
+﻿"use client";
+
 import Container from "./ui/Container";
 import { siteConfig } from "@/lib/data";
 
@@ -5,7 +7,7 @@ const footerLinks = [
   {
     title: "Platform",
     links: [
-      { label: "About EduWeCan", href: "#about" },
+      { label: "About Edubeacon", href: "#about" },
       { label: "Find Solutions", href: "#solutions" },
       { label: "For Schools", href: "#for-schools" },
       { label: "For Vendors", href: "#for-vendors" },
@@ -62,7 +64,7 @@ export default function SiteFooter() {
             <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-white/15">
               <span className="text-white font-display font-bold text-[15px]">E</span>
             </div>
-            <span className="font-display font-bold text-[20px] text-white">EduWeCan</span>
+            <span className="font-display font-bold text-[20px] text-white">Edubeacon</span>
           </div>
           <p className="max-w-[26ch] text-[14px] leading-relaxed text-white/65">
             Connecting Schools, Innovation and Opportunity across India.
@@ -109,7 +111,7 @@ export default function SiteFooter() {
 
       <div className="border-t border-white/10">
         <Container className="flex flex-col items-center justify-between gap-4 py-6 text-[12.5px] text-white/50 md:flex-row">
-          <span>© 2027 EduWeCan. All rights reserved.</span>
+          <span>© 2027 Edubeacon. All rights reserved.</span>
           <div className="flex gap-6">
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms & Conditions</a>

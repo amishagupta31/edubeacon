@@ -1,5 +1,5 @@
-/**
- * EduWeCan Photography Registry
+﻿/**
+ * Edubeacon Photography Registry
  * All images sourced from Unsplash — education, technology, and professional settings.
  */
 function unsplash(id: string, params = "auto=format&fit=crop&q=80") {

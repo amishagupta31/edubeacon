@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import SiteHeader from "@/components/SiteHeader";
@@ -14,9 +14,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "EduWeCan — Connecting Schools, Innovation and Opportunity",
+  title: "Edubeacon — Connecting Schools, Innovation and Opportunity",
   description:
-    "EduWeCan connects schools, education leaders, startups, vendors and solution providers to create meaningful partnerships and discover the best solutions for the future of education.",
+    "Edubeacon connects schools, education leaders, startups, vendors and solution providers to create meaningful partnerships and discover the best solutions for the future of education.",
   keywords: "education platform, school solutions, EdTech, STEM labs, education conference, school vendors, India",
 };
 

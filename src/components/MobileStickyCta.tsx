@@ -1,14 +1,24 @@
-import Button from "./ui/Button";
+"use client";
+
+import { useModal } from "./modals/ModalProvider";
 
 export default function MobileStickyCta() {
+  const { openModal } = useModal();
+
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 border-t border-line bg-warm-white/95 p-3 backdrop-blur-md md:hidden">
-      <Button href="/sponsor" variant="secondary" className="flex-1">
-        Sponsor
-      </Button>
-      <Button href="/#register" variant="primary" className="flex-1">
-        Register Now
-      </Button>
+    <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden border-t border-line bg-white/95 backdrop-blur-sm px-4 py-3 flex gap-2 shadow-lg">
+      <button
+        onClick={() => openModal("school-register")}
+        className="flex-1 bg-edu-blue text-white py-3 rounded-xl font-bold text-[13px] hover:bg-edu-blue-mid transition-colors"
+      >
+        Register School
+      </button>
+      <button
+        onClick={() => openModal("vendor-register")}
+        className="flex-1 border-2 border-teal text-teal py-3 rounded-xl font-bold text-[13px] hover:bg-teal hover:text-white transition-colors"
+      >
+        Become a Partner
+      </button>
     </div>
   );
 }

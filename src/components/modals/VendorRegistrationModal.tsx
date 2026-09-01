@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import ModalShell from "./ModalShell";
@@ -40,10 +40,10 @@ export default function VendorRegistrationModal({
             <span className="text-3xl">✅</span>
           </div>
           <h3 className="font-display text-[22px] font-bold text-edu-blue mb-3">
-            Welcome to EduWeCan!
+            Welcome to Edubeacon!
           </h3>
           <p className="text-slate-soft text-[15px] leading-relaxed mb-6">
-            Thank you for applying to list your solution on EduWeCan. Our team will review your application and get in touch within 2–3 business days.
+            Thank you for applying to list your solution on Edubeacon. Our team will review your application and get in touch within 2–3 business days.
           </p>
           <button
             onClick={onClose}
@@ -59,7 +59,7 @@ export default function VendorRegistrationModal({
   return (
     <ModalShell title="List Your Solution" onClose={onClose} size="lg">
       <p className="text-slate-soft text-[14px] mb-6">
-        Register your company on EduWeCan and start connecting with schools across India.
+        Register your company on Edubeacon and start connecting with schools across India.
       </p>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

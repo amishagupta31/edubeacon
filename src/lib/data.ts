@@ -1,18 +1,18 @@
-import { img } from "./images";
+﻿import { img } from "./images";
 
 /* ─────────────────────────────────────────
    Site Configuration
 ───────────────────────────────────────── */
 export const siteConfig = {
-  name: "EduWeCan",
+  name: "Edubeacon",
   tagline: "Connecting Schools, Innovation and Opportunity",
-  email: "connect@eduwecan.com",
+  email: "connect@Edubeacon.com",
   phone: "+91 98765 43210",
   location: "New Delhi, India",
   conferenceDate: new Date("2027-03-15T09:00:00+05:30"),
   conferenceVenue: "Bharat Mandapam, New Delhi",
   conferenceCity: "New Delhi, India",
-  conferenceEventName: "EduWeCan Education Leadership Conference 2027",
+  conferenceEventName: "Edubeacon Education Leadership Conference 2027",
   conferenceEventDate: "15–16 March 2027",
 };
 
@@ -403,7 +403,7 @@ export const conferenceAgenda: AgendaDay[] = [
       {
         time: "15:30",
         type: "AWARDS",
-        title: "EduWeCan Awards Ceremony",
+        title: "Edubeacon Awards Ceremony",
         description: "Celebrating innovation and excellence in Indian education",
       },
       {
@@ -445,7 +445,7 @@ export const sponsorshipPackages: SponsorPackage[] = [
       "Logo on event advertisements & banners",
       "5 guaranteed curated meetings with schools",
       "Access to participant contact list",
-      "Feature in EduWeCan Magazine",
+      "Feature in Edubeacon Magazine",
       "Brand visibility across event touchpoints",
       "2 delegate passes",
     ],
@@ -465,7 +465,7 @@ export const sponsorshipPackages: SponsorPackage[] = [
       "10 guaranteed curated meetings with schools",
       "Enhanced logo placement across banners & digital",
       "Access to participant contact list",
-      "EduWeCan Magazine half-page feature",
+      "Edubeacon Magazine half-page feature",
       "Social media promotion",
       "5 delegate passes",
     ],
@@ -485,9 +485,9 @@ export const sponsorshipPackages: SponsorPackage[] = [
       "20-minute conference presentation",
       "Founder invited to panel discussion",
       "15 guaranteed curated meetings with selected schools",
-      "EduWeCan team support during meetings",
+      "Edubeacon team support during meetings",
       "Highly prominent branding across venue",
-      "EduWeCan Magazine full-page feature",
+      "Edubeacon Magazine full-page feature",
       "Priority social media promotion",
       "Delegate list with contact details",
       "10 delegate passes",
@@ -499,7 +499,7 @@ export const sponsorshipPackages: SponsorPackage[] = [
     name: "Diamond Partner",
     tier: "diamond",
     badge: "ELITE PARTNER",
-    description: "The highest level of partnership — unrivalled visibility across the entire EduWeCan ecosystem.",
+    description: "The highest level of partnership — unrivalled visibility across the entire Edubeacon ecosystem.",
     exhibitionSpace: "Custom — premium location",
     guaranteedMeetings: 20,
     speakingSlot: "Keynote slot available",
@@ -507,11 +507,11 @@ export const sponsorshipPackages: SponsorPackage[] = [
       "Custom premium exhibition space",
       "Keynote speaking opportunity",
       "20+ curated connections with selected schools",
-      "Access to wider EduWeCan event ecosystem",
+      "Access to wider Edubeacon event ecosystem",
       "Premium advertising placement across all media",
       "Full-page magazine advertisement (front section)",
       "Elite sponsorship recognition & awards night branding",
-      "Dedicated EduWeCan partnership manager",
+      "Dedicated Edubeacon partnership manager",
       "Year-round brand visibility on website & social",
       "Exclusive pre-event networking dinner invite",
       "Unlimited delegate passes",
@@ -562,21 +562,21 @@ export const awardCategories = [
 export const testimonials = [
   {
     quote:
-      "EduWeCan helped us discover three technology solutions we didn't know existed. Within two months, we had implemented a new STEM lab and a complete digital learning system.",
+      "Edubeacon helped us discover three technology solutions we didn't know existed. Within two months, we had implemented a new STEM lab and a complete digital learning system.",
     name: "Mrs. Rekha Gupta",
     title: "Principal",
     organization: "Delhi Model School",
   },
   {
     quote:
-      "As a startup, finding the right schools to speak to was our biggest challenge. EduWeCan connected us with 20 school principals in a single afternoon.",
+      "As a startup, finding the right schools to speak to was our biggest challenge. Edubeacon connected us with 20 school principals in a single afternoon.",
     name: "Aditya Singh",
     title: "Co-Founder",
     organization: "RoboKidz",
   },
   {
     quote:
-      "The EduWeCan conference is unlike any other education event. The curated meetings format means every conversation is relevant and purposeful.",
+      "The Edubeacon conference is unlike any other education event. The curated meetings format means every conversation is relevant and purposeful.",
     name: "Mr. Prakash Nair",
     title: "School Owner",
     organization: "Sunrise International Schools",
@@ -664,5 +664,5 @@ export const whyAttendVendors = [
   "Gain significant brand visibility",
   "Participate in the exhibition",
   "Get speaking and panel opportunities",
-  "Access the EduWeCan school network year-round",
+  "Access the Edubeacon school network year-round",
 ];

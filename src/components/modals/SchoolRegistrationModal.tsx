@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import ModalShell from "./ModalShell";
@@ -57,7 +57,7 @@ export default function SchoolRegistrationModal({
             Thank you for registering!
           </h3>
           <p className="text-slate-soft text-[15px] leading-relaxed mb-6">
-            The EduWeCan team will review your requirements and connect you with the right solution providers. Expect to hear from us within 24–48 hours.
+            The Edubeacon team will review your requirements and connect you with the right solution providers. Expect to hear from us within 24–48 hours.
           </p>
           <button
             onClick={onClose}
@@ -73,7 +73,7 @@ export default function SchoolRegistrationModal({
   return (
     <ModalShell title="Register Your School" onClose={onClose} size="lg">
       <p className="text-slate-soft text-[14px] mb-6">
-        Tell us about your school and what you&#39;re looking for. EduWeCan will connect you with the right solution providers.
+        Tell us about your school and what you&#39;re looking for. Edubeacon will connect you with the right solution providers.
       </p>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

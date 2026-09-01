@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import { useModal } from "./modals/ModalProvider";
@@ -57,7 +57,7 @@ export default function HeroSection() {
 
             {/* Subheading */}
             <p className="text-[16px] md:text-[17px] leading-relaxed text-slate-soft max-w-[48ch]">
-              EduWeCan connects schools, education leaders, startups, vendors
+              Edubeacon connects schools, education leaders, startups, vendors
               and solution providers to create meaningful partnerships and
               discover the best solutions for the future of education.
             </p>
@@ -72,11 +72,11 @@ export default function HeroSection() {
                 Explore Solutions →
               </button>
               <button
-                id="hero-join-eduwecan"
+                id="hero-join-Edubeacon"
                 onClick={() => openModal("school-register")}
                 className="border-2 border-teal text-teal px-7 py-3.5 rounded-xl font-semibold text-[14px] hover:bg-teal hover:text-white transition-all"
               >
-                Join EduWeCan
+                Join Edubeacon
               </button>
             </div>
 
@@ -102,7 +102,7 @@ export default function HeroSection() {
             <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3]">
               <Image
                 src={img.conferenceKeynote}
-                alt="EduWeCan Education Leadership Conference"
+                alt="Edubeacon Education Leadership Conference"
                 fill
                 className="object-cover"
                 priority

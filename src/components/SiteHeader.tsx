@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -59,7 +59,7 @@ export default function SiteHeader() {
           </div>
           <div className="flex flex-col">
             <span className="font-display font-bold text-[18px] text-edu-blue leading-none">
-              EduWeCan
+              Edubeacon
             </span>
             <span className="text-[9.5px] uppercase tracking-[0.18em] text-slate-soft leading-none mt-0.5 hidden sm:block">
               Education Ecosystem
