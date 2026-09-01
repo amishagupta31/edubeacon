@@ -1,0 +1,200 @@
+"use client";
+
+import { useState } from "react";
+import ModalShell from "./ModalShell";
+
+const categoryOptions = [
+  "STEM Labs", "AI Labs", "Robotics", "Smart Classrooms", "EdTech Platform",
+  "School ERP", "Books & Publishing", "Assessment", "Teacher Training",
+  "Healthcare", "Infrastructure", "Sports & Activity", "Other",
+];
+
+export default function VendorRegistrationModal({
+  onClose,
+}: {
+  onClose: () => void;
+}) {
+  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState({
+    companyName: "",
+    contactPerson: "",
+    designation: "",
+    email: "",
+    phone: "",
+    website: "",
+    category: "",
+    companyDescription: "",
+    productDescription: "",
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
+  if (submitted) {
+    return (
+      <ModalShell title="Application Received!" onClose={onClose}>
+        <div className="text-center py-8">
+          <div className="w-16 h-16 bg-teal-muted rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-3xl">✅</span>
+          </div>
+          <h3 className="font-display text-[22px] font-bold text-edu-blue mb-3">
+            Welcome to EduWeCan!
+          </h3>
+          <p className="text-slate-soft text-[15px] leading-relaxed mb-6">
+            Thank you for applying to list your solution on EduWeCan. Our team will review your application and get in touch within 2–3 business days.
+          </p>
+          <button
+            onClick={onClose}
+            className="bg-edu-blue text-white px-8 py-3 rounded-lg font-semibold hover:bg-edu-blue-mid transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </ModalShell>
+    );
+  }
+
+  return (
+    <ModalShell title="List Your Solution" onClose={onClose} size="lg">
+      <p className="text-slate-soft text-[14px] mb-6">
+        Register your company on EduWeCan and start connecting with schools across India.
+      </p>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-[12px] font-semibold text-slate mb-1.5 uppercase tracking-wide">
+              Company Name *
+            </label>
+            <input
+              required
+              type="text"
+              placeholder="Your company name"
+              className="w-full border border-line rounded-lg px-4 py-2.5 text-[14px] text-slate focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20"
+              value={form.companyName}
+              onChange={(e) => setForm({ ...form, companyName: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-[12px] font-semibold text-slate mb-1.5 uppercase tracking-wide">
+              Contact Person *
+            </label>
+            <input
+              required
+              type="text"
+              placeholder="Full name"
+              className="w-full border border-line rounded-lg px-4 py-2.5 text-[14px] text-slate focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20"
+              value={form.contactPerson}
+              onChange={(e) => setForm({ ...form, contactPerson: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-[12px] font-semibold text-slate mb-1.5 uppercase tracking-wide">
+              Designation *
+            </label>
+            <input
+              required
+              type="text"
+              placeholder="e.g. Founder, Business Development Head"
+              className="w-full border border-line rounded-lg px-4 py-2.5 text-[14px] text-slate focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20"
+              value={form.designation}
+              onChange={(e) => setForm({ ...form, designation: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-[12px] font-semibold text-slate mb-1.5 uppercase tracking-wide">
+              Email Address *
+            </label>
+            <input
+              required
+              type="email"
+              placeholder="you@company.com"
+              className="w-full border border-line rounded-lg px-4 py-2.5 text-[14px] text-slate focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-[12px] font-semibold text-slate mb-1.5 uppercase tracking-wide">
+              Phone Number *
+            </label>
+            <input
+              required
+              type="tel"
+              placeholder="+91 98765 43210"
+              className="w-full border border-line rounded-lg px-4 py-2.5 text-[14px] text-slate focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20"
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-[12px] font-semibold text-slate mb-1.5 uppercase tracking-wide">
+              Website
+            </label>
+            <input
+              type="url"
+              placeholder="https://yourcompany.com"
+              className="w-full border border-line rounded-lg px-4 py-2.5 text-[14px] text-slate focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20"
+              value={form.website}
+              onChange={(e) => setForm({ ...form, website: e.target.value })}
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-[12px] font-semibold text-slate mb-1.5 uppercase tracking-wide">
+            Solution Category *
+          </label>
+          <select
+            required
+            className="w-full border border-line rounded-lg px-4 py-2.5 text-[14px] text-slate focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20"
+            value={form.category}
+            onChange={(e) => setForm({ ...form, category: e.target.value })}
+          >
+            <option value="">Select your primary category</option>
+            {categoryOptions.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-[12px] font-semibold text-slate mb-1.5 uppercase tracking-wide">
+            Company Description
+          </label>
+          <textarea
+            rows={2}
+            placeholder="Brief description of your company..."
+            className="w-full border border-line rounded-lg px-4 py-2.5 text-[14px] text-slate focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20 resize-none"
+            value={form.companyDescription}
+            onChange={(e) => setForm({ ...form, companyDescription: e.target.value })}
+          />
+        </div>
+
+        <div>
+          <label className="block text-[12px] font-semibold text-slate mb-1.5 uppercase tracking-wide">
+            Product / Service Description
+          </label>
+          <textarea
+            rows={3}
+            placeholder="Describe the product or service you want to list..."
+            className="w-full border border-line rounded-lg px-4 py-2.5 text-[14px] text-slate focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20 resize-none"
+            value={form.productDescription}
+            onChange={(e) => setForm({ ...form, productDescription: e.target.value })}
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-teal text-white py-3.5 rounded-lg font-semibold text-[14px] hover:bg-teal-light transition-colors mt-2"
+        >
+          Submit Application →
+        </button>
+        <p className="text-center text-[11px] text-slate-soft">
+          Our team will review your application and contact you within 2–3 business days.
+        </p>
+      </form>
+    </ModalShell>
+  );
+}

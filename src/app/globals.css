@@ -1,0 +1,166 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap");
+
+@theme {
+  /* ── Core Palette ── */
+  --color-edu-blue:       #1E3A5F;   /* Deep education authority */
+  --color-edu-blue-mid:   #2C5282;   /* Mid blue */
+  --color-edu-blue-light: #3B82F6;   /* Accent blue */
+  --color-teal:           #0D9488;   /* Innovation teal */
+  --color-teal-light:     #14B8A6;   /* Lighter teal */
+  --color-teal-muted:     #CCFBF1;   /* Pastel teal */
+
+  /* ── Neutral ── */
+  --color-warm-ivory:     #FDFBF7;   /* Main background */
+  --color-paper:          #FFFFFF;
+  --color-slate:          #334155;   /* Body text */
+  --color-slate-soft:     #64748B;   /* Muted text */
+  --color-charcoal:       #1E293B;   /* Headings */
+  --color-charcoal-soft:  #334155;
+
+  /* ── Pastel Section Backgrounds ── */
+  --color-sky-pastel:     #EFF6FF;   /* Light blue wash */
+  --color-mint-pastel:    #F0FDF9;   /* Light teal wash */
+  --color-peach-pastel:   #FFFBEB;   /* Warm highlight */
+  --color-lavender-pastel:#F5F3FF;   /* Soft purple */
+  --color-rose-pastel:    #FFF1F2;   /* Soft rose */
+  --color-sage-pastel:    #F0FDF4;   /* Soft green */
+
+  /* ── Awards Gold ── */
+  --color-gold:           #D97706;
+  --color-gold-light:     #FEF3C7;
+
+  /* ── Sponsor Tiers ── */
+  --color-bronze:         #CD7F32;
+  --color-silver:         #9CA3AF;
+  --color-diamond:        #6366F1;
+
+  /* ── Borders ── */
+  --color-line:           #E2E8F0;
+  --color-line-soft:      #F1F5F9;
+
+  /* ── Warm White alias (keeps header working) ── */
+  --color-warm-white:     #FDFBF7;
+
+  /* ── Fonts ── */
+  --font-display: "Plus Jakarta Sans", sans-serif;
+  --font-sans:    "Inter", sans-serif;
+
+  /* ── Radius ── */
+  --radius-card:  0.75rem;
+  --radius-sm:    0.375rem;
+}
+
+/* ─── Base ─── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-warm-ivory);
+  color: var(--color-slate);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Selection ─── */
+::selection {
+  background: var(--color-teal-muted);
+  color: var(--color-edu-blue);
+}
+
+/* ─── Display / Heading font ─── */
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* ─── Reveal animation ─── */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: reveal-up 0.7s cubic-bezier(0.22, 0.7, 0.2, 1) forwards;
+  }
+  .reveal-delay-1 { animation-delay: 0.1s; }
+  .reveal-delay-2 { animation-delay: 0.2s; }
+  .reveal-delay-3 { animation-delay: 0.3s; }
+  .reveal-delay-4 { animation-delay: 0.4s; }
+}
+
+@keyframes reveal-up {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Text balance ─── */
+.text-balance {
+  text-wrap: balance;
+}
+
+/* ─── Horizontal scroll rail ─── */
+.scroll-rail {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+.scroll-rail::-webkit-scrollbar {
+  height: 6px;
+}
+.scroll-rail::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 999px;
+}
+
+/* ─── Modal backdrop ─── */
+.modal-backdrop {
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* ─── Category pill active state ─── */
+.cat-pill-active {
+  background: var(--color-edu-blue);
+  color: #fff;
+}
+
+/* ─── Countdown digits ─── */
+@keyframes flip-down {
+  0%   { transform: translateY(-8px); opacity: 0; }
+  100% { transform: translateY(0);    opacity: 1; }
+}
+.countdown-digit {
+  animation: flip-down 0.4s ease forwards;
+}
+
+/* ─── Gradient text utility ─── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-edu-blue) 0%, var(--color-teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Section divider ─── */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-line), transparent);
+}
+
+/* ─── Card hover lift ─── */
+.card-lift {
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+.card-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px -8px rgba(30, 58, 95, 0.12);
+}
+
+/* ─── Teal underline link ─── */
+.teal-link {
+  text-decoration: underline;
+  text-decoration-color: var(--color-teal);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 2px;
+}
