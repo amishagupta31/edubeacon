@@ -5,9 +5,7 @@ import GridPanels from "@/components/eduwecan/GridPanels";
 import SolutionsGrid from "@/components/SolutionsGrid";
 import FeaturedVendors from "@/components/FeaturedVendors";
 import ForSchools from "@/components/ForSchools";
-import Opportunities from "@/components/eduwecan/Opportunities";
 import ForVendors from "@/components/ForVendors";
-import Ecosystem from "@/components/eduwecan/Ecosystem";
 import ConferenceSection from "@/components/ConferenceSection";
 import WhyAttend from "@/components/WhyAttend";
 import SpeakersSection from "@/components/SpeakersSection";
@@ -15,7 +13,6 @@ import AgendaSection from "@/components/AgendaSection";
 import SponsorshipPackages from "@/components/SponsorshipPackages";
 import CuratedMeetings from "@/components/CuratedMeetings";
 import PartnersSection from "@/components/PartnersSection";
-import HorizontalScroll from "@/components/eduwecan/HorizontalScroll";
 import AwardsSection from "@/components/AwardsSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import Testimonials from "@/components/eduwecan/Testimonials";
@@ -47,14 +44,8 @@ export default function Home() {
       {/* 5. For Schools */}
       <ForSchools />
 
-      {/* Learning Opportunities */}
-      <Opportunities />
-
       {/* 6. For Vendors */}
       <ForVendors />
-
-      {/* Ecosystem Track */}
-      <Ecosystem />
 
       {/* 7. Conference Spotlight & Countdown */}
       <ConferenceSection />
@@ -73,9 +64,6 @@ export default function Home() {
 
       {/* 11. Curated Meetings */}
       <CuratedMeetings />
-
-      {/* The Journey Horizontal Cards */}
-      <HorizontalScroll />
 
       {/* 12. Partners Section */}
       <PartnersSection />

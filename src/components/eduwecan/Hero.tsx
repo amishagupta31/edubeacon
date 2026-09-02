@@ -18,7 +18,6 @@ export default function Hero() {
   const lineRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const paraRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
-  const statsRef = useRef<HTMLDivElement>(null);
 
   const bgGlow1Ref = useRef<HTMLDivElement>(null);
   const bgGlow2Ref = useRef<HTMLDivElement>(null);
@@ -36,7 +35,6 @@ export default function Hero() {
             ...lineRefs.current,
             paraRef.current,
             ctaRef.current,
-            statsRef.current,
           ],
           { opacity: 1, y: 0, scale: 1 }
         );
@@ -75,12 +73,6 @@ export default function Hero() {
           { opacity: 0, y: 20 },
           { opacity: 1, y: 0, duration: 0.5 },
           0.7
-        )
-        .fromTo(
-          statsRef.current,
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.6 },
-          0.85
         );
 
       // Scroll Parallax Effect
@@ -144,12 +136,12 @@ export default function Hero() {
           fill
           unoptimized
           priority
-          className="object-cover object-center opacity-45 scale-105 filter brightness-110 contrast-110"
+          className="object-cover object-center opacity-70 scale-105 filter brightness-105 contrast-105"
         />
 
-        {/* Ambient Overlay Gradients for Optimal Centered Text Contrast */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0A0E17]/80 via-[#0A0E17]/60 to-[#0A0E17]/90" />
-        <div className="absolute inset-0 bg-radial from-transparent via-[#0A0E17]/50 to-[#0A0E17]" />
+        {/* Ambient Overlay Gradients - More transparent to show background clearly */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0A0E17]/45 via-[#0A0E17]/25 to-[#0A0E17]/70" />
+        <div className="absolute inset-0 bg-radial from-transparent via-[#0A0E17]/20 to-[#0A0E17]/60" />
 
         {/* Soft Radial Glow Orbs */}
         <div
@@ -222,7 +214,7 @@ export default function Hero() {
         {/* Supporting Subheading */}
         <p
           ref={paraRef}
-          className="text-slate-300/90 text-[17px] sm:text-[20px] leading-relaxed max-w-[50ch] font-normal opacity-0"
+          className="text-slate-200 text-[17px] sm:text-[20px] leading-relaxed max-w-[50ch] font-normal opacity-0 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
         >
           Where schools, innovators, and world-class opportunities come together to create meaningful partnerships for the future of learning.
         </p>
@@ -238,27 +230,6 @@ export default function Hero() {
               →
             </span>
           </button>
-        </div>
-
-        {/* Centered Trust Statistics Pills */}
-        <div
-          ref={statsRef}
-          className="opacity-0 pt-4 flex flex-wrap items-center justify-center gap-6 sm:gap-10 border-t border-white/10 w-full max-w-[600px] mt-4"
-        >
-          {[
-            { value: "500+", label: "Schools Connected" },
-            { value: "300+", label: "Vendors & Partners" },
-            { value: "25+", label: "Solution Categories" },
-          ].map((stat) => (
-            <div key={stat.label} className="flex items-baseline gap-2">
-              <span className="font-bold text-[22px] sm:text-[26px] text-emerald-400 tracking-tight">
-                {stat.value}
-              </span>
-              <span className="text-[12px] sm:text-[13px] text-slate-400 font-medium">
-                {stat.label}
-              </span>
-            </div>
-          ))}
         </div>
       </div>
 
