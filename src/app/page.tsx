@@ -1,10 +1,13 @@
-import HeroSection from "@/components/HeroSection";
+import Hero from "@/components/eduwecan/Hero";
 import HeroStats from "@/components/HeroStats";
 import AboutSection from "@/components/AboutSection";
+import GridPanels from "@/components/eduwecan/GridPanels";
 import SolutionsGrid from "@/components/SolutionsGrid";
 import FeaturedVendors from "@/components/FeaturedVendors";
 import ForSchools from "@/components/ForSchools";
+import Opportunities from "@/components/eduwecan/Opportunities";
 import ForVendors from "@/components/ForVendors";
+import Ecosystem from "@/components/eduwecan/Ecosystem";
 import ConferenceSection from "@/components/ConferenceSection";
 import WhyAttend from "@/components/WhyAttend";
 import SpeakersSection from "@/components/SpeakersSection";
@@ -12,8 +15,10 @@ import AgendaSection from "@/components/AgendaSection";
 import SponsorshipPackages from "@/components/SponsorshipPackages";
 import CuratedMeetings from "@/components/CuratedMeetings";
 import PartnersSection from "@/components/PartnersSection";
+import HorizontalScroll from "@/components/eduwecan/HorizontalScroll";
 import AwardsSection from "@/components/AwardsSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
+import Testimonials from "@/components/eduwecan/Testimonials";
 import MagazineSection from "@/components/MagazineSection";
 import FinalCta from "@/components/FinalCta";
 import ContactSection from "@/components/ContactSection";
@@ -21,61 +26,74 @@ import ContactSection from "@/components/ContactSection";
 export default function Home() {
   return (
     <>
-      {/* Section 1: Hero */}
-      <HeroSection />
+      {/* 1. Redesigned Minimal EduBeacon Hero */}
+      <Hero />
 
       {/* Community stats bar */}
       <HeroStats />
 
-      {/* Section 2: About */}
+      {/* 2. About Section */}
       <AboutSection />
 
-      {/* Section 3: Solutions */}
+      {/* Editorial Visual Grid Panels */}
+      <GridPanels />
+
+      {/* 3. Solutions Grid (Interactive Filter Categories & Cards) */}
       <SolutionsGrid />
 
-      {/* Section 4: Featured Vendors */}
+      {/* 4. Featured Vendors */}
       <FeaturedVendors />
 
-      {/* Section 5: For Schools */}
+      {/* 5. For Schools */}
       <ForSchools />
 
-      {/* Section 6: For Vendors */}
+      {/* Learning Opportunities & Support */}
+      <Opportunities />
+
+      {/* 6. For Vendors */}
       <ForVendors />
 
-      {/* Section 7: Conference + Countdown */}
+      {/* Ecosystem Track */}
+      <Ecosystem />
+
+      {/* 7. Conference + Countdown */}
       <ConferenceSection />
 
-      {/* Section 8: Why Attend */}
+      {/* 8. Why Attend */}
       <WhyAttend />
 
-      {/* Section 9: Speakers */}
+      {/* 9. Speakers */}
       <SpeakersSection />
 
       {/* Conference Agenda */}
       <AgendaSection />
 
-      {/* Section 11: Sponsorship */}
+      {/* 11. Sponsorship Packages */}
       <SponsorshipPackages />
 
-      {/* Section 12: Curated Meetings */}
+      {/* 12. Curated Meetings */}
       <CuratedMeetings />
 
-      {/* Section 13: Partners */}
+      {/* The Journey Horizontal Cards */}
+      <HorizontalScroll />
+
+      {/* 13. Partners Section */}
       <PartnersSection />
 
-      {/* Section 14: Awards */}
+      {/* 14. Awards Section */}
       <AwardsSection />
 
-      {/* Section 15: Testimonials */}
+      {/* 15. Testimonials & Stories */}
       <TestimonialsSection />
+      <Testimonials />
 
-      {/* Section 16: Magazine */}
+      {/* 16. Magazine */}
       <MagazineSection />
 
-      {/* Section 17: Final CTA */}
+      {/* 17. Final CTA */}
       <FinalCta />
 
-      {/* Section 18: Contact */}
+      {/* 18. Contact */}
       <ContactSection />
     </>
   );

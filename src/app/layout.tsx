@@ -1,10 +1,11 @@
-﻿import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import type { Metadata } from "next";
+import { Inter, Fraunces } from "next/font/google";
 import "./globals.css";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import MobileStickyCta from "@/components/MobileStickyCta";
 import ModalProvider from "@/components/modals/ModalProvider";
+import ScrollReveal from "@/components/ScrollReveal";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -13,10 +14,18 @@ const inter = Inter({
   display: "swap",
 });
 
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "Edubeacon — Connecting Schools, Innovation and Opportunity",
+  title: "EduBeacon — The Future of Education, Connected.",
   description:
-    "Edubeacon connects schools, education leaders, startups, vendors and solution providers to create meaningful partnerships and discover the best solutions for the future of education.",
+    "EduBeacon connects schools, education leaders, startups, vendors and solution providers to create meaningful partnerships and discover the best solutions for the future of education.",
   keywords: "education platform, school solutions, EdTech, STEM labs, education conference, school vendors, India",
 };
 
@@ -26,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} h-full`}>
+    <html lang="en" className={`${inter.variable} ${fraunces.variable} h-full`}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -37,6 +46,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-warm-ivory text-slate antialiased">
         <ModalProvider>
+          <ScrollReveal />
           <SiteHeader />
           <main className="flex-1 pb-16 md:pb-0">{children}</main>
           <SiteFooter />

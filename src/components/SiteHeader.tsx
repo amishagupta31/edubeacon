@@ -6,11 +6,10 @@ import Container from "./ui/Container";
 import { useModal } from "./modals/ModalProvider";
 
 const navItems = [
-  { label: "Home", href: "#home" },
   { label: "About", href: "#about" },
   { label: "Solutions", href: "#solutions" },
-  { label: "For Schools", href: "#for-schools" },
-  { label: "For Vendors", href: "#for-vendors" },
+  { label: "Schools", href: "#for-schools" },
+  { label: "Vendors", href: "#for-vendors" },
   { label: "Conference", href: "#conference" },
   { label: "Speakers", href: "#speakers" },
   { label: "Sponsorship", href: "#sponsorship" },
@@ -53,7 +52,17 @@ export default function SiteHeader() {
     >
       <Container className="flex h-[72px] items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
+        <Link
+          href="/"
+          className="flex shrink-0 items-center gap-2.5"
+          onClick={(e) => {
+            setOpen(false);
+            if (window.location.pathname === "/") {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+          }}
+        >
           <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-edu-blue">
             <span className="text-white font-display font-bold text-[15px]">E</span>
           </div>
@@ -68,12 +77,12 @@ export default function SiteHeader() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden items-center gap-1 xl:flex">
+        <nav className="hidden items-center xl:flex">
           {navItems.map((item) => (
             <button
               key={item.label}
               onClick={() => handleNavClick(item.href)}
-              className="px-3 py-2 text-[13px] font-medium text-slate-soft transition-colors hover:text-edu-blue rounded-md hover:bg-sky-pastel"
+              className="whitespace-nowrap rounded-md px-2.5 py-2 text-[13px] font-medium text-slate-soft transition-colors hover:bg-sky-pastel hover:text-edu-blue 2xl:px-3"
             >
               {item.label}
             </button>
@@ -81,20 +90,20 @@ export default function SiteHeader() {
         </nav>
 
         {/* Desktop CTAs */}
-        <div className="hidden items-center gap-3 xl:flex">
+        <div className="hidden shrink-0 items-center gap-2.5 xl:flex 2xl:gap-3">
           <button
             onClick={() => openModal("vendor-register")}
-            className="text-[13px] font-semibold text-teal hover:text-edu-blue transition-colors"
+            className="whitespace-nowrap text-[13px] font-semibold text-teal transition-colors hover:text-edu-blue"
             id="header-become-partner"
           >
-            Become a Partner
+            Partner
           </button>
           <button
             onClick={() => openModal("school-register")}
-            className="bg-edu-blue text-white px-5 py-2.5 rounded-lg text-[13px] font-semibold hover:bg-edu-blue-mid transition-colors shadow-sm"
+            className="whitespace-nowrap rounded-lg bg-edu-blue px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm transition-colors hover:bg-edu-blue-mid 2xl:px-5"
             id="header-register-school"
           >
-            Register Your School
+            Register School
           </button>
         </div>
 

@@ -1,4 +1,25 @@
 ﻿import { img } from "./images";
+import {
+  FlaskConical,
+  Bot,
+  Cog,
+  Monitor,
+  Smartphone,
+  Building2,
+  Stethoscope,
+  Laptop,
+  BookOpen,
+  Shirt,
+  HardHat,
+  GraduationCap,
+  BarChart3,
+  Sparkles,
+  Trophy,
+  Crown,
+  Lightbulb,
+  Rocket,
+  type LucideIcon,
+} from "lucide-react";
 
 /* ─────────────────────────────────────────
    Site Configuration
@@ -6,7 +27,7 @@
 export const siteConfig = {
   name: "Edubeacon",
   tagline: "Connecting Schools, Innovation and Opportunity",
-  email: "connect@Edubeacon.com",
+  email: "connect@edubeacon.com",
   phone: "+91 98765 43210",
   location: "New Delhi, India",
   conferenceDate: new Date("2027-03-15T09:00:00+05:30"),
@@ -49,7 +70,7 @@ export type SolutionCategory =
 
 export interface SolutionCategoryItem {
   id: string;
-  icon: string;
+  icon: LucideIcon;
   name: SolutionCategory | string;
   description: string;
   color: string;
@@ -58,98 +79,98 @@ export interface SolutionCategoryItem {
 export const solutionCategories: SolutionCategoryItem[] = [
   {
     id: "stem",
-    icon: "🔬",
+    icon: FlaskConical,
     name: "STEM Labs",
     description: "Science, technology, engineering and mathematics labs for modern schools.",
     color: "sky-pastel",
   },
   {
     id: "ai",
-    icon: "🤖",
+    icon: Bot,
     name: "AI Labs",
     description: "Artificial intelligence and machine learning labs for future-ready education.",
     color: "lavender-pastel",
   },
   {
     id: "robotics",
-    icon: "⚙️",
+    icon: Cog,
     name: "Robotics Labs",
     description: "Hands-on robotics and coding environments for students.",
     color: "mint-pastel",
   },
   {
     id: "smart-classroom",
-    icon: "🖥️",
+    icon: Monitor,
     name: "Smart Classrooms",
     description: "Interactive panels, projectors and digital classroom infrastructure.",
     color: "peach-pastel",
   },
   {
     id: "edtech",
-    icon: "📱",
+    icon: Smartphone,
     name: "EdTech Platforms",
     description: "Learning management systems, e-learning and digital content platforms.",
     color: "sky-pastel",
   },
   {
     id: "erp",
-    icon: "🏫",
+    icon: Building2,
     name: "School ERP",
     description: "Comprehensive school management, admissions, and administration software.",
     color: "sage-pastel",
   },
   {
     id: "healthcare",
-    icon: "🏥",
+    icon: Stethoscope,
     name: "Healthcare Solutions",
     description: "School health management, wellness and medical services.",
     color: "rose-pastel",
   },
   {
     id: "software",
-    icon: "💻",
+    icon: Laptop,
     name: "Educational Software",
     description: "Curriculum-aligned software and digital tools for teaching and learning.",
     color: "lavender-pastel",
   },
   {
     id: "books",
-    icon: "📚",
+    icon: BookOpen,
     name: "Books & Publishers",
     description: "Textbooks, supplementary materials, e-books and educational content.",
     color: "peach-pastel",
   },
   {
     id: "uniforms",
-    icon: "👕",
+    icon: Shirt,
     name: "Uniform Suppliers",
     description: "School uniforms, sportswear and institutional apparel suppliers.",
     color: "mint-pastel",
   },
   {
     id: "infrastructure",
-    icon: "🏗️",
+    icon: HardHat,
     name: "School Infrastructure",
     description: "Furniture, construction, playground and campus infrastructure solutions.",
     color: "sage-pastel",
   },
   {
     id: "training",
-    icon: "🎓",
+    icon: GraduationCap,
     name: "Teacher Training",
     description: "Professional development, certification and capacity building programs.",
     color: "sky-pastel",
   },
   {
     id: "assessment",
-    icon: "📊",
+    icon: BarChart3,
     name: "Assessment Solutions",
     description: "Testing platforms, performance analytics and learning outcome tools.",
     color: "lavender-pastel",
   },
   {
     id: "other",
-    icon: "✨",
+    icon: Sparkles,
     name: "Other Services",
     description: "Transport, safety, security and other education support services.",
     color: "peach-pastel",
@@ -525,32 +546,32 @@ export const sponsorshipPackages: SponsorPackage[] = [
 ───────────────────────────────────────── */
 export const awardCategories = [
   {
-    icon: "🏆",
+    icon: Trophy,
     title: "Innovative School of the Year",
     description: "Recognizing schools that have embraced innovation, technology and future-ready education practices.",
   },
   {
-    icon: "👑",
+    icon: Crown,
     title: "Education Leader of the Year",
     description: "Celebrating exceptional school leaders who are transforming educational outcomes.",
   },
   {
-    icon: "💡",
+    icon: Lightbulb,
     title: "Best EdTech Innovation",
     description: "Honoring the most impactful EdTech product or platform making a difference in Indian classrooms.",
   },
   {
-    icon: "🔬",
+    icon: FlaskConical,
     title: "Best STEM Initiative",
     description: "Recognizing outstanding STEM programs, labs and initiatives in schools.",
   },
   {
-    icon: "🤖",
+    icon: Bot,
     title: "Best AI in Education Initiative",
     description: "Celebrating the effective integration of artificial intelligence in teaching and learning.",
   },
   {
-    icon: "🚀",
+    icon: Rocket,
     title: "Emerging Education Startup",
     description: "Spotlighting the most promising early-stage EdTech startups making an impact.",
   },

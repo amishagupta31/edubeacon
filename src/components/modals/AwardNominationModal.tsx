@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState } from "react";
+import { Trophy } from "lucide-react";
 import ModalShell from "./ModalShell";
 import { awardCategories } from "@/lib/data";
 
@@ -31,7 +32,7 @@ export default function AwardNominationModal({
       <ModalShell title="Nomination Submitted!" onClose={onClose}>
         <div className="text-center py-8">
           <div className="w-16 h-16 bg-gold-light rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-3xl">🏆</span>
+            <Trophy className="w-8 h-8 text-gold" strokeWidth={1.75} />
           </div>
           <h3 className="font-display text-[22px] font-bold text-edu-blue mb-3">
             Thank you for your nomination!

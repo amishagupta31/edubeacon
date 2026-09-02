@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import Image from "next/image";
+import { Calendar } from "lucide-react";
 import { useModal } from "./modals/ModalProvider";
 import { img } from "@/lib/images";
 
@@ -24,8 +25,9 @@ export default function HeroSection() {
             background: "linear-gradient(135deg, transparent 0%, #EFF6FF 40%, #F0FDF9 100%)",
           }}
         />
-        <div className="absolute top-20 left-1/4 w-72 h-72 rounded-full bg-teal-muted/30 blur-3xl" />
-        <div className="absolute bottom-20 right-1/3 w-96 h-96 rounded-full bg-sky-pastel/50 blur-3xl" />
+        <div className="bg-blob absolute top-20 left-1/4 w-72 h-72 rounded-full bg-teal-muted/30 blur-3xl" />
+        <div className="bg-blob-reverse absolute bottom-20 right-1/3 w-96 h-96 rounded-full bg-sky-pastel/50 blur-3xl" />
+        <div className="bg-blob-slow absolute top-1/3 right-10 w-56 h-56 rounded-full bg-lavender-pastel/60 blur-3xl" />
       </div>
 
       <div className="relative z-10 w-full max-w-[1200px] mx-auto px-6 md:px-10 py-16 md:py-20">
@@ -115,8 +117,8 @@ export default function HeroSection() {
             {/* Floating badge */}
             <div className="absolute -bottom-5 -left-5 bg-white rounded-2xl shadow-xl p-4 border border-line max-w-[200px]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-teal-muted flex items-center justify-center text-xl">
-                  📅
+                <div className="w-10 h-10 rounded-xl bg-teal-muted flex items-center justify-center">
+                  <Calendar className="w-5 h-5 text-teal" strokeWidth={1.75} />
                 </div>
                 <div>
                   <p className="text-[10px] uppercase tracking-wide text-slate-soft font-semibold">

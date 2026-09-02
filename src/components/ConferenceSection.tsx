@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { Landmark, Mic, Handshake, Calendar, MapPin } from "lucide-react";
 import Container from "./ui/Container";
 import { img } from "@/lib/images";
 import { siteConfig } from "@/lib/data";
@@ -30,10 +31,10 @@ function useCountdown(targetDate: Date) {
 }
 
 const experiences = [
-  { icon: "🏛️", title: "Exhibition", desc: "Discover innovative education products and solutions from 100+ vendors." },
-  { icon: "🎤", title: "Conference", desc: "Hear from education leaders, policymakers and industry experts." },
-  { icon: "🤝", title: "Networking", desc: "Build meaningful relationships with education decision-makers." },
-  { icon: "📅", title: "Curated Meetings", desc: "Pre-arranged 1:1 meetings connecting schools with relevant vendors." },
+  { icon: Landmark, title: "Exhibition", desc: "Discover innovative education products and solutions from 100+ vendors." },
+  { icon: Mic, title: "Conference", desc: "Hear from education leaders, policymakers and industry experts." },
+  { icon: Handshake, title: "Networking", desc: "Build meaningful relationships with education decision-makers." },
+  { icon: Calendar, title: "Curated Meetings", desc: "Pre-arranged 1:1 meetings connecting schools with relevant vendors." },
 ];
 
 export default function ConferenceSection() {
@@ -70,11 +71,13 @@ export default function ConferenceSection() {
               {siteConfig.conferenceEventName}
             </h2>
             <div className="flex flex-wrap items-center gap-3 mb-6">
-              <span className="bg-white/15 text-white text-[13px] font-semibold px-4 py-1.5 rounded-full border border-white/20">
-                📅 {siteConfig.conferenceEventDate}
+              <span className="inline-flex items-center gap-1.5 bg-white/15 text-white text-[13px] font-semibold px-4 py-1.5 rounded-full border border-white/20">
+                <Calendar className="w-3.5 h-3.5" strokeWidth={2} />
+                {siteConfig.conferenceEventDate}
               </span>
-              <span className="bg-white/15 text-white text-[13px] font-semibold px-4 py-1.5 rounded-full border border-white/20">
-                📍 {siteConfig.conferenceVenue}
+              <span className="inline-flex items-center gap-1.5 bg-white/15 text-white text-[13px] font-semibold px-4 py-1.5 rounded-full border border-white/20">
+                <MapPin className="w-3.5 h-3.5" strokeWidth={2} />
+                {siteConfig.conferenceVenue}
               </span>
             </div>
             <p className="text-[15.5px] text-white/75 leading-relaxed mb-8 max-w-[44ch]">
@@ -134,7 +137,9 @@ export default function ConferenceSection() {
                 key={exp.title}
                 className="bg-white/10 border border-white/20 rounded-xl p-5 hover:bg-white/15 transition-colors"
               >
-                <span className="text-3xl block mb-3">{exp.icon}</span>
+                <div className="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center mb-3">
+                  <exp.icon className="w-5 h-5 text-white" strokeWidth={1.75} />
+                </div>
                 <h4 className="font-display font-bold text-[16px] text-white mb-1.5">
                   {exp.title}
                 </h4>

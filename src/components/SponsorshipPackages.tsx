@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState } from "react";
+import { Ruler, Handshake, Mic } from "lucide-react";
 import Container from "./ui/Container";
 import { sponsorshipPackages } from "@/lib/data";
 import { useModal } from "./modals/ModalProvider";
@@ -74,19 +75,19 @@ export default function SponsorshipPackages() {
                 {/* Key highlights */}
                 {pkg.exhibitionSpace && (
                   <div className="flex items-center gap-2 text-[13px] text-slate mb-2">
-                    <span>📐</span>
+                    <Ruler className="w-4 h-4 text-slate-soft shrink-0" strokeWidth={1.75} />
                     <span>Exhibition: <strong>{pkg.exhibitionSpace}</strong></span>
                   </div>
                 )}
                 {pkg.guaranteedMeetings && (
                   <div className="flex items-center gap-2 text-[13px] text-slate mb-2">
-                    <span>🤝</span>
+                    <Handshake className="w-4 h-4 text-slate-soft shrink-0" strokeWidth={1.75} />
                     <span><strong>{pkg.guaranteedMeetings}</strong> curated school meetings</span>
                   </div>
                 )}
                 {pkg.speakingSlot && (
                   <div className="flex items-center gap-2 text-[13px] text-slate mb-4">
-                    <span>🎤</span>
+                    <Mic className="w-4 h-4 text-slate-soft shrink-0" strokeWidth={1.75} />
                     <span>{pkg.speakingSlot}</span>
                   </div>
                 )}

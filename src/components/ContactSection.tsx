@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState } from "react";
+import { Mail, Phone, MapPin, CheckCircle2 } from "lucide-react";
 import Container from "./ui/Container";
 import { siteConfig } from "@/lib/data";
 
@@ -49,13 +50,13 @@ export default function ContactSection() {
 
             <div className="flex flex-col gap-5">
               {[
-                { icon: "📧", label: "Email", value: siteConfig.email, href: `mailto:${siteConfig.email}` },
-                { icon: "📞", label: "Phone", value: siteConfig.phone, href: `tel:${siteConfig.phone}` },
-                { icon: "📍", label: "Location", value: siteConfig.location, href: "#" },
+                { icon: Mail, label: "Email", value: siteConfig.email, href: `mailto:${siteConfig.email}` },
+                { icon: Phone, label: "Phone", value: siteConfig.phone, href: `tel:${siteConfig.phone}` },
+                { icon: MapPin, label: "Location", value: siteConfig.location, href: "#" },
               ].map((item) => (
                 <div key={item.label} className="flex items-start gap-4">
-                  <div className="w-11 h-11 bg-white rounded-xl border border-line flex items-center justify-center text-xl shrink-0 shadow-sm">
-                    {item.icon}
+                  <div className="w-11 h-11 bg-white rounded-xl border border-line flex items-center justify-center shrink-0 shadow-sm">
+                    <item.icon className="w-5 h-5 text-edu-blue" strokeWidth={1.75} />
                   </div>
                   <div>
                     <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-soft mb-0.5">
@@ -96,7 +97,7 @@ export default function ContactSection() {
             {submitted ? (
               <div className="text-center py-10">
                 <div className="w-16 h-16 bg-teal-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-3xl">✅</span>
+                  <CheckCircle2 className="w-8 h-8 text-teal" strokeWidth={1.75} />
                 </div>
                 <h3 className="font-display font-bold text-[22px] text-edu-blue mb-3">
                   Message Received!

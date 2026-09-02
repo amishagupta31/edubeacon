@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import Image from "next/image";
+import { Trophy } from "lucide-react";
 import { useModal } from "./modals/ModalProvider";
 import Container from "./ui/Container";
 import { awardCategories } from "@/lib/data";
@@ -46,7 +47,8 @@ export default function AwardsSection() {
               onClick={() => openModal("award-nominate")}
               className="bg-gold text-white px-8 py-4 rounded-xl font-bold text-[15px] hover:opacity-90 transition-opacity shadow-md"
             >
-              🏆 Nominate for an Award →
+              <Trophy className="inline w-4 h-4 -mt-0.5 mr-1.5" strokeWidth={2} />
+              Nominate for an Award →
             </button>
           </div>
 
@@ -61,7 +63,9 @@ export default function AwardsSection() {
                   key={award.title}
                   className={`bg-white rounded-2xl border border-line p-5 flex items-start gap-4 card-lift reveal reveal-delay-${Math.min(i + 1, 4)}`}
                 >
-                  <span className="text-3xl shrink-0">{award.icon}</span>
+                  <div className="w-11 h-11 rounded-xl bg-gold-light flex items-center justify-center shrink-0">
+                    <award.icon className="w-5 h-5 text-gold" strokeWidth={1.75} />
+                  </div>
                   <div>
                     <h4 className="font-display font-bold text-[15px] text-charcoal mb-1">
                       {award.title}

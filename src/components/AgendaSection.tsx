@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Mic } from "lucide-react";
 import Container from "./ui/Container";
 import { conferenceAgenda } from "@/lib/data";
 import type { SessionType } from "@/lib/data";
@@ -84,8 +85,9 @@ export default function AgendaSection() {
                     {session.description}
                   </p>
                   {session.speaker && (
-                    <p className="text-[12.5px] text-teal font-medium mt-1.5">
-                      🎤 {session.speaker}
+                    <p className="inline-flex items-center gap-1.5 text-[12.5px] text-teal font-medium mt-1.5">
+                      <Mic className="w-3.5 h-3.5" strokeWidth={2} />
+                      {session.speaker}
                     </p>
                   )}
                 </div>

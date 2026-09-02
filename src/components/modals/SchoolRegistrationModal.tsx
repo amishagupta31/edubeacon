@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState } from "react";
+import { PartyPopper } from "lucide-react";
 import ModalShell from "./ModalShell";
 
 const schoolTypes = [
@@ -51,7 +52,7 @@ export default function SchoolRegistrationModal({
       <ModalShell title="Registration Received!" onClose={onClose}>
         <div className="text-center py-8">
           <div className="w-16 h-16 bg-teal-muted rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-3xl">🎉</span>
+            <PartyPopper className="w-8 h-8 text-teal" strokeWidth={1.75} />
           </div>
           <h3 className="font-display text-[22px] font-bold text-edu-blue mb-3">
             Thank you for registering!

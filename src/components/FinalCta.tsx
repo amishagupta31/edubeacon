@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { Rocket } from "lucide-react";
 import { useModal } from "./modals/ModalProvider";
 import Container from "./ui/Container";
 
@@ -9,15 +10,22 @@ export default function FinalCta() {
   return (
     <section
       id="final-cta"
-      className="py-24 md:py-32"
+      className="relative overflow-hidden py-24 md:py-32"
       style={{
         background:
           "linear-gradient(135deg, #EFF6FF 0%, #F0FDF9 50%, #EDE9FE 100%)",
       }}
     >
-      <Container>
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="bg-blob absolute -top-20 -left-10 w-72 h-72 rounded-full bg-white/50 blur-3xl" />
+        <div className="bg-blob-slow absolute top-10 right-0 w-64 h-64 rounded-full bg-teal-muted/40 blur-3xl" />
+        <div className="bg-blob-reverse absolute -bottom-16 left-1/3 w-80 h-80 rounded-full bg-rose-pastel/50 blur-3xl" />
+      </div>
+      <Container className="relative">
         <div className="text-center max-w-3xl mx-auto reveal">
-          <div className="text-5xl mb-6">🚀</div>
+          <div className="inline-flex w-16 h-16 rounded-2xl bg-white items-center justify-center shadow-sm mb-6">
+            <Rocket className="w-8 h-8 text-teal" strokeWidth={1.75} />
+          </div>
           <h2 className="font-display font-bold text-[36px] md:text-[52px] text-charcoal leading-[1.08] text-balance mb-5">
             Let&apos;s Build the Future of{" "}
             <span

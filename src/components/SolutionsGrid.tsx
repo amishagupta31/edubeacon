@@ -71,7 +71,9 @@ export default function SolutionsGrid() {
               key={cat.id}
               className={`${bgMap[cat.color] ?? "bg-white border-line"} border rounded-xl p-5 flex flex-col gap-3 card-lift cursor-pointer group reveal reveal-delay-${Math.min(i + 1, 4)}`}
             >
-              <div className="text-3xl">{cat.icon}</div>
+              <div className="w-11 h-11 rounded-xl bg-white/70 flex items-center justify-center">
+                <cat.icon className="w-[22px] h-[22px] text-edu-blue" strokeWidth={1.75} />
+              </div>
               <div>
                 <h3 className="font-display font-semibold text-[14px] text-charcoal group-hover:text-edu-blue transition-colors">
                   {cat.name}

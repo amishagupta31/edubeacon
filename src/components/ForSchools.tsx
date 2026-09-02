@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import { useModal } from "./modals/ModalProvider";
@@ -101,14 +101,21 @@ export default function ForSchools() {
               <div className="absolute inset-0 bg-gradient-to-t from-edu-blue/40 to-transparent" />
             </div>
 
-            {/* Step Cards */}
+            {/* Step Cards — reference style */}
             <div className="grid grid-cols-2 gap-4">
               {steps.map((step) => (
                 <div
                   key={step.num}
-                  className="bg-white rounded-xl border border-line p-5"
+                  className="flex flex-col p-5"
+                  style={{
+                    background: "#E2E6EA",
+                    borderRadius: "10px 40px 10px 40px",
+                  }}
                 >
-                  <span className="font-display font-bold text-[13px] text-teal mb-2 block">
+                  <span
+                    className="font-display font-bold text-[12px] uppercase tracking-[0.12em] mb-2 block"
+                    style={{ color: "#1E3A5F" }}
+                  >
                     Step {step.num}
                   </span>
                   <h4 className="font-semibold text-[14px] text-charcoal mb-1.5 leading-tight">

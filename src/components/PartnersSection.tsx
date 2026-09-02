@@ -44,7 +44,7 @@ export default function PartnersSection() {
             Interested in becoming an Edubeacon Education Partner?
           </p>
           <a
-            href="mailto:partners@Edubeacon.com"
+            href="mailto:partners@edubeacon.com"
             className="text-[14px] font-bold text-edu-blue hover:text-teal transition-colors underline decoration-edu-blue/30 underline-offset-3"
           >
             Get in touch with our partnerships team →
