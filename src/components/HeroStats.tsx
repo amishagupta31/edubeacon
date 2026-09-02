@@ -3,26 +3,26 @@ import { communityStats } from "@/lib/data";
 
 export default function HeroStats() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-sky-pastel via-lavender-pastel to-mint-pastel py-14 border-y border-line-soft">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="bg-blob-slow absolute -top-16 left-10 w-64 h-64 rounded-full bg-white/40 blur-3xl" />
-        <div className="bg-blob absolute -bottom-20 right-16 w-72 h-72 rounded-full bg-teal-muted/30 blur-3xl" />
+    <section className="relative overflow-hidden bg-[#0A0E17] py-12 border-y border-white/10">
+      <div className="absolute inset-0 pointer-events-none opacity-40">
+        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 rounded-full bg-emerald-600/10 blur-3xl" />
+        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-96 h-96 rounded-full bg-teal-600/10 blur-3xl" />
       </div>
-      <Container className="relative">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-4">
+      <Container className="relative z-10">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-4">
           {communityStats.map((stat, i) => (
             <div
               key={stat.label}
-              className={`text-center ${
+              className={`text-center py-2 px-3 ${
                 i < communityStats.length - 1
-                  ? "md:border-r md:border-edu-blue/10"
+                  ? "md:border-r md:border-white/10"
                   : ""
               }`}
             >
-              <p className="font-display font-bold text-[36px] md:text-[42px] text-edu-blue leading-none">
+              <p className="font-bold text-[36px] md:text-[44px] text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-300 leading-none tracking-tight">
                 {stat.value}
               </p>
-              <p className="text-[13px] text-slate-soft mt-2 font-medium">
+              <p className="text-[13px] text-slate-300/80 mt-2 font-medium">
                 {stat.label}
               </p>
             </div>
@@ -32,3 +32,4 @@ export default function HeroStats() {
     </section>
   );
 }
+

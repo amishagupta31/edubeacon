@@ -10,7 +10,6 @@ import {
   EASE,
   EASE_CSS,
 } from "./gsapSetup";
-import FloatingShapes from "./FloatingShapes";
 import { testimonials, testimonialsDisclaimer } from "./data";
 
 export default function Testimonials() {
@@ -63,21 +62,20 @@ export default function Testimonials() {
 
   return (
     <section
-      id="stories"
+      id="testimonials"
       ref={sectionRef}
-      className="relative overflow-hidden py-24 md:py-32"
-      style={{ background: "var(--color-ewc-lilac)" }}
+      className="relative overflow-hidden py-24 md:py-32 bg-[#FDFBF7]"
     >
-      <FloatingShapes variant="soft" />
       <div className="relative mx-auto max-w-[900px] px-6 md:px-10">
-        <div data-testimonial-heading className="mb-14 flex flex-col items-center gap-4 text-center">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: "var(--color-ewc-muted)" }}>
-            Community Voices
-          </span>
-          <h2 className="font-display text-[34px] leading-[1.15] font-medium md:text-[44px]" style={{ color: "var(--color-ewc-ink)" }}>
+        <div data-testimonial-heading className="mb-14 flex flex-col items-center gap-3 text-center">
+          <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-[#0E733B] text-[11px] font-bold uppercase tracking-[0.2em] px-4.5 py-1.5 rounded-full border border-emerald-500/20">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#0E733B]" />
+            <span>Community Voices</span>
+          </div>
+          <h2 className="font-bold text-[34px] leading-[1.15] md:text-[44px] text-charcoal tracking-tight">
             Stories of Growth
           </h2>
-          <p className="text-[12px] italic" style={{ color: "var(--color-ewc-muted)", opacity: 0.8 }}>
+          <p className="text-[12.5px] italic text-slate-soft opacity-80">
             {testimonialsDisclaimer}
           </p>
         </div>
@@ -97,9 +95,8 @@ export default function Testimonials() {
             return (
               <div
                 key={t.name}
-                className="absolute inset-x-8 inset-y-0 flex flex-col items-center justify-center gap-5 rounded-[1.75rem] p-8 text-center transition-all sm:inset-x-14 sm:flex-row sm:items-center sm:gap-7 sm:text-left"
+                className="absolute inset-x-4 sm:inset-x-8 inset-y-0 flex flex-col items-center justify-center gap-5 rounded-2xl p-8 text-center border border-line transition-all sm:flex-row sm:items-center sm:gap-7 sm:text-left bg-white"
                 style={{
-                  background: "var(--color-ewc-ivory)",
                   transitionDuration: "700ms",
                   transitionTimingFunction: EASE_CSS.entrance,
                   opacity: isActive ? 1 : visible ? 0.55 : 0,
@@ -112,21 +109,21 @@ export default function Testimonials() {
                         : "translateY(14px) scale(0.9)",
                   zIndex: isActive ? 10 : 0,
                   pointerEvents: isActive ? "auto" : "none",
-                  boxShadow: isActive ? "0 30px 70px -35px rgba(47,52,64,0.35)" : "0 12px 30px -18px rgba(47,52,64,0.2)",
+                  boxShadow: isActive ? "0 25px 60px -20px rgba(14,115,59,0.18)" : "0 8px 25px -15px rgba(0,0,0,0.08)",
                 }}
                 aria-hidden={!isActive}
               >
-                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full sm:h-24 sm:w-24">
+                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border-2 border-emerald-500/20 sm:h-24 sm:w-24 shadow-sm">
                   <Image src={t.image} alt={t.name} fill sizes="96px" className="object-cover" />
                 </div>
                 <div>
-                  <p className="font-display text-[17px] leading-relaxed italic sm:text-[19px]" style={{ color: "var(--color-ewc-ink)" }}>
+                  <p className="text-[17px] leading-relaxed italic sm:text-[18.5px] text-slate-800 font-normal">
                     &ldquo;{t.quote}&rdquo;
                   </p>
-                  <p className="mt-4 text-[14px] font-semibold" style={{ color: "var(--color-ewc-ink)" }}>
+                  <p className="mt-4 text-[14.5px] font-bold text-charcoal">
                     {t.name}
                   </p>
-                  <p className="text-[12.5px]" style={{ color: "var(--color-ewc-muted)" }}>
+                  <p className="text-[12.5px] text-[#0E733B] font-semibold">
                     {t.role}
                   </p>
                 </div>
@@ -143,8 +140,8 @@ export default function Testimonials() {
               onClick={() => setActive(i)}
               className="h-2 rounded-full transition-all duration-300"
               style={{
-                width: i === active ? "22px" : "8px",
-                background: i === active ? "var(--color-ewc-ink)" : "var(--color-ewc-lavender-deep)",
+                width: i === active ? "24px" : "8px",
+                background: i === active ? "#0E733B" : "#CBD5E1",
               }}
             />
           ))}
@@ -153,3 +150,4 @@ export default function Testimonials() {
     </section>
   );
 }
+

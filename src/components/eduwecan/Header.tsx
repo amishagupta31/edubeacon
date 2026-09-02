@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const navItems = [
@@ -40,14 +41,16 @@ export default function Header() {
             e.preventDefault();
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
-          className="flex items-center gap-2.5"
+          className="flex items-center"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-full" style={{ background: "var(--color-ewc-lavender)" }}>
-            <span className="font-display text-[15px] font-semibold" style={{ color: "var(--color-ewc-ink)" }}>E</span>
-          </span>
-          <span className="font-display text-[19px] font-semibold" style={{ color: "var(--color-ewc-ink)" }}>
-            EduBeacon
-          </span>
+          <Image
+            src="/edubeacon-logo.png"
+            alt="eduBeacon Logo"
+            width={160}
+            height={44}
+            className="h-8.5 w-auto object-contain"
+            priority
+          />
         </a>
 
         <nav className="hidden items-center gap-8 md:flex">

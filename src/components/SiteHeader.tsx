@@ -1,5 +1,6 @@
-﻿"use client";
+"use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Container from "./ui/Container";
@@ -46,7 +47,7 @@ export default function SiteHeader() {
     <header
       className={`sticky top-0 z-50 border-b transition-all duration-300 ${
         scrolled
-          ? "border-line bg-white/90 backdrop-blur-md shadow-sm"
+          ? "border-line bg-white/95 backdrop-blur-md shadow-sm"
           : "border-transparent bg-warm-ivory"
       }`}
     >
@@ -54,7 +55,7 @@ export default function SiteHeader() {
         {/* Logo */}
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-2.5"
+          className="flex shrink-0 items-center py-1"
           onClick={(e) => {
             setOpen(false);
             if (window.location.pathname === "/") {
@@ -63,17 +64,14 @@ export default function SiteHeader() {
             }
           }}
         >
-          <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-edu-blue">
-            <span className="text-white font-display font-bold text-[15px]">E</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="font-display font-bold text-[18px] text-edu-blue leading-none">
-              Edubeacon
-            </span>
-            <span className="text-[9.5px] uppercase tracking-[0.18em] text-slate-soft leading-none mt-0.5 hidden sm:block">
-              Education Ecosystem
-            </span>
-          </div>
+          <Image
+            src="/edubeacon-logo.png"
+            alt="eduBeacon Logo"
+            width={160}
+            height={44}
+            className="h-8 sm:h-9 w-auto object-contain"
+            priority
+          />
         </Link>
 
         {/* Desktop Nav */}
@@ -93,14 +91,14 @@ export default function SiteHeader() {
         <div className="hidden shrink-0 items-center gap-2.5 xl:flex 2xl:gap-3">
           <button
             onClick={() => openModal("vendor-register")}
-            className="whitespace-nowrap text-[13px] font-semibold text-teal transition-colors hover:text-edu-blue"
+            className="whitespace-nowrap text-[13px] font-semibold text-[#0E733B] hover:text-[#0B5C2F] transition-colors"
             id="header-become-partner"
           >
             Partner
           </button>
           <button
             onClick={() => openModal("school-register")}
-            className="whitespace-nowrap rounded-lg bg-edu-blue px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm transition-colors hover:bg-edu-blue-mid 2xl:px-5"
+            className="whitespace-nowrap rounded-lg bg-[#0E733B] px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm transition-colors hover:bg-[#0B5C2F] 2xl:px-5"
             id="header-register-school"
           >
             Register School

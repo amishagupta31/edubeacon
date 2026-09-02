@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import { Target, School, BarChart3, Handshake, Mic, Megaphone, Rocket } from "lucide-react";
@@ -19,12 +19,12 @@ export default function ForVendors() {
   const { openModal } = useModal();
 
   return (
-    <section id="for-vendors" className="py-20 md:py-28 bg-mint-pastel/40">
+    <section id="for-vendors" className="py-20 md:py-28 bg-[#F8FAF8]">
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left: Image */}
           <div className="reveal order-2 lg:order-1">
-            <div className="relative rounded-2xl overflow-hidden aspect-[4/3] shadow-xl">
+            <div className="relative rounded-2xl overflow-hidden aspect-[4/3] shadow-xl border border-line">
               <Image
                 src={img.exhibitionFloor}
                 alt="Education exhibition floor"
@@ -32,18 +32,18 @@ export default function ForVendors() {
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-tr from-edu-blue/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-[#0A0E17]/40 to-transparent" />
             </div>
 
             {/* Floating card */}
-            <div className="bg-white rounded-2xl border border-line shadow-lg p-5 -mt-8 ml-6 relative z-10 max-w-xs">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-teal-muted rounded-xl flex items-center justify-center">
-                  <Rocket className="w-5 h-5 text-teal" strokeWidth={2} />
+            <div className="bg-white rounded-2xl border border-line shadow-xl p-5 -mt-10 ml-6 relative z-10 max-w-xs">
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center">
+                  <Rocket className="w-5.5 h-5.5 text-[#0E733B]" strokeWidth={2} />
                 </div>
                 <div>
-                  <p className="font-display font-bold text-[16px] text-edu-blue">300+ Vendors</p>
-                  <p className="text-[12px] text-slate-soft">Already Listed on Edubeacon</p>
+                  <p className="font-bold text-[17px] text-charcoal">300+ Vendors</p>
+                  <p className="text-[12px] text-slate-soft font-medium">Already Listed on Edubeacon</p>
                 </div>
               </div>
             </div>
@@ -51,14 +51,15 @@ export default function ForVendors() {
 
           {/* Right: Content */}
           <div className="reveal reveal-delay-2 order-1 lg:order-2">
-            <div className="inline-block bg-teal-muted text-teal text-[11px] font-semibold uppercase tracking-[0.18em] px-4 py-1.5 rounded-full mb-6 border border-teal/15">
-              For Startups & Vendors
+            <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-[#0E733B] text-[11px] font-bold uppercase tracking-[0.2em] px-4.5 py-1.5 rounded-full mb-6 border border-emerald-500/20">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#0E733B]" />
+              <span>For Startups & Vendors</span>
             </div>
-            <h2 className="font-display font-bold text-[34px] md:text-[46px] text-charcoal leading-[1.1] mb-5">
+            <h2 className="font-bold text-[34px] md:text-[46px] text-charcoal leading-[1.1] mb-5 tracking-tight">
               Connect Your Innovation with{" "}
-              <span className="text-teal">the Right Schools</span>
+              <span className="text-[#0E733B]">the Right Schools</span>
             </h2>
-            <p className="text-[15.5px] leading-relaxed text-slate-soft mb-8">
+            <p className="text-[16px] leading-relaxed text-slate-soft mb-8 font-normal">
               Edubeacon is the most direct route from your product to the schools that need it. Stop cold-calling. Start building meaningful partnerships through India&#39;s education ecosystem platform.
             </p>
 
@@ -67,24 +68,24 @@ export default function ForVendors() {
               {benefits.map((b) => (
                 <div
                   key={b.title}
-                  className="flex items-start gap-3 bg-white rounded-xl border border-line p-4"
+                  className="flex items-start gap-3 bg-white rounded-2xl border border-line p-4 shadow-sm hover:shadow-md transition-all duration-200"
                 >
-                  <div className="w-9 h-9 rounded-lg bg-teal-muted flex items-center justify-center shrink-0">
-                    <b.icon className="w-[18px] h-[18px] text-teal" strokeWidth={2} />
+                  <div className="w-9.5 h-9.5 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
+                    <b.icon className="w-[18px] h-[18px] text-[#0E733B]" strokeWidth={2} />
                   </div>
                   <div>
-                    <p className="font-semibold text-[13.5px] text-charcoal mb-0.5">{b.title}</p>
-                    <p className="text-[12.5px] text-slate-soft leading-snug">{b.desc}</p>
+                    <p className="font-bold text-[14px] text-charcoal mb-0.5">{b.title}</p>
+                    <p className="text-[12.5px] text-slate-soft leading-snug font-normal">{b.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-4">
               <button
                 id="for-vendors-list"
                 onClick={() => openModal("vendor-register")}
-                className="bg-teal text-white px-8 py-4 rounded-xl font-semibold text-[15px] hover:bg-teal-light transition-all shadow-md hover:shadow-lg"
+                className="bg-gradient-to-r from-[#0E733B] via-[#059669] to-[#10B981] text-white px-8 py-4 rounded-full font-bold text-[15px] hover:opacity-90 transition-all shadow-md hover:shadow-emerald-500/20"
               >
                 List Your Solution →
               </button>
@@ -92,7 +93,7 @@ export default function ForVendors() {
                 onClick={() => {
                   document.getElementById("sponsorship")?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="border-2 border-teal text-teal px-8 py-4 rounded-xl font-semibold text-[15px] hover:bg-teal hover:text-white transition-all"
+                className="border border-[#0E733B] text-[#0E733B] px-8 py-4 rounded-full font-semibold text-[15px] hover:bg-[#0E733B] hover:text-white transition-all shadow-sm"
               >
                 Explore Sponsorship
               </button>
@@ -103,3 +104,4 @@ export default function ForVendors() {
     </section>
   );
 }
+

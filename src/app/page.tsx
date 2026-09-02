@@ -26,19 +26,19 @@ import ContactSection from "@/components/ContactSection";
 export default function Home() {
   return (
     <>
-      {/* 1. Redesigned Minimal EduBeacon Hero */}
+      {/* 1. Hero */}
       <Hero />
 
-      {/* Community stats bar */}
+      {/* Community Stats Bar */}
       <HeroStats />
 
       {/* 2. About Section */}
       <AboutSection />
 
-      {/* Editorial Visual Grid Panels */}
+      {/* Visual Grid Panels */}
       <GridPanels />
 
-      {/* 3. Solutions Grid (Interactive Filter Categories & Cards) */}
+      {/* 3. Solutions Grid */}
       <SolutionsGrid />
 
       {/* 4. Featured Vendors */}
@@ -47,7 +47,7 @@ export default function Home() {
       {/* 5. For Schools */}
       <ForSchools />
 
-      {/* Learning Opportunities & Support */}
+      {/* Learning Opportunities */}
       <Opportunities />
 
       {/* 6. For Vendors */}
@@ -56,7 +56,7 @@ export default function Home() {
       {/* Ecosystem Track */}
       <Ecosystem />
 
-      {/* 7. Conference + Countdown */}
+      {/* 7. Conference Spotlight & Countdown */}
       <ConferenceSection />
 
       {/* 8. Why Attend */}
@@ -68,33 +68,35 @@ export default function Home() {
       {/* Conference Agenda */}
       <AgendaSection />
 
-      {/* 11. Sponsorship Packages */}
+      {/* 10. Sponsorship Packages */}
       <SponsorshipPackages />
 
-      {/* 12. Curated Meetings */}
+      {/* 11. Curated Meetings */}
       <CuratedMeetings />
 
       {/* The Journey Horizontal Cards */}
       <HorizontalScroll />
 
-      {/* 13. Partners Section */}
+      {/* 12. Partners Section */}
       <PartnersSection />
 
-      {/* 14. Awards Section */}
+      {/* 13. Awards Section */}
       <AwardsSection />
 
-      {/* 15. Testimonials & Stories */}
+      {/* 14. Testimonials & Stories */}
       <TestimonialsSection />
       <Testimonials />
 
-      {/* 16. Magazine */}
+      {/* 15. Magazine */}
       <MagazineSection />
 
-      {/* 17. Final CTA */}
+      {/* 16. Final CTA */}
       <FinalCta />
 
-      {/* 18. Contact */}
+      {/* 17. Contact */}
       <ContactSection />
     </>
   );
 }
+
+

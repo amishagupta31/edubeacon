@@ -43,19 +43,20 @@ export default function ForSchools() {
   const { openModal } = useModal();
 
   return (
-    <section id="for-schools" className="py-20 md:py-28 bg-sky-pastel/30">
+    <section id="for-schools" className="py-20 md:py-28 bg-[#FDFBF7]">
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Left */}
           <div className="reveal">
-            <div className="inline-block bg-edu-blue/10 text-edu-blue text-[11px] font-semibold uppercase tracking-[0.18em] px-4 py-1.5 rounded-full mb-6 border border-edu-blue/15">
-              For Schools
+            <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-[#0E733B] text-[11px] font-bold uppercase tracking-[0.2em] px-4.5 py-1.5 rounded-full mb-6 border border-emerald-500/20">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#0E733B]" />
+              <span>For Schools</span>
             </div>
-            <h2 className="font-display font-bold text-[34px] md:text-[46px] text-charcoal leading-[1.1] mb-5">
+            <h2 className="font-bold text-[34px] md:text-[46px] text-charcoal leading-[1.1] mb-5 tracking-tight">
               Empowering Schools to Find the{" "}
-              <span className="text-edu-blue">Right Solutions</span>
+              <span className="text-[#0E733B]">Right Solutions</span>
             </h2>
-            <p className="text-[15.5px] leading-relaxed text-slate-soft mb-8">
+            <p className="text-[16px] leading-relaxed text-slate-soft mb-8 font-normal">
               Whether you&#39;re looking for a new STEM lab, a better school management system or the latest EdTech tools — Edubeacon helps you find, evaluate and connect with the right partners.
             </p>
 
@@ -63,18 +64,18 @@ export default function ForSchools() {
             <ul className="flex flex-col gap-3 mb-10">
               {benefits.map((b) => (
                 <li key={b} className="flex items-start gap-3">
-                  <span className="mt-0.5 w-5 h-5 rounded-full bg-teal-muted flex items-center justify-center shrink-0">
+                  <span className="mt-0.5 w-5 h-5 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
                     <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                       <path
                         d="M1 4L3.5 6.5L9 1"
-                        stroke="#0D9488"
+                        stroke="#0E733B"
                         strokeWidth="1.8"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
                     </svg>
                   </span>
-                  <span className="text-[14px] text-slate">{b}</span>
+                  <span className="text-[14.5px] text-slate-700 font-medium">{b}</span>
                 </li>
               ))}
             </ul>
@@ -82,7 +83,7 @@ export default function ForSchools() {
             <button
               id="for-schools-register"
               onClick={() => openModal("school-register")}
-              className="bg-edu-blue text-white px-8 py-4 rounded-xl font-semibold text-[15px] hover:bg-edu-blue-mid transition-all shadow-md hover:shadow-lg"
+              className="bg-gradient-to-r from-[#0E733B] via-[#059669] to-[#10B981] text-white px-8 py-4 rounded-full font-bold text-[15px] hover:opacity-90 transition-all shadow-md hover:shadow-emerald-500/20"
             >
               Register Your School →
             </button>
@@ -90,7 +91,7 @@ export default function ForSchools() {
 
           {/* Right: Steps + Image */}
           <div className="reveal reveal-delay-2">
-            <div className="relative rounded-2xl overflow-hidden mb-8 aspect-video shadow-xl">
+            <div className="relative rounded-2xl overflow-hidden mb-8 aspect-video shadow-xl border border-line">
               <Image
                 src={img.smartClassroom}
                 alt="Smart classroom with technology"
@@ -98,30 +99,25 @@ export default function ForSchools() {
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-edu-blue/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0E17]/50 to-transparent" />
             </div>
 
-            {/* Step Cards — reference style */}
+            {/* Step Cards */}
             <div className="grid grid-cols-2 gap-4">
               {steps.map((step) => (
                 <div
                   key={step.num}
-                  className="flex flex-col p-5"
-                  style={{
-                    background: "#E2E6EA",
-                    borderRadius: "10px 40px 10px 40px",
-                  }}
+                  className="flex flex-col p-5 bg-white border border-line rounded-2xl shadow-sm hover:shadow-md transition-all duration-200"
                 >
                   <span
-                    className="font-display font-bold text-[12px] uppercase tracking-[0.12em] mb-2 block"
-                    style={{ color: "#1E3A5F" }}
+                    className="font-bold text-[12px] uppercase tracking-[0.15em] mb-2 block text-[#0E733B]"
                   >
                     Step {step.num}
                   </span>
-                  <h4 className="font-semibold text-[14px] text-charcoal mb-1.5 leading-tight">
+                  <h4 className="font-bold text-[14.5px] text-charcoal mb-1.5 leading-tight">
                     {step.title}
                   </h4>
-                  <p className="text-[12.5px] text-slate-soft leading-snug">
+                  <p className="text-[12.5px] text-slate-soft leading-snug font-normal">
                     {step.description}
                   </p>
                 </div>
@@ -133,3 +129,4 @@ export default function ForSchools() {
     </section>
   );
 }
+
