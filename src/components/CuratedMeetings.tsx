@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   ClipboardList,
@@ -7,95 +7,155 @@ import {
   CalendarCheck,
   Handshake,
   ArrowRight,
-  type LucideIcon,
+  CheckCircle2,
+  Sparkles,
 } from "lucide-react";
 import { useModal } from "./modals/ModalProvider";
 import Container from "./ui/Container";
 
-type Step =
-  | { arrow: true; icon?: never; label?: never; desc?: never }
-  | { arrow?: never; icon: LucideIcon; label: string; desc: string };
-
-const steps: Step[] = [
-  { icon: ClipboardList, label: "Requirement", desc: "School shares what they need" },
-  { arrow: true },
-  { icon: Search, label: "Matching", desc: "Edubeacon identifies relevant vendors" },
-  { arrow: true },
-  { icon: Mail, label: "Introduction", desc: "We make the connection" },
-  { arrow: true },
-  { icon: CalendarCheck, label: "Curated Meeting", desc: "1:1 conversation at the event" },
-  { arrow: true },
-  { icon: Handshake, label: "Partnership", desc: "Long-term relationship built" },
+const flowSteps = [
+  {
+    num: "01",
+    icon: ClipboardList,
+    title: "Requirement",
+    desc: "School shares institutional needs & priorities.",
+  },
+  {
+    num: "02",
+    icon: Search,
+    title: "AI & Editorial Match",
+    desc: "We curate verified vendors matching the exact criteria.",
+  },
+  {
+    num: "03",
+    icon: Mail,
+    title: "Direct Intro",
+    desc: "Pre-event briefing & matched introductions.",
+  },
+  {
+    num: "04",
+    icon: CalendarCheck,
+    title: "Curated 1:1 Meeting",
+    desc: "Private 20-min discussion in the executive lounge.",
+  },
+  {
+    num: "05",
+    icon: Handshake,
+    title: "Partnership & Pilot",
+    desc: "Seamless rollout & ongoing institutional support.",
+  },
 ];
 
 export default function CuratedMeetings() {
   const { openModal } = useModal();
 
   return (
-    <section id="meetings" className="relative overflow-hidden py-20 md:py-28 bg-lavender-pastel">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="bg-blob absolute top-0 right-0 w-80 h-80 rounded-full bg-sky-pastel/70 blur-3xl" />
-        <div className="bg-blob-reverse absolute bottom-0 left-10 w-72 h-72 rounded-full bg-rose-pastel/60 blur-3xl" />
-      </div>
-      <Container className="relative">
-        <div className="text-center mb-14 reveal">
-          <div className="inline-block bg-white text-edu-blue text-[11px] font-semibold uppercase tracking-[0.18em] px-4 py-1.5 rounded-full mb-5 border border-edu-blue/15 shadow-sm">
-            Curated Connections
+    <section id="meetings" className="py-14 md:py-20 bg-[#F8FAF8] relative overflow-hidden">
+      {/* Subtle ambient mint glows */}
+      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-emerald-100/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-96 h-96 bg-emerald-100/30 rounded-full blur-3xl pointer-events-none" />
+
+      <Container className="relative z-10">
+        {/* Section Header */}
+        <div className="max-w-3xl mx-auto text-center mb-10 reveal">
+          <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-[#0E733B] text-[11px] font-bold uppercase tracking-[0.2em] px-4.5 py-1.5 rounded-full mb-3.5 border border-emerald-500/20">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#0E733B]" />
+            <span>Curated Connections</span>
           </div>
-          <h2 className="font-display font-bold text-[34px] md:text-[46px] text-charcoal leading-[1.1] mb-4">
+          <h2 className="font-bold text-[32px] md:text-[42px] text-charcoal leading-[1.15] mb-3 tracking-tight">
             Meaningful Connections.{" "}
-            <span className="text-teal">Real Opportunities.</span>
+            <span className="text-[#0E733B]">Real Opportunities.</span>
           </h2>
-          <p className="text-[16px] leading-relaxed text-slate-soft max-w-[52ch] mx-auto">
-            Edubeacon goes beyond the exhibition floor. We create curated 1:1 meetings between schools looking for solutions and vendors with exactly what they need.
+          <p className="text-[15.5px] leading-relaxed text-slate-soft max-w-[54ch] mx-auto font-normal">
+            EduBeacon goes beyond the crowded exhibition floor. We facilitate pre-matched, high-intent 1:1 conversations between schools and solution providers.
           </p>
         </div>
 
-        {/* Flow Visualization */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-0 mb-14 overflow-x-auto pb-2">
-          {steps.map((step, i) =>
-            step.arrow ? (
-              <ArrowRight
-                key={i}
-                className="w-6 h-6 text-edu-blue/25 mx-2 rotate-90 md:rotate-0 shrink-0"
-              />
-            ) : (
-              <div
-                key={i}
-                className="flex flex-col items-center text-center bg-white border border-line rounded-2xl p-5 min-w-[120px] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all shrink-0"
-              >
-                <div className="w-11 h-11 rounded-xl bg-teal-muted flex items-center justify-center mb-2.5">
-                  <step.icon className="w-5 h-5 text-teal" strokeWidth={2} />
-                </div>
-                <p className="font-display font-bold text-[13px] text-charcoal">{step.label}</p>
-                <p className="text-[11px] text-slate-soft mt-1 leading-snug">{step.desc}</p>
-              </div>
-            )
-          )}
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-6 max-w-2xl mx-auto mb-12">
-          {[
-            { value: "500+", label: "Schools in Network" },
-            { value: "300+", label: "Verified Vendors" },
-            { value: "2,000+", label: "Connections Made" },
-          ].map((s) => (
-            <div key={s.label} className="text-center">
-              <p className="font-display font-bold text-[36px] text-teal leading-none">{s.value}</p>
-              <p className="text-[13px] text-slate-soft mt-1">{s.label}</p>
+        {/* Unified Premium Master Card */}
+        <div className="bg-white rounded-3xl border border-emerald-200/80 p-6 sm:p-8 md:p-10 shadow-[0_8px_30px_rgba(14,115,59,0.06)] relative overflow-hidden reveal">
+          
+          {/* Top Label Strip */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-stone-100">
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0E733B]">
+                THE 5-STEP MATCHMAKING PIPELINE
+              </span>
+              <h3 className="font-bold text-[18px] text-charcoal mt-0.5">
+                From Need Assessment to Active Implementation
+              </h3>
             </div>
-          ))}
-        </div>
+            <button
+              onClick={() => openModal("school-register")}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-[#0E733B] hover:bg-[#0E733B] hover:text-white transition-all text-[12.5px] font-bold shadow-2xs"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              Request 1:1 Matchmaking →
+            </button>
+          </div>
 
-        <div className="text-center">
-          <button
-            id="meetings-request"
-            onClick={() => openModal("school-register")}
-            className="bg-edu-blue text-white px-8 py-4 rounded-xl font-bold text-[15px] hover:bg-edu-blue-mid transition-colors shadow-lg"
-          >
-            Request a Connection →
-          </button>
+          {/* 5-Step Connected Flow Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 py-8 relative">
+            {flowSteps.map((step, idx) => (
+              <div
+                key={step.num}
+                className="group relative flex flex-col p-4 sm:p-5 rounded-2xl bg-[#F8FAF8] border border-emerald-100/70 hover:bg-white hover:border-emerald-300 hover:shadow-md transition-all duration-300"
+              >
+                {/* Step number badge & Icon */}
+                <div className="flex items-center justify-between mb-3.5">
+                  <span className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 font-mono font-bold text-[11px] text-[#0E733B] flex items-center justify-center">
+                    {step.num}
+                  </span>
+                  <div className="w-8 h-8 rounded-xl bg-white border border-emerald-100 text-[#0E733B] flex items-center justify-center group-hover:bg-[#0E733B] group-hover:text-white transition-colors duration-300 shadow-2xs">
+                    <step.icon className="w-4 h-4" strokeWidth={1.75} />
+                  </div>
+                </div>
+
+                <h4 className="font-bold text-[14px] text-charcoal mb-1.5 group-hover:text-[#0E733B] transition-colors">
+                  {step.title}
+                </h4>
+                <p className="text-[12px] text-slate-soft leading-relaxed font-normal">
+                  {step.desc}
+                </p>
+
+                {/* Subtle right connector indicator for desktop */}
+                {idx < flowSteps.length - 1 && (
+                  <div className="hidden md:block absolute -right-2.5 top-1/2 -translate-y-1/2 z-20 text-emerald-300 pointer-events-none">
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom Credibility & Statistics Strip */}
+          <div className="pt-6 border-t border-stone-100 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+            <div className="sm:border-r sm:border-stone-100 sm:pr-4">
+              <p className="font-bold text-[28px] md:text-[34px] text-[#0E733B] leading-none">
+                500+
+              </p>
+              <p className="text-[12.5px] text-slate-soft font-semibold mt-1">
+                Verified Schools in Network
+              </p>
+            </div>
+
+            <div className="sm:border-r sm:border-stone-100 sm:pr-4">
+              <p className="font-bold text-[28px] md:text-[34px] text-[#0E733B] leading-none">
+                300+
+              </p>
+              <p className="text-[12.5px] text-slate-soft font-semibold mt-1">
+                Trusted Solution Providers
+              </p>
+            </div>
+
+            <div>
+              <p className="font-bold text-[28px] md:text-[34px] text-[#0E733B] leading-none">
+                2,000+
+              </p>
+              <p className="text-[12.5px] text-slate-soft font-semibold mt-1">
+                Curated Connections Made
+              </p>
+            </div>
+          </div>
         </div>
       </Container>
     </section>

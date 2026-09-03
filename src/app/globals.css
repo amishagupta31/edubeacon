@@ -2,45 +2,45 @@
 @import "tailwindcss";
 
 @theme {
-  /* ── Core Palette ── */
-  --color-edu-blue:       #1E3A5F;   /* Deep education authority */
-  --color-edu-blue-mid:   #2C5282;   /* Mid blue */
-  --color-edu-blue-light: #3B82F6;   /* Accent blue */
+  /* ── Core Green, White & Black Palette ── */
+  --color-edu-blue:       #062013;   /* Deepest Forest / Obsidian Green */
+  --color-edu-blue-mid:   #0E733B;   /* Mid Forest Green */
+  --color-edu-blue-light: #10B981;   /* Emerald Green */
   --color-teal:           #0E733B;   /* Official Brand Logo Green */
-  --color-teal-light:     #10B981;   /* Lighter emerald accent */
-  --color-teal-muted:     #D1FAE5;   /* Pastel emerald green */
+  --color-teal-light:     #34D399;   /* Lighter Mint Green */
+  --color-teal-muted:     #D1FAE5;   /* Pastel Mint Wash */
 
-  /* ── Neutral ── */
-  --color-warm-ivory:     #FDFBF7;   /* Main background */
+  /* ── Neutrals (White, Charcoal, Black) ── */
+  --color-warm-ivory:     #F8FAF8;   /* Clean light green-white background */
   --color-paper:          #FFFFFF;
-  --color-slate:          #334155;   /* Body text */
-  --color-slate-soft:     #64748B;   /* Muted text */
-  --color-charcoal:       #1E293B;   /* Headings */
-  --color-charcoal-soft:  #334155;
+  --color-slate:          #1E293B;   /* Body text */
+  --color-slate-soft:     #4B5563;   /* Muted text */
+  --color-charcoal:       #0A0E17;   /* Headings */
+  --color-charcoal-soft:  #1F2937;
 
-  /* ── Pastel Section Backgrounds ── */
-  --color-sky-pastel:     #EFF6FF;   /* Light blue wash */
-  --color-mint-pastel:    #F0FDF9;   /* Light teal wash */
-  --color-peach-pastel:   #FFFBEB;   /* Warm highlight */
-  --color-lavender-pastel:#F5F3FF;   /* Soft purple */
-  --color-rose-pastel:    #FFF1F2;   /* Soft rose */
-  --color-sage-pastel:    #F0FDF4;   /* Soft green */
+  /* ── Pastel Green & Mint Section Backgrounds ── */
+  --color-sky-pastel:     #F0FDF4;   /* Soft sage wash */
+  --color-mint-pastel:    #ECFDF5;   /* Light mint wash */
+  --color-peach-pastel:   #F4FBF7;   /* Pale seafoam */
+  --color-lavender-pastel:#F0FDF4;   /* Soft forest tint */
+  --color-rose-pastel:    #ECFDF5;   /* Light mint wash */
+  --color-sage-pastel:    #E6F4EA;   /* Soft sage */
 
-  /* ── Awards Gold ── */
-  --color-gold:           #D97706;
-  --color-gold-light:     #FEF3C7;
+  /* ── Awards / Highlights ── */
+  --color-gold:           #0E733B;
+  --color-gold-light:     #D1FAE5;
 
-  /* ── Sponsor Tiers ── */
-  --color-bronze:         #CD7F32;
-  --color-silver:         #9CA3AF;
-  --color-diamond:        #6366F1;
+  /* ── Sponsor Tiers (Green / Neutral) ── */
+  --color-bronze:         #064E3B;
+  --color-silver:         #10B981;
+  --color-diamond:        #0E733B;
 
   /* ── Borders ── */
-  --color-line:           #E2E8F0;
-  --color-line-soft:      #F1F5F9;
+  --color-line:           #E5E7EB;
+  --color-line-soft:      #F3F4F6;
 
-  /* ── Warm White alias (keeps header working) ── */
-  --color-warm-white:     #FDFBF7;
+  /* ── Warm White alias ── */
+  --color-warm-white:     #F8FAF8;
 
   /* ── Fonts ── */
   --font-display: var(--font-fraunces), "Plus Jakarta Sans", sans-serif;
@@ -50,23 +50,21 @@
   --radius-card:  0.75rem;
   --radius-sm:    0.375rem;
 
-  /* ══════════════════════════════════════════
-     EduWeCan — soft pastel editorial palette
-  ══════════════════════════════════════════ */
-  --color-ewc-ivory:       #F7F5F0;  /* Main background */
-  --color-ewc-lavender:    #D6CCF2;
-  --color-ewc-lavender-deep: #BCAEE8;
-  --color-ewc-blue:        #C9DDED;  /* Pastel blue */
-  --color-ewc-blue-deep:   #AECBE0;
-  --color-ewc-peach:       #F6D6C8;  /* Soft peach */
-  --color-ewc-peach-deep:  #EEBFAB;
-  --color-ewc-sage:        #CFE0D2;  /* Sage green */
-  --color-ewc-sage-deep:   #B7D0BC;
-  --color-ewc-lilac:       #E9E1F5;  /* Light lilac */
-  --color-ewc-lilac-deep:  #D9CBEF;
-  --color-ewc-ink:         #2F3440;  /* Dark text */
-  --color-ewc-muted:       #6F737B;  /* Secondary text */
-  --color-ewc-line:        #E4E0D6;  /* Hairline border on ivory */
+  /* ── EduWeCan — harmonious mint & sage palette ── */
+  --color-ewc-ivory:       #F8FAF8;
+  --color-ewc-lavender:    #D1FAE5;
+  --color-ewc-lavender-deep: #A7F3D0;
+  --color-ewc-blue:        #ECFDF5;
+  --color-ewc-blue-deep:   #6EE7B7;
+  --color-ewc-peach:       #F0FDF4;
+  --color-ewc-peach-deep:  #A7F3D0;
+  --color-ewc-sage:        #D1FAE5;
+  --color-ewc-sage-deep:   #34D399;
+  --color-ewc-lilac:       #ECFDF5;
+  --color-ewc-lilac-deep:  #6EE7B7;
+  --color-ewc-ink:         #0A0E17;
+  --color-ewc-muted:       #4B5563;
+  --color-ewc-line:        #E5E7EB;
 }
 
 /* ─── Base ─── */
@@ -84,8 +82,8 @@ body {
 
 /* ─── Selection ─── */
 ::selection {
-  background: var(--color-teal-muted);
-  color: var(--color-edu-blue);
+  background: #D1FAE5;
+  color: #062013;
 }
 
 /* ─── Display / Heading font ─── */
@@ -93,11 +91,7 @@ body {
   font-family: var(--font-display);
 }
 
-/* ─── Reveal on scroll ───
-   .reveal starts hidden; ScrollReveal (IntersectionObserver) adds
-   .in-view the moment an element enters the viewport, which is what
-   actually plays the transition — so content animates in as you
-   scroll to it, not just once at page load. */
+/* ─── Reveal on scroll ─── */
 .reveal {
   opacity: 0;
   transform: translateY(20px);
@@ -121,10 +115,7 @@ body {
   }
 }
 
-/* ─── Ambient background motion ───
-   Slow-drifting blurred pastel blobs used as soft, continuous
-   background motion inside key sections. Kept subtle and slow so it
-   reads as ambience, not distraction. */
+/* ─── Ambient background motion ─── */
 @media (prefers-reduced-motion: no-preference) {
   .bg-blob {
     animation: blob-drift 22s ease-in-out infinite;
@@ -175,7 +166,7 @@ body {
 
 /* ─── Category pill active state ─── */
 .cat-pill-active {
-  background: var(--color-edu-blue);
+  background: #0E733B;
   color: #fff;
 }
 
@@ -190,7 +181,7 @@ body {
 
 /* ─── Gradient text utility ─── */
 .gradient-text {
-  background: linear-gradient(135deg, var(--color-edu-blue) 0%, var(--color-teal) 100%);
+  background: linear-gradient(135deg, #062013 0%, #0E733B 50%, #10B981 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -208,13 +199,13 @@ body {
 }
 .card-lift:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 32px -8px rgba(30, 58, 95, 0.12);
+  box-shadow: 0 12px 32px -8px rgba(14, 115, 59, 0.15);
 }
 
 /* ─── Teal underline link ─── */
 .teal-link {
   text-decoration: underline;
-  text-decoration-color: var(--color-teal);
+  text-decoration-color: #0E733B;
   text-underline-offset: 3px;
   text-decoration-thickness: 2px;
 }
@@ -222,15 +213,11 @@ body {
 /* ══════════════════════════════════════════
    EduWeCan — animation system
    ══════════════════════════════════════════ */
-
 .ewc {
   background: var(--color-ewc-ivory);
   color: var(--color-ewc-ink);
 }
 
-/* Floating decorative shapes — slow, continuous, alternating.
-   Different durations/delays are set inline per-instance so
-   elements never move in visible sync. */
 @media (prefers-reduced-motion: no-preference) {
   .ewc-float {
     animation: ewc-float 8s ease-in-out infinite alternate;
@@ -258,16 +245,10 @@ body {
   to   { transform: rotate(360deg); }
 }
 
-/* Counter digits: no motion needed beyond the JS-driven text change,
-   this just keeps layout stable while the number grows. */
 .ewc-counter {
   font-variant-numeric: tabular-nums;
 }
 
-/* Reduced motion: freeze every continuous/decorative animation and
-   let GSAP-driven entrance timelines fall back to instant/near-instant
-   (handled in JS via matchMedia — this is the CSS-only safety net for
-   anything driven purely by CSS keyframes). */
 @media (prefers-reduced-motion: reduce) {
   .ewc-float,
   .ewc-drift,

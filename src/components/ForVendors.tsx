@@ -19,9 +19,9 @@ export default function ForVendors() {
   const { openModal } = useModal();
 
   return (
-    <section id="for-vendors" className="py-20 md:py-28 bg-[#F8FAF8]">
+    <section id="for-vendors" className="py-14 md:py-20 bg-[#FDFBF7]">
       <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left: Image */}
           <div className="reveal order-2 lg:order-1">
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3] shadow-xl border border-line">
@@ -51,11 +51,11 @@ export default function ForVendors() {
 
           {/* Right: Content */}
           <div className="reveal reveal-delay-2 order-1 lg:order-2">
-            <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-[#0E733B] text-[11px] font-bold uppercase tracking-[0.2em] px-4.5 py-1.5 rounded-full mb-6 border border-emerald-500/20">
+            <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-[#0E733B] text-[11px] font-bold uppercase tracking-[0.2em] px-4.5 py-1.5 rounded-full mb-4 border border-emerald-500/20">
               <div className="w-1.5 h-1.5 rounded-full bg-[#0E733B]" />
               <span>For Startups & Vendors</span>
             </div>
-            <h2 className="font-bold text-[34px] md:text-[46px] text-charcoal leading-[1.1] mb-5 tracking-tight">
+            <h2 className="font-bold text-[34px] md:text-[44px] text-charcoal leading-[1.1] mb-4 tracking-tight">
               Connect Your Innovation with{" "}
               <span className="text-[#0E733B]">the Right Schools</span>
             </h2>

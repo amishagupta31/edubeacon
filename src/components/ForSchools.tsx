@@ -43,16 +43,16 @@ export default function ForSchools() {
   const { openModal } = useModal();
 
   return (
-    <section id="for-schools" className="py-20 md:py-28 bg-[#FDFBF7]">
+    <section id="for-schools" className="py-14 md:py-20 bg-[#F8FAF8]">
       <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Left */}
           <div className="reveal">
-            <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-[#0E733B] text-[11px] font-bold uppercase tracking-[0.2em] px-4.5 py-1.5 rounded-full mb-6 border border-emerald-500/20">
+            <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-[#0E733B] text-[11px] font-bold uppercase tracking-[0.2em] px-4.5 py-1.5 rounded-full mb-4 border border-emerald-500/20">
               <div className="w-1.5 h-1.5 rounded-full bg-[#0E733B]" />
               <span>For Schools</span>
             </div>
-            <h2 className="font-bold text-[34px] md:text-[46px] text-charcoal leading-[1.1] mb-5 tracking-tight">
+            <h2 className="font-bold text-[34px] md:text-[44px] text-charcoal leading-[1.1] mb-4 tracking-tight">
               Empowering Schools to Find the{" "}
               <span className="text-[#0E733B]">Right Solutions</span>
             </h2>

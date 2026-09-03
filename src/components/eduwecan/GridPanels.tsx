@@ -90,20 +90,21 @@ export default function GridPanels() {
   }, []);
 
   return (
-    <section id="explore" ref={sectionRef} className="relative py-24 md:py-32" style={{ background: "var(--color-ewc-ivory)" }}>
-      <div className="mx-auto max-w-[1320px] px-6 md:px-10">
-        <div className="mb-14 flex flex-col items-start gap-4">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: "var(--color-ewc-muted)" }}>
-            Explore
-          </span>
-          <h2 className="font-display text-[36px] leading-[1.1] font-medium md:text-[48px]" style={{ color: "var(--color-ewc-ink)" }}>
+    <section id="explore" ref={sectionRef} className="relative py-12 md:py-16 bg-[#FDFBF7]">
+      <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-8 md:px-12">
+        <div className="mb-6 md:mb-8 flex flex-col items-start gap-2">
+          <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-[#0E733B] text-[11px] font-bold uppercase tracking-[0.2em] px-4 py-1 rounded-full border border-emerald-500/20">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#0E733B]" />
+            <span>Moments</span>
+          </div>
+          <h2 className="font-bold text-[30px] leading-[1.1] md:text-[40px] text-charcoal tracking-tight">
             An Education Story, <br className="hidden sm:block" />
             Told in Moments
           </h2>
         </div>
 
         <div
-          className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6"
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5"
           style={{
             gridTemplateAreas: `"a a b" "c d b" "e e e"`,
           }}
@@ -114,12 +115,12 @@ export default function GridPanels() {
               ref={(el) => {
                 panelRefs.current[i] = el;
               }}
-              className={`group relative overflow-hidden rounded-[1.75rem] shadow-[0_25px_60px_-35px_rgba(47,52,64,0.35)] ${
+              className={`group relative overflow-hidden rounded-2xl md:rounded-3xl shadow-md ${
                 panel.span === "wide"
-                  ? "aspect-[16/9] lg:aspect-[2/1]"
+                  ? "h-[190px] sm:h-[220px] lg:h-[240px]"
                   : panel.span === "tall"
-                    ? "aspect-[4/5] lg:aspect-auto lg:h-full"
-                    : "aspect-[4/3]"
+                    ? "h-[250px] sm:h-[300px] lg:h-full lg:min-h-[496px]"
+                    : "h-[170px] sm:h-[200px] lg:h-[240px]"
               }`}
               style={{ gridArea: AREAS[i] }}
             >
@@ -136,7 +137,7 @@ export default function GridPanels() {
                   sizes="(min-width: 1024px) 640px, 90vw"
                   className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
               </div>
 
               {/* Pastel block that slides away to reveal the image */}
@@ -152,10 +153,10 @@ export default function GridPanels() {
                 ref={(el) => {
                   textRefs.current[i] = el;
                 }}
-                className="absolute inset-x-0 bottom-0 p-6 md:p-7"
+                className="absolute inset-x-0 bottom-0 p-4 sm:p-5 md:p-6"
               >
-                <h3 className="font-display text-[20px] leading-tight text-white md:text-[24px]">{panel.title}</h3>
-                <p className="mt-1.5 max-w-[36ch] text-[13px] leading-relaxed text-white/80">{panel.description}</p>
+                <h3 className="font-bold text-[17px] leading-tight text-white md:text-[20px]">{panel.title}</h3>
+                <p className="mt-1 max-w-[36ch] text-[12px] leading-relaxed text-white/85">{panel.description}</p>
               </div>
             </div>
           ))}

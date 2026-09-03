@@ -1,4 +1,4 @@
-﻿import { img } from "./images";
+import { img } from "./images";
 import {
   FlaskConical,
   Bot,
@@ -18,6 +18,8 @@ import {
   Crown,
   Lightbulb,
   Rocket,
+  Award,
+  Compass,
   type LucideIcon,
 } from "lucide-react";
 
@@ -29,12 +31,13 @@ export const siteConfig = {
   tagline: "Connecting Schools, Innovation and Opportunity",
   email: "connect@edubeacon.com",
   phone: "+91 98765 43210",
-  location: "New Delhi, India",
-  conferenceDate: new Date("2027-03-15T09:00:00+05:30"),
-  conferenceVenue: "Bharat Mandapam, New Delhi",
-  conferenceCity: "New Delhi, India",
-  conferenceEventName: "Edubeacon Education Leadership Conference 2027",
-  conferenceEventDate: "15–16 March 2027",
+  location: "Hotel Aketa, Dehradun, Uttarakhand",
+  conferenceDate: new Date("2027-11-15T09:00:00+05:30"),
+  conferenceVenue: "Hotel Aketa, Rajpur Road",
+  conferenceCity: "Dehradun, Uttarakhand, India",
+  conferenceLocationMapUrl: "https://share.google/g2ShK4g4eKqOSN45a",
+  conferenceEventName: "EduBeacon Education Leadership Conference 2027",
+  conferenceEventDate: "15–16 November 2027",
 };
 
 /* ─────────────────────────────────────────
@@ -66,6 +69,9 @@ export type SolutionCategory =
   | "Infrastructure"
   | "Robotics"
   | "Sports & Activity"
+  | "Olympiad"
+  | "Adventure & Entertainment"
+  | "Recognition, Awards & Prizes"
   | "Other Services";
 
 export interface SolutionCategoryItem {
@@ -120,6 +126,48 @@ export const solutionCategories: SolutionCategoryItem[] = [
     color: "sage-pastel",
   },
   {
+    id: "assessment",
+    icon: BarChart3,
+    name: "Assessment Solutions",
+    description: "Testing platforms, performance analytics and learning outcome tools.",
+    color: "lavender-pastel",
+  },
+  {
+    id: "training",
+    icon: GraduationCap,
+    name: "Teacher Training",
+    description: "Professional development, certification and capacity building programs.",
+    color: "sky-pastel",
+  },
+  {
+    id: "books",
+    icon: BookOpen,
+    name: "Books & Publishers",
+    description: "Textbooks, supplementary materials, e-books and educational content.",
+    color: "peach-pastel",
+  },
+  {
+    id: "olympiad",
+    icon: Trophy,
+    name: "Olympiad",
+    description: "Competitive academic olympiads, talent search exams, and national-level student challenges.",
+    color: "amber-pastel",
+  },
+  {
+    id: "adventure",
+    icon: Compass,
+    name: "Adventure & Entertainment",
+    description: "Outdoor camps, experiential field trips, edutainment activities, and adventure learning.",
+    color: "mint-pastel",
+  },
+  {
+    id: "awards",
+    icon: Award,
+    name: "Recognition, Awards & Prizes",
+    description: "School awards, student felicitation trophies, certificates, and recognition prize programs.",
+    color: "rose-pastel",
+  },
+  {
     id: "healthcare",
     icon: Stethoscope,
     name: "Healthcare Solutions",
@@ -134,13 +182,6 @@ export const solutionCategories: SolutionCategoryItem[] = [
     color: "lavender-pastel",
   },
   {
-    id: "books",
-    icon: BookOpen,
-    name: "Books & Publishers",
-    description: "Textbooks, supplementary materials, e-books and educational content.",
-    color: "peach-pastel",
-  },
-  {
     id: "uniforms",
     icon: Shirt,
     name: "Uniform Suppliers",
@@ -153,20 +194,6 @@ export const solutionCategories: SolutionCategoryItem[] = [
     name: "School Infrastructure",
     description: "Furniture, construction, playground and campus infrastructure solutions.",
     color: "sage-pastel",
-  },
-  {
-    id: "training",
-    icon: GraduationCap,
-    name: "Teacher Training",
-    description: "Professional development, certification and capacity building programs.",
-    color: "sky-pastel",
-  },
-  {
-    id: "assessment",
-    icon: BarChart3,
-    name: "Assessment Solutions",
-    description: "Testing platforms, performance analytics and learning outcome tools.",
-    color: "lavender-pastel",
   },
   {
     id: "other",

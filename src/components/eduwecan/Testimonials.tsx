@@ -64,10 +64,10 @@ export default function Testimonials() {
     <section
       id="testimonials"
       ref={sectionRef}
-      className="relative overflow-hidden py-24 md:py-32 bg-[#FDFBF7]"
+      className="relative overflow-hidden py-14 md:py-20 bg-[#F8FAF8]"
     >
       <div className="relative mx-auto max-w-[900px] px-6 md:px-10">
-        <div data-testimonial-heading className="mb-14 flex flex-col items-center gap-3 text-center">
+        <div data-testimonial-heading className="mb-8 flex flex-col items-center gap-2.5 text-center">
           <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-[#0E733B] text-[11px] font-bold uppercase tracking-[0.2em] px-4.5 py-1.5 rounded-full border border-emerald-500/20">
             <div className="w-1.5 h-1.5 rounded-full bg-[#0E733B]" />
             <span>Community Voices</span>

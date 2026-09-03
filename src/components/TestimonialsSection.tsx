@@ -4,10 +4,10 @@ import { testimonials } from "@/lib/data";
 
 export default function TestimonialsSection() {
   return (
-    <section id="testimonials" className="relative py-20 md:py-28 bg-rose-pastel overflow-hidden">
+    <section id="testimonials" className="relative py-20 md:py-28 bg-[#F8FAF8] overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="bg-blob-slow absolute -top-24 left-1/4 w-80 h-80 rounded-full bg-white/50 blur-3xl" />
-        <div className="bg-blob absolute -bottom-24 right-1/4 w-96 h-96 rounded-full bg-lavender-pastel/60 blur-3xl" />
+        <div className="bg-blob-slow absolute -top-24 left-1/4 w-80 h-80 rounded-full bg-emerald-100/30 blur-3xl" />
+        <div className="bg-blob absolute -bottom-24 right-1/4 w-96 h-96 rounded-full bg-emerald-50/50 blur-3xl" />
       </div>
       <Container className="relative">
         <div className="text-center mb-14 reveal">

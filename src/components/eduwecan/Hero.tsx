@@ -2,6 +2,9 @@
 
 import Image from "next/image";
 import { useRef } from "react";
+import { 
+  ChevronRight
+} from "lucide-react";
 import {
   gsap,
   ensureGsapRegistered,
@@ -9,233 +12,161 @@ import {
   prefersReducedMotion,
   EASE,
 } from "./gsapSetup";
+import { useModal } from "../modals/ModalProvider";
 
 export default function Hero() {
   const rootRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { openModal } = useModal();
 
-  const eyebrowRef = useRef<HTMLDivElement>(null);
-  const lineRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const paraRef = useRef<HTMLParagraphElement>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
-
-  const bgGlow1Ref = useRef<HTMLDivElement>(null);
-  const bgGlow2Ref = useRef<HTMLDivElement>(null);
-
-  // GSAP Page Load & Scroll Animations
+  // GSAP Entrance Animations
   useIsomorphicLayoutEffect(() => {
     ensureGsapRegistered();
     const reduced = prefersReducedMotion();
 
     const ctx = gsap.context(() => {
       if (reduced) {
-        gsap.set(
-          [
-            eyebrowRef.current,
-            ...lineRefs.current,
-            paraRef.current,
-            ctaRef.current,
-          ],
-          { opacity: 1, y: 0, scale: 1 }
-        );
+        gsap.set(cardRef.current, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+        });
         return;
       }
 
-      // Page Load Sequence
       const tl = gsap.timeline({ defaults: { ease: EASE.entrance } });
 
       tl.fromTo(
-        eyebrowRef.current,
-        { opacity: 0, y: 15 },
-        { opacity: 1, y: 0, duration: 0.5 },
+        cardRef.current,
+        { opacity: 0, scale: 0.94, y: 25 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.8 },
         0.1
-      )
-        .fromTo(
-          lineRefs.current,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            stagger: 0.12,
-            ease: EASE.entrance,
-          },
-          0.2
-        )
-        .fromTo(
-          paraRef.current,
-          { opacity: 0, y: 15 },
-          { opacity: 1, y: 0, duration: 0.5 },
-          0.55
-        )
-        .fromTo(
-          ctaRef.current,
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.5 },
-          0.7
-        );
-
-      // Scroll Parallax Effect
-      gsap.to(contentRef.current, {
-        y: -40,
-        opacity: 0.95,
-        ease: "none",
-        scrollTrigger: {
-          trigger: rootRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: 0.8,
-        },
-      });
-
-      gsap.to(bgGlow1Ref.current, {
-        y: 80,
-        x: 40,
-        scale: 1.15,
-        ease: "none",
-        scrollTrigger: {
-          trigger: rootRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: 1,
-        },
-      });
-
-      gsap.to(bgGlow2Ref.current, {
-        y: -60,
-        x: -40,
-        scale: 0.9,
-        ease: "none",
-        scrollTrigger: {
-          trigger: rootRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: 1,
-        },
-      });
+      );
     }, rootRef);
 
     return () => ctx.revert();
   }, []);
 
-  const scrollToNext = () => {
-    document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <section
       id="top"
       ref={rootRef}
-      className="relative min-h-screen w-full flex items-center justify-center overflow-hidden pt-28 pb-16 lg:py-0 lg:h-screen lg:min-h-[740px] bg-[#0A0E17]"
+      className="relative min-h-[85vh] lg:min-h-[90vh] w-full flex flex-col justify-center items-center overflow-hidden bg-[#0A0E17] text-white py-12"
     >
-      {/* ──────────────── Background Video (No Sound, Looping) ──────────────── */}
+      {/* ──────────────── Background Video (Autoplay, Loop, Muted) ──────────────── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        <Image
-          src="/videos/_10second_video_script03_sec__disco.gif"
-          alt="EduBeacon Background Video"
-          fill
-          unoptimized
-          priority
-          className="object-cover object-center opacity-70 scale-105 filter brightness-105 contrast-105"
-        />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover object-center opacity-65 scale-105 filter brightness-105 contrast-105"
+        >
+          <source src="/videos/hero-bg.mp4" type="video/mp4" />
+        </video>
 
-        {/* Ambient Overlay Gradients - More transparent to show background clearly */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0A0E17]/45 via-[#0A0E17]/25 to-[#0A0E17]/70" />
-        <div className="absolute inset-0 bg-radial from-transparent via-[#0A0E17]/20 to-[#0A0E17]/60" />
+        {/* Ambient Dark & Green Gradient Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0A0E17]/65 via-[#0A0E17]/35 to-[#0A0E17]/85" />
+        <div className="absolute inset-0 bg-radial from-transparent via-[#0A0E17]/30 to-[#0A0E17]/70" />
 
-        {/* Soft Radial Glow Orbs */}
+        {/* Soft Green Radial Glows */}
         <div
-          ref={bgGlow1Ref}
-          className="absolute -top-[20%] left-1/2 -translate-x-1/2 w-[70vw] h-[70vw] max-w-[950px] max-h-[950px] rounded-full opacity-45 blur-[140px]"
+          className="absolute -top-[10%] left-[20%] w-[50vw] h-[50vw] max-w-[650px] max-h-[650px] rounded-full opacity-35 blur-[130px] pointer-events-none"
           style={{
             background:
-              "radial-gradient(circle, rgba(14,115,59,0.4) 0%, rgba(16,185,129,0.2) 50%, transparent 75%)",
+              "radial-gradient(circle, rgba(14,115,59,0.45) 0%, rgba(52,211,153,0.2) 60%, transparent 80%)",
           }}
         />
         <div
-          ref={bgGlow2Ref}
-          className="absolute -bottom-[20%] left-1/2 -translate-x-1/2 w-[55vw] h-[55vw] max-w-[750px] max-h-[750px] rounded-full opacity-40 blur-[130px]"
+          className="absolute -bottom-[10%] right-[15%] w-[50vw] h-[50vw] max-w-[650px] max-h-[650px] rounded-full opacity-30 blur-[130px] pointer-events-none"
           style={{
             background:
-              "radial-gradient(circle, rgba(5,150,105,0.3) 0%, rgba(14,115,59,0.15) 50%, transparent 75%)",
+              "radial-gradient(circle, rgba(16,185,129,0.35) 0%, rgba(6,78,59,0.2) 60%, transparent 80%)",
           }}
         />
       </div>
 
-      {/* ──────────────── CENTERED HERO CONTENT ──────────────── */}
-      <div
-        ref={contentRef}
-        className="relative z-10 mx-auto w-full max-w-[1000px] px-6 sm:px-10 flex flex-col items-center text-center space-y-8"
-      >
-        {/* Eyebrow Badge */}
-        <div ref={eyebrowRef} className="opacity-0">
-          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-5 py-2 backdrop-blur-md shadow-lg shadow-emerald-500/10">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.25em] text-emerald-300">
-              GLOBAL EDUCATION NETWORK • CONNECTED
-            </span>
+      {/* ──────────────── CENTERPIECE STYLIZED BANNER (Compact & Elegant) ──────────────── */}
+      <div className="relative z-10 w-full flex items-center justify-center px-4 sm:px-6 my-auto">
+        <div 
+          ref={cardRef}
+          className="relative mx-auto w-full max-w-[540px] text-center opacity-0"
+        >
+          {/* Stylized Emerald / Mint L-Bracket Graphic Frames */}
+          <div className="absolute -top-5 -left-4 sm:-top-7 sm:-left-6 w-20 sm:w-26 h-20 sm:h-26 border-t-[5px] sm:border-t-[7px] border-l-[5px] sm:border-l-[7px] border-transparent rounded-tl-2xl pointer-events-none [border-image:linear-gradient(to_bottom_right,#34D399,#0E733B)_1]" />
+          <div className="absolute -bottom-5 -right-4 sm:-bottom-7 sm:-right-6 w-18 sm:w-24 h-18 sm:h-24 border-b-[5px] sm:border-b-[6px] border-r-[5px] sm:border-r-[6px] border-transparent rounded-br-2xl pointer-events-none [border-image:linear-gradient(to_top_left,#10B981,#059669)_1]" />
+
+          {/* Main Card Shell */}
+          <div className="relative rounded-2xl sm:rounded-3xl bg-[#061A10]/90 border border-emerald-500/30 px-5 sm:px-9 py-7 sm:py-9 shadow-2xl backdrop-blur-xl">
+            
+            {/* Center Brand Badge */}
+            <div className="flex items-center justify-center gap-2 mb-2.5">
+              <div className="bg-white/95 rounded-lg px-3 py-1 shadow-sm inline-flex items-center gap-2">
+                <Image
+                  src="/edubeacon-logo.png"
+                  alt="eduBeacon"
+                  width={110}
+                  height={28}
+                  className="h-5 w-auto object-contain"
+                  priority
+                />
+              </div>
+            </div>
+
+            {/* Main Headline */}
+            <div className="my-2.5">
+              <h1 className="font-extrabold font-display leading-[1.06] tracking-tight">
+                <span className="block text-2xl sm:text-3xl md:text-[36px] text-white">
+                  The Future of
+                </span>
+                <span className="block text-3xl sm:text-4xl md:text-[46px] text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-200 drop-shadow-[0_4px_20px_rgba(16,185,129,0.35)] py-0.5">
+                  Education,
+                </span>
+                <span className="block text-2xl sm:text-3xl md:text-[36px] text-white">
+                  Connected.
+                </span>
+              </h1>
+            </div>
+
+            {/* Original Tagline */}
+            <p className="text-slate-200 text-xs sm:text-[13.5px] leading-relaxed max-w-[42ch] mx-auto font-normal my-3.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+              Where schools, innovators, and world-class opportunities come together to create meaningful partnerships for the future of learning.
+            </p>
+
+            {/* Call to Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-1.5">
+              <button
+                onClick={() => openModal("school-register")}
+                className="w-full sm:w-auto px-6 py-2.5 rounded-full font-extrabold text-xs uppercase tracking-wider text-white bg-gradient-to-r from-[#0E733B] via-[#059669] to-[#10B981] shadow-md shadow-emerald-600/30 hover:shadow-emerald-600/50 hover:scale-105 active:scale-95 transition-all duration-300"
+              >
+                Register Your School
+              </button>
+
+              <button
+                onClick={() => openModal("vendor-register")}
+                className="w-full sm:w-auto px-6 py-2.5 rounded-full font-extrabold text-xs uppercase tracking-wider text-charcoal bg-white shadow-md hover:bg-emerald-50 hover:scale-105 active:scale-95 transition-all duration-300"
+              >
+                Become a Partner
+              </button>
+            </div>
           </div>
         </div>
-
-        {/* Main Centered Headline */}
-        <h1 className="font-bold font-sans text-[48px] sm:text-[64px] md:text-[76px] lg:text-[84px] leading-[1.03] tracking-[-0.03em] text-white max-w-[20ch]">
-          <span className="block overflow-hidden">
-            <span
-              ref={(el) => {
-                lineRefs.current[0] = el;
-              }}
-              className="block opacity-0"
-            >
-              The Future
-            </span>
-          </span>
-          <span className="block overflow-hidden">
-            <span
-              ref={(el) => {
-                lineRefs.current[1] = el;
-              }}
-              className="block opacity-0"
-            >
-              of Education,
-            </span>
-          </span>
-          <span className="block overflow-hidden">
-            <span
-              ref={(el) => {
-                lineRefs.current[2] = el;
-              }}
-              className="block opacity-0 text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-green-300 to-emerald-200 drop-shadow-[0_0_35px_rgba(14,115,59,0.5)]"
-            >
-              Connected.
-            </span>
-          </span>
-        </h1>
-
-        {/* Supporting Subheading */}
-        <p
-          ref={paraRef}
-          className="text-slate-200 text-[17px] sm:text-[20px] leading-relaxed max-w-[50ch] font-normal opacity-0 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
-        >
-          Where schools, innovators, and world-class opportunities come together to create meaningful partnerships for the future of learning.
-        </p>
-
-        {/* Centered Primary CTA Button */}
-        <div ref={ctaRef} className="pt-2 opacity-0 flex justify-center">
-          <button
-            onClick={scrollToNext}
-            className="group relative inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-[#0E733B] via-[#059669] to-[#10B981] px-9 py-4.5 text-[15px] font-semibold text-white transition-all duration-300 hover:from-[#0B5C2F] hover:to-[#059669] hover:shadow-[0_20px_45px_-10px_rgba(14,115,59,0.65)] hover:-translate-y-0.5 active:scale-[0.98]"
-          >
-            <span>Explore EduBeacon</span>
-            <span className="transition-transform duration-300 group-hover:translate-x-1">
-              →
-            </span>
-          </button>
-        </div>
       </div>
 
-      {/* ──────────────── Bottom Subtle Transition Gradient ──────────────── */}
-      <div className="absolute bottom-0 inset-x-0 h-24 pointer-events-none bg-gradient-to-t from-[#0A0E17] to-transparent" />
+      {/* ──────────────── Bottom Subtle Transition Button ──────────────── */}
+      <div className="relative z-10 w-full pt-6 flex justify-center">
+        <button
+          onClick={() => scrollToSection("solutions")}
+          className="text-[11px] font-bold uppercase tracking-widest text-emerald-300/80 hover:text-emerald-300 flex items-center gap-1 transition-colors"
+        >
+          <span>Explore Categories & Features</span>
+          <ChevronRight className="w-3.5 h-3.5 rotate-90" />
+        </button>
+      </div>
     </section>
   );
 }
-

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { CheckCircle2 } from "lucide-react";
@@ -7,6 +7,7 @@ import ModalShell from "./ModalShell";
 const categoryOptions = [
   "STEM Labs", "AI Labs", "Robotics", "Smart Classrooms", "EdTech Platform",
   "School ERP", "Books & Publishing", "Assessment", "Teacher Training",
+  "Olympiad", "Adventure & Entertainment", "Recognition, Awards & Prizes",
   "Healthcare", "Infrastructure", "Sports & Activity", "Other",
 ];
 

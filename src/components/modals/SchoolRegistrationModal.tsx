@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { PartyPopper } from "lucide-react";
@@ -11,6 +11,7 @@ const schoolTypes = [
 const solutionOptions = [
   "STEM Labs", "AI Labs", "Robotics", "Smart Classrooms", "EdTech Platform",
   "School ERP", "Books & Publishing", "Assessment", "Teacher Training",
+  "Olympiad", "Adventure & Entertainment", "Recognition, Awards & Prizes",
   "Healthcare", "Infrastructure", "Other",
 ];
 

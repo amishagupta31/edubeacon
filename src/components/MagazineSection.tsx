@@ -1,21 +1,21 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import Container from "./ui/Container";
 import { magazineArticles } from "@/lib/data";
 import { img } from "@/lib/images";
 
 export default function MagazineSection() {
   return (
-    <section id="magazine" className="py-20 md:py-28 bg-peach-pastel/40">
+    <section id="magazine" className="py-20 md:py-28 bg-[#F8FAF8]">
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-start">
           {/* Left: Magazine cover + info */}
           <div className="reveal">
-            <div className="inline-block bg-white text-edu-blue text-[11px] font-semibold uppercase tracking-[0.18em] px-4 py-1.5 rounded-full mb-6 border border-edu-blue/15 shadow-sm">
+            <div className="inline-block bg-white text-[#0E733B] text-[11px] font-semibold uppercase tracking-[0.18em] px-4 py-1.5 rounded-full mb-6 border border-emerald-500/20 shadow-sm">
               Edubeacon Magazine
             </div>
             <h2 className="font-display font-bold text-[34px] md:text-[44px] text-charcoal leading-[1.1] mb-5">
               Ideas, Insights &{" "}
-              <span className="text-edu-blue">Education Trends</span>
+              <span className="text-[#0E733B]">Education Trends</span>
             </h2>
             <p className="text-[15.5px] leading-relaxed text-slate-soft mb-8">
               Edubeacon Magazine is India&#39;s education leadership publication — featuring school stories, startup spotlights, policy analysis and EdTech trends. Partners and sponsors receive premium editorial and advertising opportunities.

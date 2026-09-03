@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Landmark, Mic, Handshake, Calendar, MapPin } from "lucide-react";
 import Container from "./ui/Container";
@@ -60,13 +61,16 @@ export default function ConferenceSection() {
         <div className="inline-flex items-center gap-2 bg-emerald-500/15 border border-emerald-500/30 rounded-full px-4.5 py-1.5 mb-8 backdrop-blur-md">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-300">
-            Flagship Conference & Exhibition
+            Upcoming Conference • 15–16 March 2027
           </span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left */}
           <div className="reveal">
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-emerald-400 block mb-2">
+              Upcoming Flagship Summit
+            </span>
             <h2 className="font-bold text-[38px] md:text-[52px] text-white leading-[1.08] mb-4 tracking-tight">
               {siteConfig.conferenceEventName}
             </h2>
@@ -113,19 +117,19 @@ export default function ConferenceSection() {
 
             {/* CTAs */}
             <div className="flex flex-wrap gap-4">
+              <Link
+                href="/events/conference"
+                className="bg-gradient-to-r from-[#0E733B] via-[#059669] to-[#10B981] text-white px-8 py-4 rounded-full font-bold text-[14px] hover:opacity-90 transition-all shadow-lg hover:shadow-emerald-500/20 hover:-translate-y-0.5 inline-flex items-center gap-2"
+              >
+                <span>View Full Conference Page</span>
+                <span>→</span>
+              </Link>
               <button
                 id="conference-attend"
                 onClick={() => openModal("school-register")}
-                className="bg-gradient-to-r from-[#0E733B] via-[#059669] to-[#10B981] text-white px-8 py-4 rounded-full font-bold text-[14px] hover:opacity-90 transition-all shadow-lg hover:shadow-emerald-500/20 hover:-translate-y-0.5"
-              >
-                Register to Attend
-              </button>
-              <button
-                id="conference-exhibit"
-                onClick={() => openModal("vendor-register")}
                 className="border border-emerald-400/40 text-emerald-300 px-8 py-4 rounded-full font-semibold text-[14px] hover:bg-emerald-500/10 transition-colors backdrop-blur-md"
               >
-                Become an Exhibitor
+                Register for Passes
               </button>
             </div>
           </div>

@@ -11,16 +11,14 @@ import {
 } from "./eduwecan/gsapSetup";
 import { speakers } from "@/lib/data";
 
-// Card color themes for diversity
+// Card color themes in shades of green and white
 const cardBackgrounds = [
-  "linear-gradient(135deg, #E0E7FF 0%, #EEF2FF 100%)", // Lavender Indigo
-  "linear-gradient(135deg, #E0F2FE 0%, #F0F9FF 100%)", // Sky Pastel
-  "linear-gradient(135deg, #DCFCE7 0%, #F0FDF4 100%)", // Mint Green
-  "linear-gradient(135deg, #FFEDD5 0%, #FFF7ED 100%)", // Warm Peach
-  "linear-gradient(135deg, #FCE7F3 0%, #FDF2F8 100%)", // Soft Rose
-  "linear-gradient(135deg, #E2E8F0 0%, #F8FAFC 100%)", // Slate Platinum
-  "linear-gradient(135deg, #FEF3C7 0%, #FFFBEB 100%)", // Amber Cream
-  "linear-gradient(135deg, #CCFBF1 0%, #F0FDFA 100%)", // Teal Soft
+  "linear-gradient(135deg, #ECFDF5 0%, #FFFFFF 100%)", // Mint to White
+  "linear-gradient(135deg, #F0FDF4 0%, #FFFFFF 100%)", // Sage to White
+  "linear-gradient(135deg, #E6F4EA 0%, #F8FAF8 100%)", // Soft Jade
+  "linear-gradient(135deg, #D1FAE5 0%, #F0FDF4 100%)", // Mint Tint
+  "linear-gradient(135deg, #F8FAF8 0%, #FFFFFF 100%)", // Platinum Green
+  "linear-gradient(135deg, #E6F7ED 0%, #F8FAF8 100%)", // Tea Green
 ];
 
 export default function SpeakersSection() {
@@ -122,9 +120,9 @@ export default function SpeakersSection() {
 
           <button
             onClick={() => {
-              document.getElementById("conference")?.scrollIntoView({ behavior: "smooth" });
+              document.getElementById("agenda")?.scrollIntoView({ behavior: "smooth" });
             }}
-            className="self-start md:self-auto shrink-0 inline-flex items-center gap-2 rounded-full border border-[#0E733B]/30 bg-white px-6 py-2.5 text-[13px] font-semibold text-[#0E733B] shadow-sm transition-all hover:bg-[#0E733B]/5 hover:border-[#0E733B]/50"
+            className="self-start md:self-auto shrink-0 inline-flex items-center gap-2 rounded-full border border-[#0E733B]/30 bg-white px-6 py-2.5 text-[13px] font-semibold text-[#0E733B] shadow-sm transition-all hover:bg-emerald-50 hover:border-[#0E733B]/50"
           >
             <span>View Full Program</span>
             <span>→</span>

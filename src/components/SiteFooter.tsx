@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import Container from "./ui/Container";
 import { siteConfig } from "@/lib/data";
 
@@ -8,37 +10,38 @@ const footerLinks = [
   {
     title: "Platform",
     links: [
-      { label: "About Edubeacon", href: "#about" },
-      { label: "Find Solutions", href: "#solutions" },
-      { label: "For Schools", href: "#for-schools" },
-      { label: "For Vendors", href: "#for-vendors" },
+      { label: "About Edubeacon", href: "/#about" },
+      { label: "Find Solutions", href: "/#solutions" },
+      { label: "For Schools", href: "/#for-schools" },
+      { label: "For Vendors", href: "/#for-vendors" },
     ],
   },
   {
-    title: "Conference",
+    title: "Events",
     links: [
-      { label: "Overview", href: "#conference" },
-      { label: "Speakers", href: "#speakers" },
-      { label: "Agenda", href: "#conference" },
-      { label: "Exhibition", href: "#conference" },
+      { label: "Events Hub", href: "/events" },
+      { label: "City Roadshows", href: "/events/roadshows" },
+      { label: "Annual Conference", href: "/events/conference" },
+      { label: "Philanthropy & CSR", href: "/events/philanthropy" },
+      { label: "Executive Round Tables", href: "/events/roundtable" },
     ],
   },
   {
     title: "Get Involved",
     links: [
-      { label: "Register Your School", href: "#for-schools" },
-      { label: "List Your Solution", href: "#for-vendors" },
-      { label: "Sponsorship", href: "#sponsorship" },
-      { label: "Awards", href: "#awards" },
+      { label: "Register Your School", href: "/#for-schools" },
+      { label: "List Your Solution", href: "/#for-vendors" },
+      { label: "Sponsorship", href: "/#sponsorship" },
+      { label: "Awards", href: "/#awards" },
     ],
   },
   {
     title: "Resources",
     links: [
-      { label: "Magazine", href: "#magazine" },
-      { label: "Partners", href: "#partners" },
-      { label: "Testimonials", href: "#testimonials" },
-      { label: "Contact", href: "#contact" },
+      { label: "Magazine", href: "/#magazine" },
+      { label: "Partners", href: "/#partners" },
+      { label: "Testimonials", href: "/#testimonials" },
+      { label: "Contact", href: "/#contact" },
     ],
   },
 ];
@@ -51,11 +54,23 @@ const socials = [
   { name: "Facebook", href: "#" },
 ];
 
-function scrollTo(id: string) {
-  document.getElementById(id.replace("#", ""))?.scrollIntoView({ behavior: "smooth" });
-}
-
 export default function SiteFooter() {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleLinkClick = (href: string) => {
+    if (href.startsWith("/#")) {
+      const id = href.replace("/#", "");
+      if (pathname === "/") {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      } else {
+        router.push(href);
+      }
+    } else {
+      router.push(href);
+    }
+  };
+
   return (
     <footer className="border-t border-white/10 bg-[#0A0E17] text-white">
       <Container className="grid grid-cols-2 gap-10 py-16 md:grid-cols-6 md:gap-8 md:py-20">
@@ -103,7 +118,7 @@ export default function SiteFooter() {
               {col.links.map((link) => (
                 <li key={link.label}>
                   <button
-                    onClick={() => scrollTo(link.href)}
+                    onClick={() => handleLinkClick(link.href)}
                     className="text-[13.5px] text-slate-300/80 hover:text-emerald-300 transition-colors text-left"
                   >
                     {link.label}
