@@ -103,27 +103,33 @@ export default function GridPanels() {
           </h2>
         </div>
 
-        <div
-          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5"
-          style={{
-            gridTemplateAreas: `"a a b" "c d b" "e e e"`,
-          }}
-        >
-          {gridPanels.map((panel, i) => (
-            <div
-              key={panel.title}
-              ref={(el) => {
-                panelRefs.current[i] = el;
-              }}
-              className={`group relative overflow-hidden rounded-2xl md:rounded-3xl shadow-md ${
-                panel.span === "wide"
-                  ? "h-[190px] sm:h-[220px] lg:h-[240px]"
-                  : panel.span === "tall"
-                    ? "h-[250px] sm:h-[300px] lg:h-full lg:min-h-[496px]"
-                    : "h-[170px] sm:h-[200px] lg:h-[240px]"
-              }`}
-              style={{ gridArea: AREAS[i] }}
-            >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5 lg:[grid-template-areas:'a_a_b'_'c_d_b'_'e_e_e']">
+          {gridPanels.map((panel, i) => {
+            const desktopAreaClass =
+              i === 0
+                ? "lg:[grid-area:a] sm:col-span-2 lg:col-span-auto"
+                : i === 1
+                  ? "lg:[grid-area:b]"
+                  : i === 2
+                    ? "lg:[grid-area:c]"
+                    : i === 3
+                      ? "lg:[grid-area:d]"
+                      : "lg:[grid-area:e] sm:col-span-2 lg:col-span-auto";
+
+            return (
+              <div
+                key={panel.title}
+                ref={(el) => {
+                  panelRefs.current[i] = el;
+                }}
+                className={`group relative overflow-hidden rounded-2xl md:rounded-3xl shadow-md ${
+                  panel.span === "wide"
+                    ? "h-[200px] sm:h-[220px] lg:h-[240px]"
+                    : panel.span === "tall"
+                      ? "h-[250px] sm:h-[280px] lg:h-full lg:min-h-[496px]"
+                      : "h-[180px] sm:h-[220px] lg:h-[240px]"
+                } ${desktopAreaClass}`}
+              >
               <div
                 ref={(el) => {
                   imageRefs.current[i] = el;
@@ -159,7 +165,8 @@ export default function GridPanels() {
                 <p className="mt-1 max-w-[36ch] text-[12px] leading-relaxed text-white/85">{panel.description}</p>
               </div>
             </div>
-          ))}
+          );
+        })}
         </div>
       </div>
     </section>

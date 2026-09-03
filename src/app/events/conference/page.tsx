@@ -1152,7 +1152,7 @@ export default function ConferencePage() {
 
               {/* Right Embedded Interactive Map */}
               <div className="lg:col-span-7">
-                <div className="relative w-full h-[320px] sm:h-[380px] rounded-2xl overflow-hidden border border-emerald-200/80 shadow-md bg-white">
+                <div className="relative w-full h-[260px] sm:h-[320px] md:h-[380px] rounded-2xl overflow-hidden border border-emerald-200/80 shadow-md bg-white">
                   <iframe
                     title="Hotel Aketa Dehradun Location Map"
                     src="https://maps.google.com/maps?q=Hotel+Aketa,+Rajpur+Road,+Hathibarkala,+Dehradun,+Uttarakhand+248001&t=&z=15&ie=UTF8&iwloc=&output=embed"

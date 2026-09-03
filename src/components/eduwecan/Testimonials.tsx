@@ -82,7 +82,7 @@ export default function Testimonials() {
 
         <div
           data-testimonial-stack
-          className="relative mx-auto h-[380px] max-w-[820px] sm:h-[300px]"
+          className="relative mx-auto h-[440px] xs:h-[390px] sm:h-[320px] md:h-[280px] max-w-[820px]"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
@@ -95,7 +95,7 @@ export default function Testimonials() {
             return (
               <div
                 key={t.name}
-                className="absolute inset-x-4 sm:inset-x-8 inset-y-0 flex flex-col items-center justify-center gap-5 rounded-2xl p-8 text-center border border-line transition-all sm:flex-row sm:items-center sm:gap-7 sm:text-left bg-white"
+                className="absolute inset-x-2 sm:inset-x-8 inset-y-0 flex flex-col items-center justify-center gap-4 sm:gap-7 rounded-2xl p-5 sm:p-8 text-center border border-line transition-all sm:flex-row sm:items-center sm:text-left bg-white"
                 style={{
                   transitionDuration: "700ms",
                   transitionTimingFunction: EASE_CSS.entrance,
