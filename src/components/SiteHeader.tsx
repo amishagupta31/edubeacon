@@ -144,28 +144,28 @@ export default function SiteHeader() {
         </div>
 
         {/* ──────────────── Desktop Navigation Links (Directly Visible) ──────────────── */}
-        <nav className="hidden xl:flex items-center gap-1 2xl:gap-1.5 text-[13px]">
+        <nav className="hidden xl:flex items-center gap-0.5 2xl:gap-1 text-[13px]">
           <button
             onClick={() => handleNavClick("/#about")}
-            className="whitespace-nowrap rounded-full px-3 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
+            className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
           >
             About
           </button>
           <button
             onClick={() => handleNavClick("/#solutions")}
-            className="whitespace-nowrap rounded-full px-3 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
+            className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
           >
             Solutions
           </button>
           <button
             onClick={() => handleNavClick("/#for-schools")}
-            className="whitespace-nowrap rounded-full px-3 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
+            className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
           >
             Schools
           </button>
           <button
             onClick={() => handleNavClick("/#for-vendors")}
-            className="whitespace-nowrap rounded-full px-3 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
+            className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
           >
             Vendors
           </button>
@@ -175,7 +175,7 @@ export default function SiteHeader() {
             <button
               onClick={() => setEventsOpen(!eventsOpen)}
               onMouseEnter={() => setEventsOpen(true)}
-              className={`flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-1.5 font-bold transition-all ${
+              className={`flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1.5 font-bold transition-all ${
                 isEventsActive || eventsOpen
                   ? "bg-emerald-50 text-[#0E733B]"
                   : "text-slate-700 hover:bg-emerald-50 hover:text-[#0E733B]"
@@ -231,31 +231,31 @@ export default function SiteHeader() {
 
           <button
             onClick={() => handleNavClick("/#speakers")}
-            className="whitespace-nowrap rounded-full px-3 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
+            className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
           >
             Speakers
           </button>
           <button
             onClick={() => handleNavClick("/events/conference#sponsorship")}
-            className="whitespace-nowrap rounded-full px-3 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
+            className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
           >
             Sponsorship
           </button>
           <button
             onClick={() => handleNavClick("/#awards")}
-            className="whitespace-nowrap rounded-full px-3 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
+            className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
           >
             Awards
           </button>
           <button
             onClick={() => handleNavClick("/#testimonials")}
-            className="whitespace-nowrap rounded-full px-3 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
+            className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
           >
             Testimonials
           </button>
           <button
             onClick={() => handleNavClick("/#contact")}
-            className="whitespace-nowrap rounded-full px-3 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
+            className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
           >
             Contact
           </button>
