@@ -46,7 +46,7 @@ export default function AwardsSection() {
             <button
               id="awards-nominate"
               onClick={() => openModal("award-nominate")}
-              className="bg-gradient-to-r from-[#0E733B] via-[#059669] to-[#10B981] text-white px-8 py-4 rounded-full font-bold text-[15px] hover:opacity-90 transition-all shadow-md hover:shadow-emerald-500/20"
+              className="bg-[#0E733B] hover:bg-[#0B5C2F] text-white px-8 py-4 rounded-full font-bold text-[15px] transition-all shadow-md hover:shadow-emerald-950/20"
             >
               <Trophy className="inline w-4.5 h-4.5 -mt-0.5 mr-2" strokeWidth={2} />
               Nominate for an Award →

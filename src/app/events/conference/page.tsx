@@ -317,47 +317,6 @@ export default function ConferencePage() {
   return (
     <div className="bg-[#F8FAF8] text-charcoal min-h-screen">
 
-      {/* ──────────────── STICKY CONFERENCE SUBNAV ──────────────── */}
-      <div className="sticky top-0 z-40 bg-[#061A10]/95 backdrop-blur-md border-b border-emerald-500/20 text-white py-3 px-4 shadow-sm">
-        <div className="max-w-[1440px] mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-xs sm:text-sm text-emerald-300">
-              Annual Summit 2027
-            </span>
-            <span className="hidden sm:inline text-slate-400 text-xs">• 15–16 Nov • Dehradun</span>
-          </div>
-
-          {/* Quick Jump Links */}
-          <div className="hidden lg:flex items-center gap-5 text-xs font-semibold text-slate-300">
-            <button onClick={() => scrollTo("overview")} className="hover:text-emerald-300 transition-colors">Overview</button>
-            <button onClick={() => scrollTo("experience")} className="hover:text-emerald-300 transition-colors">Experiences</button>
-            <button onClick={() => scrollTo("themes")} className="hover:text-emerald-300 transition-colors">Discussion Themes</button>
-            <button onClick={() => scrollTo("who")} className="hover:text-emerald-300 transition-colors">Who Should Attend</button>
-            <button onClick={() => scrollTo("speakers")} className="hover:text-emerald-300 transition-colors">Speakers</button>
-            <button onClick={() => scrollTo("agenda")} className="hover:text-emerald-300 transition-colors">Agenda</button>
-            <button onClick={() => scrollTo("sponsorship")} className="hover:text-emerald-300 transition-colors">Sponsors</button>
-            <button onClick={() => scrollTo("passes")} className="hover:text-emerald-300 transition-colors">Passes</button>
-            <button onClick={() => scrollTo("venue")} className="hover:text-emerald-300 transition-colors">Venue</button>
-            <button onClick={() => scrollTo("faqs")} className="hover:text-emerald-300 transition-colors">FAQs</button>
-          </div>
-
-          <div className="flex items-center gap-2.5">
-            <button
-              onClick={() => openModal("school-register")}
-              className="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-[#0E733B] to-[#10B981] text-white shadow-xs hover:opacity-90"
-            >
-              REGISTER NOW
-            </button>
-            <button
-              onClick={() => openModal("vendor-register")}
-              className="hidden sm:inline-block px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-white text-charcoal hover:bg-emerald-50 transition-colors"
-            >
-              PARTNER
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* ──────────────── 1. FULL-SCREEN IMMERSIVE CONFERENCE HERO ──────────────── */}
       <section className="relative min-h-[90vh] flex flex-col justify-between overflow-hidden bg-[#0A1A10] text-white">
         {/* Background Real HTML Video */}
@@ -425,7 +384,7 @@ export default function ConferencePage() {
               <div className="flex flex-wrap items-center gap-4">
                 <button
                   onClick={() => openModal("school-register")}
-                  className="px-8 py-4 rounded-full font-bold text-[14.5px] uppercase tracking-wider text-white bg-gradient-to-r from-[#0E733B] via-[#059669] to-[#10B981] shadow-lg shadow-emerald-600/30 hover:scale-105 active:scale-95 transition-all duration-300"
+                  className="px-8 py-4 rounded-full font-bold text-[14.5px] uppercase tracking-wider text-white bg-[#0E733B] hover:bg-[#0B5C2F] shadow-lg shadow-emerald-950/20 hover:scale-105 active:scale-95 transition-all duration-300"
                 >
                   Register Now →
                 </button>
@@ -782,7 +741,7 @@ export default function ConferencePage() {
               </div>
               <button
                 onClick={() => openModal("school-register")}
-                className="w-full text-center py-3.5 rounded-full font-bold text-[13.5px] uppercase tracking-wider text-white bg-gradient-to-r from-[#0E733B] to-[#10B981] shadow-md hover:opacity-90"
+                className="w-full text-center py-3.5 rounded-full font-bold text-[13.5px] uppercase tracking-wider text-white bg-[#0E733B] hover:bg-[#0B5C2F] shadow-md transition-colors"
               >
                 For Schools → Join EduBeacon
               </button>
@@ -967,7 +926,7 @@ export default function ConferencePage() {
 
                 <button
                   onClick={() => openModal("vendor-register")}
-                  className="w-full text-center py-3 rounded-full font-bold text-xs uppercase tracking-wider bg-gradient-to-r from-[#0E733B] via-[#059669] to-[#10B981] text-white shadow-sm hover:opacity-90"
+                  className="w-full text-center py-3 rounded-full font-bold text-xs uppercase tracking-wider bg-[#0E733B] hover:bg-[#0B5C2F] text-white shadow-sm transition-colors"
                 >
                   Inquire Package →
                 </button>
@@ -1056,7 +1015,7 @@ export default function ConferencePage() {
                   onClick={() => openModal(tier.modal)}
                   className={`w-full py-3.5 rounded-full font-bold text-xs uppercase tracking-wider transition-all ${
                     tier.highlight
-                      ? "bg-gradient-to-r from-[#0E733B] to-[#10B981] text-white shadow-md hover:opacity-90"
+                      ? "bg-[#0E733B] hover:bg-[#0B5C2F] text-white shadow-md"
                       : "bg-emerald-50 text-[#0E733B] hover:bg-[#0E733B] hover:text-white"
                   }`}
                 >
@@ -1133,56 +1092,81 @@ export default function ConferencePage() {
         </Container>
       </section>
 
-      {/* ──────────────── 18. OFFICIAL VENUE & LOCATION ──────────────── */}
+      {/* ──────────────── 18. OFFICIAL VENUE & EMBEDDED LOCATION MAP ──────────────── */}
       <section id="venue" className="py-16 md:py-24 bg-white border-b border-line">
         <Container>
           <div className="max-w-3xl mx-auto text-center mb-10">
             <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B] bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-200">
-              OFFICIAL VENUE
+              OFFICIAL VENUE & MAP
             </span>
             <h2 className="font-bold font-display text-[32px] md:text-[42px] text-charcoal mt-3 mb-2 tracking-tight">
               Conference Venue & Location
             </h2>
             <p className="text-slate-500 text-sm">
-              Conveniently located on Rajpur Road, Dehradun with full conference & exhibition amenities.
+              Conveniently located on Rajpur Road, Dehradun with full conference, exhibition, and parking amenities.
             </p>
           </div>
 
-          <div className="max-w-4xl mx-auto bg-[#F8FAF8] border border-emerald-100 rounded-3xl p-6 sm:p-10 shadow-sm flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#0E733B] bg-emerald-100/60 px-3 py-1 rounded-md">
-                <MapPin className="w-4 h-4" /> Dehradun, Uttarakhand
-              </div>
-              <h3 className="text-2xl font-bold font-display text-charcoal">
-                Hotel Aketa
-              </h3>
-              <p className="text-slate-600 text-sm max-w-md leading-relaxed">
-                Rajpur Road, Hathibarkala, Dehradun, Uttarakhand 248001. A premier hospitality and convention venue with state-of-the-art auditorium facilities, exhibition lawns, and dedicated leadership lounges.
-              </p>
-              <div className="flex flex-wrap gap-4 text-xs font-semibold text-slate-700 pt-2">
-                <span className="flex items-center gap-1.5 bg-white border border-line px-3 py-1.5 rounded-xl shadow-2xs">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#0E733B]" /> Free Valet Parking
-                </span>
-                <span className="flex items-center gap-1.5 bg-white border border-line px-3 py-1.5 rounded-xl shadow-2xs">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#0E733B]" /> High-Speed Wi-Fi
-                </span>
-                <span className="flex items-center gap-1.5 bg-white border border-line px-3 py-1.5 rounded-xl shadow-2xs">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#0E733B]" /> Dedicated Demo Pods
-                </span>
-              </div>
-            </div>
+          <div className="max-w-5xl mx-auto bg-[#F8FAF8] border border-emerald-100 rounded-3xl p-6 sm:p-8 md:p-10 shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              
+              {/* Left Details */}
+              <div className="lg:col-span-5 space-y-4">
+                <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#0E733B] bg-emerald-100/60 px-3 py-1 rounded-md">
+                  <MapPin className="w-4 h-4" /> Dehradun, Uttarakhand
+                </div>
+                <h3 className="text-2xl font-bold font-display text-charcoal">
+                  Hotel Aketa
+                </h3>
+                <p className="text-slate-600 text-sm leading-relaxed">
+                  Rajpur Road, Hathibarkala, Dehradun, Uttarakhand 248001. A premier hospitality and convention venue with state-of-the-art auditorium facilities, exhibition lawns, and leadership lounges.
+                </p>
 
-            <div className="shrink-0 flex flex-col items-center gap-3 w-full md:w-auto">
-              <a
-                href="https://share.google/g2ShK4g4eKqOSN45a"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full md:w-auto px-8 py-4 rounded-full font-bold text-xs uppercase tracking-wider text-white bg-gradient-to-r from-[#0E733B] via-[#059669] to-[#10B981] shadow-md hover:scale-105 transition-all text-center flex items-center justify-center gap-2"
-              >
-                <MapPin className="w-4 h-4" />
-                Open in Google Maps ↗
-              </a>
-              <span className="text-[11px] text-slate-400">Direct Navigation Link</span>
+                <div className="flex flex-col gap-2 pt-2">
+                  <div className="flex items-center gap-2 text-xs font-medium text-slate-700 bg-white border border-line px-3.5 py-2 rounded-xl shadow-2xs">
+                    <CheckCircle2 className="w-4 h-4 text-[#0E733B] shrink-0" />
+                    <span>Free Dedicated Valet Parking</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-medium text-slate-700 bg-white border border-line px-3.5 py-2 rounded-xl shadow-2xs">
+                    <CheckCircle2 className="w-4 h-4 text-[#0E733B] shrink-0" />
+                    <span>High-Speed Campus Wi-Fi & AV</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-medium text-slate-700 bg-white border border-line px-3.5 py-2 rounded-xl shadow-2xs">
+                    <CheckCircle2 className="w-4 h-4 text-[#0E733B] shrink-0" />
+                    <span>Executive Networking Lawn & Lounges</span>
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <a
+                    href="https://share.google/g2ShK4g4eKqOSN45a"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-7 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider text-white bg-[#0E733B] hover:bg-[#0B5C2F] shadow-md hover:scale-105 transition-all text-center"
+                  >
+                    <MapPin className="w-4 h-4" />
+                    Get Directions on Google Maps ↗
+                  </a>
+                </div>
+              </div>
+
+              {/* Right Embedded Interactive Map */}
+              <div className="lg:col-span-7">
+                <div className="relative w-full h-[320px] sm:h-[380px] rounded-2xl overflow-hidden border border-emerald-200/80 shadow-md bg-white">
+                  <iframe
+                    title="Hotel Aketa Dehradun Location Map"
+                    src="https://maps.google.com/maps?q=Hotel+Aketa,+Rajpur+Road,+Hathibarkala,+Dehradun,+Uttarakhand+248001&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    className="w-full h-full"
+                  />
+                </div>
+              </div>
+
             </div>
           </div>
         </Container>
@@ -1248,7 +1232,7 @@ export default function ConferencePage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5">
               <button
                 onClick={() => openModal("school-register")}
-                className="w-full sm:w-auto px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider text-white bg-gradient-to-r from-[#0E733B] to-[#10B981] shadow-lg hover:scale-105 transition-all"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider text-white bg-[#0E733B] hover:bg-[#0B5C2F] shadow-lg hover:scale-105 transition-all"
               >
                 Register for EduBeacon →
               </button>

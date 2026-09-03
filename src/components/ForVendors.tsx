@@ -85,7 +85,7 @@ export default function ForVendors() {
               <button
                 id="for-vendors-list"
                 onClick={() => openModal("vendor-register")}
-                className="bg-gradient-to-r from-[#0E733B] via-[#059669] to-[#10B981] text-white px-8 py-4 rounded-full font-bold text-[15px] hover:opacity-90 transition-all shadow-md hover:shadow-emerald-500/20"
+                className="bg-[#0E733B] hover:bg-[#0B5C2F] text-white px-8 py-4 rounded-full font-bold text-[15px] transition-all shadow-md hover:shadow-emerald-950/20"
               >
                 List Your Solution →
               </button>

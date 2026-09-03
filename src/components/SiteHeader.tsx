@@ -273,7 +273,7 @@ export default function SiteHeader() {
               </button>
               <button
                 onClick={() => openModal("school-register")}
-                className="rounded-full bg-gradient-to-r from-[#0E733B] via-[#059669] to-[#10B981] px-5 py-2 text-[12px] font-extrabold uppercase tracking-wider text-white shadow-md shadow-emerald-600/25 hover:shadow-emerald-600/40 hover:scale-105 active:scale-95 transition-all duration-300"
+                className="rounded-full bg-[#0E733B] hover:bg-[#0B5C2F] px-5 py-2 text-[12px] font-extrabold uppercase tracking-wider text-white shadow-md shadow-emerald-900/20 hover:scale-105 active:scale-95 transition-all duration-300"
               >
                 REGISTER NOW
               </button>
@@ -433,8 +433,11 @@ export default function SiteHeader() {
 
             <div className="mt-3 flex flex-col gap-3 border-t border-line pt-4">
               <button
-                onClick={() => { setOpen(false); openModal("school-register"); }}
-                className="w-full bg-gradient-to-r from-[#0E733B] via-[#059669] to-[#10B981] text-white py-3 rounded-full font-bold text-[14px] shadow-md"
+                onClick={() => {
+                  setOpen(false);
+                  openModal("school-register");
+                }}
+                className="w-full bg-[#0E733B] hover:bg-[#0B5C2F] text-white py-3 rounded-full font-bold text-[14px] shadow-md transition-colors"
               >
                 REGISTER NOW
               </button>

@@ -205,7 +205,7 @@ export default function ContactSection() {
                   <button
                     type="submit"
                     id="contact-submit"
-                    className="w-full bg-gradient-to-r from-[#0E733B] via-[#059669] to-[#10B981] text-white py-4 rounded-xl font-bold text-[14.5px] hover:opacity-90 transition-all shadow-md mt-2"
+                    className="w-full bg-[#0E733B] hover:bg-[#0B5C2F] text-white py-4 rounded-xl font-bold text-[14.5px] transition-all shadow-md mt-2"
                   >
                     Send Message →
                   </button>

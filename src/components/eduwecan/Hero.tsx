@@ -141,7 +141,7 @@ export default function Hero() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-1.5">
               <button
                 onClick={() => openModal("school-register")}
-                className="w-full sm:w-auto px-6 py-2.5 rounded-full font-extrabold text-xs uppercase tracking-wider text-white bg-gradient-to-r from-[#0E733B] via-[#059669] to-[#10B981] shadow-md shadow-emerald-600/30 hover:shadow-emerald-600/50 hover:scale-105 active:scale-95 transition-all duration-300"
+                className="w-full sm:w-auto px-6 py-2.5 rounded-full font-extrabold text-xs uppercase tracking-wider text-white bg-[#0E733B] hover:bg-[#0B5C2F] shadow-md shadow-emerald-950/30 hover:scale-105 active:scale-95 transition-all duration-300"
               >
                 Register Your School
               </button>

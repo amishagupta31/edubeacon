@@ -19,7 +19,7 @@ export default function HeroStats() {
                   : ""
               }`}
             >
-              <p className="font-bold text-[36px] md:text-[44px] text-transparent bg-clip-text bg-gradient-to-r from-[#0E733B] via-[#059669] to-[#10B981] leading-none tracking-tight">
+              <p className="font-bold text-[36px] md:text-[44px] text-[#0E733B] leading-none tracking-tight">
                 {stat.value}
               </p>
               <p className="text-[13px] text-stone-600 mt-2 font-semibold">
