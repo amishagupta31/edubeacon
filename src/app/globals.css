@@ -1,0 +1,258 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  /* ── Core Green, White & Black Palette ── */
+  --color-edu-blue:       #062013;   /* Deepest Forest / Obsidian Green */
+  --color-edu-blue-mid:   #0E733B;   /* Mid Forest Green */
+  --color-edu-blue-light: #10B981;   /* Emerald Green */
+  --color-teal:           #0E733B;   /* Official Brand Logo Green */
+  --color-teal-light:     #34D399;   /* Lighter Mint Green */
+  --color-teal-muted:     #D1FAE5;   /* Pastel Mint Wash */
+
+  /* ── Neutrals (White, Charcoal, Black) ── */
+  --color-warm-ivory:     #F8FAF8;   /* Clean light green-white background */
+  --color-paper:          #FFFFFF;
+  --color-slate:          #1E293B;   /* Body text */
+  --color-slate-soft:     #4B5563;   /* Muted text */
+  --color-charcoal:       #0A0E17;   /* Headings */
+  --color-charcoal-soft:  #1F2937;
+
+  /* ── Pastel Green & Mint Section Backgrounds ── */
+  --color-sky-pastel:     #F0FDF4;   /* Soft sage wash */
+  --color-mint-pastel:    #ECFDF5;   /* Light mint wash */
+  --color-peach-pastel:   #F4FBF7;   /* Pale seafoam */
+  --color-lavender-pastel:#F0FDF4;   /* Soft forest tint */
+  --color-rose-pastel:    #ECFDF5;   /* Light mint wash */
+  --color-sage-pastel:    #E6F4EA;   /* Soft sage */
+
+  /* ── Awards / Highlights ── */
+  --color-gold:           #0E733B;
+  --color-gold-light:     #D1FAE5;
+
+  /* ── Sponsor Tiers (Green / Neutral) ── */
+  --color-bronze:         #064E3B;
+  --color-silver:         #10B981;
+  --color-diamond:        #0E733B;
+
+  /* ── Borders ── */
+  --color-line:           #E5E7EB;
+  --color-line-soft:      #F3F4F6;
+
+  /* ── Warm White alias ── */
+  --color-warm-white:     #F8FAF8;
+
+  /* ── Fonts ── */
+  --font-display: var(--font-fraunces), "Plus Jakarta Sans", sans-serif;
+  --font-sans:    "Inter", sans-serif;
+
+  /* ── Radius ── */
+  --radius-card:  0.75rem;
+  --radius-sm:    0.375rem;
+
+  /* ── EduWeCan — harmonious mint & sage palette ── */
+  --color-ewc-ivory:       #F8FAF8;
+  --color-ewc-lavender:    #D1FAE5;
+  --color-ewc-lavender-deep: #A7F3D0;
+  --color-ewc-blue:        #ECFDF5;
+  --color-ewc-blue-deep:   #6EE7B7;
+  --color-ewc-peach:       #F0FDF4;
+  --color-ewc-peach-deep:  #A7F3D0;
+  --color-ewc-sage:        #D1FAE5;
+  --color-ewc-sage-deep:   #34D399;
+  --color-ewc-lilac:       #ECFDF5;
+  --color-ewc-lilac-deep:  #6EE7B7;
+  --color-ewc-ink:         #0A0E17;
+  --color-ewc-muted:       #4B5563;
+  --color-ewc-line:        #E5E7EB;
+}
+
+/* ─── Base ─── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-warm-ivory);
+  color: var(--color-slate);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Selection ─── */
+::selection {
+  background: #D1FAE5;
+  color: #062013;
+}
+
+/* ─── Display / Heading font ─── */
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* ─── Reveal on scroll ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s cubic-bezier(0.22, 0.7, 0.2, 1),
+    transform 0.7s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.reveal.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1.in-view { transition-delay: 0.1s; }
+.reveal-delay-2.in-view { transition-delay: 0.2s; }
+.reveal-delay-3.in-view { transition-delay: 0.3s; }
+.reveal-delay-4.in-view { transition-delay: 0.4s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ─── Ambient background motion ─── */
+@media (prefers-reduced-motion: no-preference) {
+  .bg-blob {
+    animation: blob-drift 22s ease-in-out infinite;
+  }
+  .bg-blob-slow {
+    animation: blob-drift 32s ease-in-out infinite;
+  }
+  .bg-blob-reverse {
+    animation: blob-drift-reverse 26s ease-in-out infinite;
+  }
+}
+
+@keyframes blob-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(3%, -4%) scale(1.08); }
+  66% { transform: translate(-3%, 3%) scale(0.96); }
+}
+
+@keyframes blob-drift-reverse {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-4%, 3%) scale(0.94); }
+  66% { transform: translate(4%, -3%) scale(1.06); }
+}
+
+/* ─── Text balance ─── */
+.text-balance {
+  text-wrap: balance;
+}
+
+/* ─── Horizontal scroll rail ─── */
+.scroll-rail {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+.scroll-rail::-webkit-scrollbar {
+  height: 6px;
+}
+.scroll-rail::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 999px;
+}
+
+/* ─── Modal backdrop ─── */
+.modal-backdrop {
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* ─── Category pill active state ─── */
+.cat-pill-active {
+  background: #0E733B;
+  color: #fff;
+}
+
+/* ─── Countdown digits ─── */
+@keyframes flip-down {
+  0%   { transform: translateY(-8px); opacity: 0; }
+  100% { transform: translateY(0);    opacity: 1; }
+}
+.countdown-digit {
+  animation: flip-down 0.4s ease forwards;
+}
+
+/* ─── Gradient text utility ─── */
+.gradient-text {
+  background: linear-gradient(135deg, #062013 0%, #0E733B 50%, #10B981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Section divider ─── */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-line), transparent);
+}
+
+/* ─── Card hover lift ─── */
+.card-lift {
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+.card-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px -8px rgba(14, 115, 59, 0.15);
+}
+
+/* ─── Teal underline link ─── */
+.teal-link {
+  text-decoration: underline;
+  text-decoration-color: #0E733B;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 2px;
+}
+
+/* ══════════════════════════════════════════
+   EduWeCan — animation system
+   ══════════════════════════════════════════ */
+.ewc {
+  background: var(--color-ewc-ivory);
+  color: var(--color-ewc-ink);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ewc-float {
+    animation: ewc-float 8s ease-in-out infinite alternate;
+  }
+  .ewc-drift {
+    animation: ewc-drift 12s ease-in-out infinite alternate;
+  }
+  .ewc-spin-slow {
+    animation: ewc-spin 16s linear infinite;
+  }
+}
+
+@keyframes ewc-float {
+  from { transform: translateY(0) rotate(0deg); }
+  to   { transform: translateY(-18px) rotate(3deg); }
+}
+
+@keyframes ewc-drift {
+  from { transform: translate(0, 0) rotate(0deg); }
+  to   { transform: translate(14px, -14px) rotate(-4deg); }
+}
+
+@keyframes ewc-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.ewc-counter {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ewc-float,
+  .ewc-drift,
+  .ewc-spin-slow {
+    animation: none !important;
+  }
+}
