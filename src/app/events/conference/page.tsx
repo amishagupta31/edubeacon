@@ -30,13 +30,53 @@ import {
   Cpu,
   Share2,
   Quote,
-  HeartHandshake
+  HeartHandshake,
+  Award,
+  Landmark,
+  School,
+  Rocket,
+  Coffee,
+  Check,
+  Download,
+  ChevronRight
 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import SpeakersSection from "@/components/SpeakersSection";
 import { useModal } from "@/components/modals/ModalProvider";
 import { img } from "@/lib/images";
 import { conferenceAgenda, siteConfig, sponsorshipPackages } from "@/lib/data";
+
+// ── 4 Conference Tracks ──
+const conferenceTracks = [
+  {
+    num: "01",
+    title: "Education Leadership",
+    desc: "Leadership, institutional transformation and the future of education.",
+    icon: GraduationCap,
+    topics: ["Institutional Governance", "Curriculum Evolution", "Culture & Wellbeing"],
+  },
+  {
+    num: "02",
+    title: "AI & Emerging Technology",
+    desc: "AI, digital transformation, smart classrooms and emerging technologies.",
+    icon: Cpu,
+    topics: ["Responsible AI", "Automated Assessment", "Smart Campus Infrastructure"],
+  },
+  {
+    num: "03",
+    title: "EdTech & Innovation",
+    desc: "Startups, solution providers, product showcases and school–startup collaboration.",
+    icon: Sparkles,
+    topics: ["Institutional Pilots", "Product Validation", "Scalable Classroom Tech"],
+  },
+  {
+    num: "04",
+    title: "Investment & Partnerships",
+    desc: "VC conversations, university partnerships, founders and institutional opportunities.",
+    icon: TrendingUp,
+    topics: ["VC × Higher Ed", "Ecosystem Syndicates", "Commercial Scaling"],
+  },
+];
 
 // ── 8 Experiences Awaiting Attendees ──
 const experienceCards = [
@@ -87,6 +127,38 @@ const experienceCards = [
     title: "Investor & Founder Connect",
     desc: "Give promising education startups an opportunity to showcase their solutions and connect with potential partners and investors.",
     icon: TrendingUp,
+  },
+];
+
+// ── 4 Featured Sessions ──
+const featuredSessions = [
+  {
+    title: "AI in Education",
+    desc: "Learn practical approaches to using AI responsibly and effectively across teaching, learning, assessment and institutional operations.",
+    icon: Cpu,
+    badge: "Masterclass Workshop",
+    highlight: "Responsible AI & Classrooms",
+  },
+  {
+    title: "Deep Connection – EdTech Showcase",
+    desc: "A focused presentation bringing innovative education solutions closer to institutions and education decision-makers.",
+    icon: Zap,
+    badge: "Solution Presentation",
+    highlight: "Live Product Demos",
+  },
+  {
+    title: "VC × University Dialogue",
+    desc: "A focused conversation between venture capital leaders and universities around innovation, entrepreneurship, technology adoption and opportunities for collaboration.",
+    icon: TrendingUp,
+    badge: "Strategic Roundtable",
+    highlight: "Institutional Innovation",
+  },
+  {
+    title: "University × Founder Connect",
+    desc: "Create meaningful conversations between universities, education founders and solution providers to explore pilots, partnerships and innovation opportunities.",
+    icon: Handshake,
+    badge: "Curated Exchange",
+    highlight: "Pilots & Joint Ventures",
   },
 ];
 
@@ -181,6 +253,37 @@ const discussionThemes = [
   },
 ];
 
+// ── University Innovation & Investment Connect Pillars ──
+const universityConnectPillars = [
+  {
+    title: "University Leaders",
+    desc: "Explore emerging technologies, partnerships and innovation opportunities.",
+    icon: Landmark,
+    badge: "Higher Ed Executives",
+  },
+  {
+    title: "Founders",
+    desc: "Present solutions designed for higher education and institutional challenges.",
+    icon: Rocket,
+    badge: "Solution Innovators",
+  },
+  {
+    title: "Investors",
+    desc: "Discover emerging education technology ventures and innovation opportunities.",
+    icon: TrendingUp,
+    badge: "Venture Capital & Angels",
+  },
+];
+
+const universityCollaborations = [
+  "University–Startup Partnerships",
+  "Innovation Labs",
+  "Technology Pilots",
+  "Research & Industry Collaboration",
+  "Entrepreneurship Programs",
+  "Investment Conversations",
+];
+
 // ── 3 Special Experiences ──
 const specialExperiences = [
   {
@@ -210,6 +313,72 @@ const attendeeProfiles = [
   { title: "Corporate & CSR Partners", desc: "Organisations supporting education grants, talent pipelines, and social impact.", icon: Briefcase },
   { title: "Investors", desc: "Venture funds, angel syndicates, and foundations backing education technology.", icon: TrendingUp },
   { title: "Policy & Board Leaders", desc: "Government advisors, education board officials, and systemic reformers.", icon: Users },
+];
+
+// ── Networking & Connections ──
+const networkingFlow = [
+  {
+    step: "01",
+    title: "Curated Networking",
+    desc: "Meet school leaders, educators, founders, universities, investors and technology providers.",
+    icon: Users,
+    timing: "Continuous Across Summit",
+  },
+  {
+    step: "02",
+    title: "Networking Lunch",
+    desc: "Continue conversations in a relaxed setting while connecting with fellow delegates.",
+    icon: Coffee,
+    timing: "Mid-Day Plenary Dining",
+  },
+  {
+    step: "03",
+    title: "Tea & Connect",
+    desc: "Informal conversations, introductions and relationship-building between sessions.",
+    icon: Clock,
+    timing: "Morning & Afternoon Breaks",
+  },
+  {
+    step: "04",
+    title: "1:1 Meetings",
+    desc: "Create focused conversations between institutions, startups, partners and investors.",
+    icon: Handshake,
+    timing: "Curated Partnership Lounge",
+  },
+];
+
+// ── Recognition & Felicitation ──
+const recognitionCategories = [
+  {
+    title: "Certificate of Participation",
+    desc: "Formal credentialing and CPD recognition acknowledging delegates' active contribution to the national education summit.",
+    icon: Award,
+    badge: "All Registered Delegates",
+  },
+  {
+    title: "Institutional Recognition",
+    desc: "Honouring progressive schools and colleges championing innovative pedagogy, student wellbeing, and modern infrastructure.",
+    icon: Building2,
+    badge: "Schools & Colleges",
+  },
+  {
+    title: "Educator Recognition",
+    desc: "Celebrating inspiring teachers, academic coordinators, and mentors who create transformative learning journeys.",
+    icon: GraduationCap,
+    badge: "Teachers & Mentors",
+  },
+  {
+    title: "Innovation Recognition",
+    desc: "Spotlighting EdTech pioneers and technologists deploying high-impact solutions in learning environments.",
+    icon: Sparkles,
+    badge: "Founders & Technologists",
+  },
+  {
+    title: "Partner Appreciation",
+    desc: "Acknowledging sponsors, university hosts, and strategic alliance partners who empower the EduBeacon network.",
+    icon: HeartHandshake,
+    badge: "Alliance Partners",
+  },
 ];
 
 // ── Testimonials (What Leaders Say) ──
@@ -308,10 +477,22 @@ export default function ConferencePage() {
   const [compareOpen, setCompareOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
+  // Participant creative interactive demo state
+  const [creativeTheme, setCreativeTheme] = useState<"leader" | "teacher">("leader");
+  const [previewName, setPreviewName] = useState("Dr. Ananya Sharma");
+  const [previewDesignation, setPreviewDesignation] = useState("Principal & Academic Director");
+  const [previewSchool, setPreviewSchool] = useState("Heritage International School");
+  const [copiedLink, setCopiedLink] = useState(false);
+
   const currentDay = conferenceAgenda.find((d) => d.id === activeDay) || conferenceAgenda[0];
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleCopyShare = () => {
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2500);
   };
 
   return (
@@ -331,7 +512,7 @@ export default function ConferencePage() {
             <source src="/videos/hero-bg.mp4" type="video/mp4" />
           </video>
 
-          {/* Translucent Gradient Overlay (Light on Left for Text Readability, Video Visible on Right) */}
+          {/* Translucent Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#061A10]/90 via-[#061A10]/60 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#061A10] via-transparent to-[#061A10]/40" />
 
@@ -394,13 +575,6 @@ export default function ConferencePage() {
                   className="px-8 py-4 rounded-full font-bold text-[14.5px] uppercase tracking-wider text-charcoal bg-white shadow-lg hover:bg-emerald-50 hover:scale-105 active:scale-95 transition-all duration-300"
                 >
                   Become a Partner →
-                </button>
-
-                <button
-                  onClick={() => scrollTo("overview")}
-                  className="px-6 py-4 rounded-full font-semibold text-[14px] text-slate-300 hover:text-white transition-colors"
-                >
-                  Explore EduBeacon ↓
                 </button>
               </div>
             </div>
@@ -482,8 +656,62 @@ export default function ConferencePage() {
         </Container>
       </section>
 
-      {/* ──────────────── 4. WHAT AWAITS YOU AT EDUBEACON (8 CARDS) ──────────────── */}
-      <section id="experience" className="py-16 md:py-24 bg-[#F8FAF8]">
+      {/* ──────────────── 4. FOUR CONFERENCE TRACKS ──────────────── */}
+      <section id="tracks" className="py-16 md:py-24 bg-[#F8FAF8] border-b border-line">
+        <Container>
+          <div className="max-w-3xl mb-12">
+            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B] bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-200">
+              FOUR CONFERENCE TRACKS
+            </span>
+            <h2 className="font-bold font-display text-[32px] md:text-[44px] text-charcoal mt-3 mb-2 tracking-tight">
+              One Ecosystem. Four Conversations Shaping Education.
+            </h2>
+            <p className="text-slate-500 text-[15px]">
+              Explore the four core streams framing plenary addresses, masterclasses, and executive roundtables.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {conferenceTracks.map((track) => (
+              <div
+                key={track.num}
+                className="group p-7 rounded-3xl bg-white border border-line hover:border-emerald-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 text-[#0E733B] flex items-center justify-center group-hover:bg-[#0E733B] group-hover:text-white transition-colors">
+                      <track.icon className="w-6 h-6" strokeWidth={1.8} />
+                    </div>
+                    <span className="text-xs font-black text-slate-300 group-hover:text-emerald-600 transition-colors">
+                      TRACK {track.num}
+                    </span>
+                  </div>
+
+                  <h3 className="font-bold text-[18px] text-charcoal mb-2 group-hover:text-[#0E733B] transition-colors">
+                    {track.title}
+                  </h3>
+
+                  <p className="text-[13px] text-slate-600 leading-relaxed mb-5">
+                    {track.desc}
+                  </p>
+                </div>
+
+                <div className="border-t border-gray-100 pt-4 space-y-1.5">
+                  {track.topics.map((t) => (
+                    <div key={t} className="flex items-center gap-1.5 text-[11.5px] font-medium text-slate-500">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                      <span>{t}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ──────────────── 5. WHAT AWAITS YOU AT EDUBEACON (8 CARDS) ──────────────── */}
+      <section id="experience" className="py-16 md:py-24 bg-white border-b border-line">
         <Container>
           <div className="text-center max-w-3xl mx-auto mb-12">
             <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-[#0E733B] text-[11px] font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full mb-3 border border-emerald-500/20">
@@ -501,7 +729,7 @@ export default function ConferencePage() {
             {experienceCards.map((card) => (
               <div
                 key={card.num}
-                className="group p-6 rounded-2xl bg-white border border-line shadow-xs hover:shadow-xl hover:border-emerald-300 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                className="group p-6 rounded-2xl bg-[#F8FAF8] border border-line shadow-xs hover:shadow-xl hover:bg-white hover:border-emerald-300 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -525,8 +753,76 @@ export default function ConferencePage() {
         </Container>
       </section>
 
-      {/* ──────────────── 5. WHY EDUBEACON (4 LARGE BLOCKS) ──────────────── */}
-      <section id="why" className="py-16 md:py-24 bg-white border-y border-line">
+      {/* ──────────────── 6. FEATURED SESSIONS ──────────────── */}
+      <section id="featured-sessions" className="py-16 md:py-24 bg-[#F8FAF8] border-b border-line">
+        <Container>
+          <div className="max-w-3xl mb-12">
+            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B] bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-200">
+              FEATURED SESSIONS
+            </span>
+            <h2 className="font-bold font-display text-[32px] md:text-[44px] text-charcoal mt-3 mb-2 tracking-tight">
+              Ideas. Conversations. Real-World Impact.
+            </h2>
+            <p className="text-slate-600 text-[15.5px] leading-relaxed">
+              From practical AI workshops to investor conversations and leadership discussions, experience focused sessions designed around the future of education.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {featuredSessions.map((session, idx) => (
+              <div
+                key={session.title}
+                className="group p-8 rounded-3xl bg-white border border-line shadow-xs hover:shadow-xl hover:border-emerald-300 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200/60 px-3 py-1 rounded-full">
+                      {session.badge}
+                    </span>
+                    <span className="text-[11px] font-bold text-slate-400">
+                      SESSION 0{idx + 1}
+                    </span>
+                  </div>
+
+                  <div className="flex items-start gap-4 mb-3">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 text-[#0E733B] flex items-center justify-center shrink-0 group-hover:bg-[#0E733B] group-hover:text-white transition-colors">
+                      <session.icon className="w-6 h-6" strokeWidth={1.8} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold font-display text-[20px] text-charcoal group-hover:text-[#0E733B] transition-colors">
+                        {session.title}
+                      </h3>
+                      <span className="text-[11.5px] font-semibold text-emerald-700">
+                        {session.highlight}
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="text-[14px] text-slate-600 leading-relaxed mt-3">
+                    {session.desc}
+                  </p>
+                </div>
+
+                <div className="pt-6 mt-6 border-t border-gray-100 flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-400">
+                    Interactive Format • Audience Q&A
+                  </span>
+                  <button
+                    onClick={() => openModal("school-register")}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0E733B] hover:text-[#0B5C2F] group-hover:translate-x-0.5 transition-transform"
+                  >
+                    <span>Reserve Session Seat</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ──────────────── 7. WHY EDUBEACON (4 LARGE BLOCKS) ──────────────── */}
+      <section id="why" className="py-16 md:py-24 bg-white border-b border-line">
         <Container>
           <div className="max-w-3xl mb-12">
             <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0E733B] bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-100">
@@ -563,8 +859,8 @@ export default function ConferencePage() {
         </Container>
       </section>
 
-      {/* ──────────────── 6. EDUBEACON 5-STAGE JOURNEY ──────────────── */}
-      <section className="py-16 md:py-20 bg-[#FDFBF7]">
+      {/* ──────────────── 8. EDUBEACON 5-STAGE JOURNEY ──────────────── */}
+      <section className="py-16 md:py-20 bg-[#FDFBF7] border-b border-line">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-12">
             <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B] bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-200">
@@ -596,8 +892,8 @@ export default function ConferencePage() {
         </Container>
       </section>
 
-      {/* ──────────────── 7. DISCUSSION THEMES (9 CARDS) ──────────────── */}
-      <section id="themes" className="py-16 md:py-24 bg-white border-y border-line">
+      {/* ──────────────── 9. DISCUSSION THEMES (9 CARDS) ──────────────── */}
+      <section id="themes" className="py-16 md:py-24 bg-white border-b border-line">
         <Container>
           <div className="max-w-3xl mb-12">
             <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0E733B] bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-100">
@@ -637,8 +933,99 @@ export default function ConferencePage() {
         </Container>
       </section>
 
-      {/* ──────────────── 8. SPECIAL EXPERIENCES (3 CARDS) ──────────────── */}
-      <section className="py-16 md:py-20 bg-[#F8FAF8]">
+      {/* ──────────────── 10. UNIVERSITY INNOVATION & INVESTMENT CONNECT ──────────────── */}
+      <section id="university-connect" className="py-16 md:py-24 bg-[#0A1A10] text-white relative overflow-hidden">
+        {/* Subtle Ambient Glow */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <Container className="relative z-10">
+          <div className="max-w-3xl mb-12">
+            <span className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-emerald-300 bg-emerald-500/20 border border-emerald-400/30 px-4 py-1.5 rounded-full inline-block mb-3">
+              UNIVERSITY INNOVATION & INVESTMENT CONNECT
+            </span>
+            <h2 className="font-bold font-display text-[32px] md:text-[46px] text-white leading-tight mb-3 tracking-tight">
+              Where Universities Meet Innovation
+            </h2>
+            <p className="text-slate-300 text-[15.5px] leading-relaxed">
+              Bring together universities, founders, EdTech innovators and investors to explore how emerging technologies and entrepreneurial ideas can move from concept to institutional implementation.
+            </p>
+          </div>
+
+          {/* 3 Executive Stakeholder Blocks */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            {universityConnectPillars.map((pillar) => (
+              <div
+                key={pillar.title}
+                className="p-7 rounded-3xl bg-white/[0.07] border border-white/15 backdrop-blur-md hover:bg-white/[0.12] hover:border-emerald-400/40 transition-all duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 flex items-center justify-center">
+                      <pillar.icon className="w-6 h-6" strokeWidth={1.8} />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 bg-emerald-500/20 px-2.5 py-0.5 rounded-full">
+                      {pillar.badge}
+                    </span>
+                  </div>
+
+                  <h3 className="font-bold text-[20px] text-white mb-2 font-display">
+                    {pillar.title}
+                  </h3>
+
+                  <p className="text-[13.5px] text-slate-300 leading-relaxed">
+                    {pillar.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* 4th Block: Potential Collaborations Executive Banner */}
+          <div className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-white/[0.09] via-white/[0.05] to-emerald-950/40 border border-emerald-500/30 backdrop-blur-md">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+              <div className="max-w-xl">
+                <span className="text-xs font-extrabold uppercase tracking-widest text-emerald-300 block mb-2">
+                  AREAS OF ENGAGEMENT
+                </span>
+                <h3 className="font-bold font-display text-[24px] sm:text-[28px] text-white mb-3">
+                  Potential Collaborations & Outcomes
+                </h3>
+                <p className="text-slate-300 text-sm leading-relaxed mb-6">
+                  Facilitating multi-stakeholder agreements, venture acceleration, and applied technology adoption across higher education ecosystems.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {universityCollaborations.map((collab) => (
+                    <div key={collab} className="flex items-center gap-2 text-xs font-semibold text-slate-200">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <span>{collab}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
+                <button
+                  onClick={() => openModal("vendor-register")}
+                  className="px-7 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider text-white bg-[#0E733B] hover:bg-[#0B5C2F] shadow-lg shadow-emerald-900/40 hover:scale-105 transition-all text-center"
+                >
+                  Join University Roundtable →
+                </button>
+                <button
+                  onClick={() => openModal("interest", { vendorName: "University Connect" })}
+                  className="px-7 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider text-slate-200 bg-white/10 hover:bg-white/20 border border-white/20 transition-all text-center"
+                >
+                  Submit Pilot Proposal
+                </button>
+              </div>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* ──────────────── 11. SPECIAL EXPERIENCES (3 CARDS) ──────────────── */}
+      <section className="py-16 md:py-20 bg-[#F8FAF8] border-b border-line">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-10">
             <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B]">
@@ -672,8 +1059,8 @@ export default function ConferencePage() {
         </Container>
       </section>
 
-      {/* ──────────────── 9. WHO SHOULD ATTEND (8 PROFILES) ──────────────── */}
-      <section id="who" className="py-16 md:py-24 bg-white border-y border-line">
+      {/* ──────────────── 12. WHO SHOULD ATTEND (8 PROFILES) ──────────────── */}
+      <section id="who" className="py-16 md:py-24 bg-white border-b border-line">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-12">
             <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B] bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-200">
@@ -703,8 +1090,8 @@ export default function ConferencePage() {
         </Container>
       </section>
 
-      {/* ──────────────── 10. DEDICATED PILLARS: FOR SCHOOLS & FOR INNOVATORS ──────────────── */}
-      <section className="py-16 md:py-24 bg-[#FDFBF7]">
+      {/* ──────────────── 13. DEDICATED PILLARS: FOR SCHOOLS & FOR INNOVATORS ──────────────── */}
+      <section className="py-16 md:py-24 bg-[#FDFBF7] border-b border-line">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
             {/* For Schools */}
@@ -790,40 +1177,286 @@ export default function ConferencePage() {
         </Container>
       </section>
 
-      {/* ──────────────── 11. NETWORKING PARTNERSHIP PIPELINE ──────────────── */}
-      <section className="py-14 md:py-20 bg-white border-y border-line">
+      {/* ──────────────── 14. NETWORKING & CONNECTIONS (FLOW & PIPELINE) ──────────────── */}
+      <section id="networking" className="py-16 md:py-24 bg-white border-b border-line">
         <Container>
-          <div className="text-center max-w-2xl mx-auto mb-8">
-            <h2 className="font-bold font-display text-[28px] md:text-[38px] text-charcoal tracking-tight">
-              Where Conversations Become Connections
+          <div className="max-w-3xl mb-12">
+            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B] bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-200">
+              NETWORKING & CONNECTIONS
+            </span>
+            <h2 className="font-bold font-display text-[32px] md:text-[44px] text-charcoal mt-3 mb-2 tracking-tight">
+              The Best Opportunities Often Begin Between Sessions.
             </h2>
-            <p className="text-slate-500 text-[14px] mt-1">
-              EduBeacon is designed to create meaningful interactions—not just crowded rooms.
+            <p className="text-slate-600 text-[15.5px] leading-relaxed">
+              EduBeacon creates intentional spaces for meaningful conversations, introductions and partnerships beyond the main stage.
             </p>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center justify-center gap-2 sm:gap-3 max-w-4xl mx-auto">
-            {["School Leader", "Conversation", "Startup / Innovator", "Partnership", "Implementation", "Impact"].map((item, idx, arr) => (
-              <div key={item} className="flex items-center gap-2">
-                <div className="px-4 py-2.5 rounded-xl bg-emerald-50 border border-emerald-100 font-bold text-xs text-[#0E733B] text-center whitespace-nowrap shadow-xs">
-                  {item}
+          {/* 4 Connected Flow Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative mb-12">
+            {networkingFlow.map((item, idx) => (
+              <div
+                key={item.title}
+                className="relative p-7 rounded-3xl bg-[#F8FAF8] border border-line hover:border-emerald-300 hover:shadow-lg hover:bg-white transition-all duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 text-[#0E733B] flex items-center justify-center">
+                      <item.icon className="w-6 h-6" strokeWidth={1.8} />
+                    </div>
+                    <span className="text-xs font-black text-slate-300">
+                      STEP {item.step}
+                    </span>
+                  </div>
+
+                  <h3 className="font-bold text-[18px] text-charcoal mb-2 font-display">
+                    {item.title}
+                  </h3>
+
+                  <p className="text-[13px] text-slate-600 leading-relaxed mb-4">
+                    {item.desc}
+                  </p>
                 </div>
-                {idx < arr.length - 1 && (
-                  <ArrowRight className="w-4 h-4 text-emerald-400 rotate-90 md:rotate-0 shrink-0" />
-                )}
+
+                <div className="border-t border-gray-200/60 pt-3 flex items-center gap-1.5 text-[11px] font-semibold text-[#0E733B]">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>{item.timing}</span>
+                </div>
               </div>
             ))}
+          </div>
+
+          {/* Visual Partnership Pipeline Strip */}
+          <div className="p-6 rounded-2xl bg-emerald-50/60 border border-emerald-100 max-w-4xl mx-auto">
+            <p className="text-center text-xs font-bold uppercase tracking-widest text-[#0E733B] mb-4">
+              THE EDUBEACON CONNECTION PIPELINE
+            </p>
+            <div className="flex flex-col md:flex-row items-center justify-center gap-2 sm:gap-3">
+              {["School Leader", "Conversation", "Startup / Innovator", "Partnership", "Implementation", "Impact"].map((item, idx, arr) => (
+                <div key={item} className="flex items-center gap-2">
+                  <div className="px-4 py-2 rounded-xl bg-white border border-emerald-200 font-bold text-xs text-charcoal text-center whitespace-nowrap shadow-2xs">
+                    {item}
+                  </div>
+                  {idx < arr.length - 1 && (
+                    <ArrowRight className="w-4 h-4 text-emerald-500 rotate-90 md:rotate-0 shrink-0" />
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </Container>
       </section>
 
-      {/* ──────────────── 12. VOICES SHAPING THE FUTURE (SPEAKERS RAIL) ──────────────── */}
+      {/* ──────────────── 15. THE EDUBEACON COMMUNITY / PARTICIPANT CREATIVES ──────────────── */}
+      <section id="community-creatives" className="py-16 md:py-24 bg-[#F8FAF8] border-b border-line">
+        <Container>
+          <div className="max-w-3xl mb-12">
+            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B] bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-200">
+              THE EDUBEACON COMMUNITY
+            </span>
+            <h2 className="font-bold font-display text-[32px] md:text-[44px] text-charcoal mt-3 mb-2 tracking-tight">
+              Meet the People Joining the Movement.
+            </h2>
+            <p className="text-slate-600 text-[15.5px] leading-relaxed">
+              Celebrate every participant and make their EduBeacon journey shareable from the moment they register.
+            </p>
+          </div>
+
+          {/* Interactive Creative Generator Preview Experience */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center bg-white rounded-3xl border border-line p-6 sm:p-10 shadow-sm">
+            
+            {/* Left Controls & Flow Explanation */}
+            <div className="lg:col-span-6 space-y-6">
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <button
+                    onClick={() => {
+                      setCreativeTheme("leader");
+                      setPreviewName("Dr. Ananya Sharma");
+                      setPreviewDesignation("Principal & Academic Director");
+                      setPreviewSchool("Heritage International School");
+                    }}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
+                      creativeTheme === "leader"
+                        ? "bg-[#0E733B] text-white shadow-sm"
+                        : "bg-[#F8FAF8] text-slate-700 hover:bg-emerald-50"
+                    }`}
+                  >
+                    Theme 01: School Leaders
+                  </button>
+                  <button
+                    onClick={() => {
+                      setCreativeTheme("teacher");
+                      setPreviewName("Prof. Rajesh Menon");
+                      setPreviewDesignation("Lead STEM Educator & Mentor");
+                      setPreviewSchool("National Progressive Academy");
+                    }}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
+                      creativeTheme === "teacher"
+                        ? "bg-[#0E733B] text-white shadow-sm"
+                        : "bg-[#F8FAF8] text-slate-700 hover:bg-emerald-50"
+                    }`}
+                  >
+                    Theme 02: Teachers & Educators
+                  </button>
+                </div>
+
+                <h3 className="font-bold font-display text-[22px] text-charcoal">
+                  {creativeTheme === "leader" ? "Welcome to EduBeacon" : "Teachers Who Inspire. Ideas That Transform."}
+                </h3>
+                <p className="text-xs text-slate-500 mt-1">
+                  {creativeTheme === "leader" 
+                    ? "Meet the leaders shaping the future of education."
+                    : "Celebrating educators whose ideas and mentorship drive real classroom transformation."}
+                </p>
+              </div>
+
+              {/* 5-Stage Shareable Flow */}
+              <div className="space-y-2.5 bg-[#F8FAF8] p-4 rounded-2xl border border-line">
+                <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#0E733B] block mb-1">
+                  REGISTRATION & CREATIVE FLOW:
+                </span>
+                {[
+                  "1. Complete registration via official delegate form",
+                  "2. Receive instant registration confirmation & delegate ID",
+                  "3. Auto-generate your personalized EduBeacon participant creative",
+                  "4. Live preview with your designation & school logo",
+                  "5. One-click share to LinkedIn, Twitter, WhatsApp or download HD badge",
+                ].map((step) => (
+                  <div key={step} className="flex items-center gap-2 text-xs text-slate-600">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#0E733B] shrink-0" />
+                    <span>{step}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Live Interactive Text Inputs for Testing Badge */}
+              <div className="space-y-3 pt-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
+                      Participant Name
+                    </label>
+                    <input
+                      type="text"
+                      value={previewName}
+                      onChange={(e) => setPreviewName(e.target.value)}
+                      className="w-full px-3.5 py-2 text-xs rounded-xl border border-line bg-white focus:outline-none focus:border-[#0E733B]"
+                      placeholder="e.g. Dr. Ananya Sharma"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
+                      Designation
+                    </label>
+                    <input
+                      type="text"
+                      value={previewDesignation}
+                      onChange={(e) => setPreviewDesignation(e.target.value)}
+                      className="w-full px-3.5 py-2 text-xs rounded-xl border border-line bg-white focus:outline-none focus:border-[#0E733B]"
+                      placeholder="e.g. Principal"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
+                    School / Institution
+                  </label>
+                  <input
+                    type="text"
+                    value={previewSchool}
+                    onChange={(e) => setPreviewSchool(e.target.value)}
+                    className="w-full px-3.5 py-2 text-xs rounded-xl border border-line bg-white focus:outline-none focus:border-[#0E733B]"
+                    placeholder="e.g. Heritage International School"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <button
+                  onClick={() => openModal("school-register")}
+                  className="px-6 py-3 rounded-full font-bold text-xs uppercase tracking-wider text-white bg-[#0E733B] hover:bg-[#0B5C2F] shadow-sm transition-colors"
+                >
+                  Register to Get Your Badge →
+                </button>
+                <button
+                  onClick={handleCopyShare}
+                  className="px-5 py-3 rounded-full font-bold text-xs uppercase tracking-wider text-slate-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors inline-flex items-center gap-1.5"
+                >
+                  <Share2 className="w-3.5 h-3.5 text-[#0E733B]" />
+                  <span>{copiedLink ? "Badge Link Copied!" : "Simulate Social Share"}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Right: Live Participant Creative Visual Badge Preview */}
+            <div className="lg:col-span-6 flex justify-center">
+              <div className="w-full max-w-[360px] sm:max-w-[400px] rounded-3xl bg-gradient-to-br from-[#061A10] via-[#0E733B] to-[#061A10] p-6 text-white shadow-2xl relative overflow-hidden border border-emerald-400/30">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
+                <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none" />
+
+                {/* Badge Top Header */}
+                <div className="relative z-10 flex items-center justify-between border-b border-white/15 pb-4 mb-5">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-sm border border-white/20">
+                      EB
+                    </div>
+                    <div>
+                      <h4 className="font-extrabold text-sm leading-none tracking-tight">EduBeacon 2027</h4>
+                      <span className="text-[9px] text-emerald-300 uppercase tracking-widest font-semibold">National Leadership Summit</span>
+                    </div>
+                  </div>
+                  <span className="text-[9px] font-extrabold uppercase tracking-widest bg-emerald-500/20 text-emerald-300 px-2.5 py-1 rounded-full border border-emerald-400/30">
+                    {creativeTheme === "leader" ? "DELEGATE" : "EDUCATOR"}
+                  </span>
+                </div>
+
+                {/* Creative Headline */}
+                <div className="relative z-10 mb-4">
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-300 block mb-0.5">
+                    {creativeTheme === "leader" ? "CONFIRMED PARTICIPANT" : "INSPIRING EDUCATOR"}
+                  </span>
+                  <h3 className="font-extrabold font-display text-[22px] leading-tight text-white">
+                    {creativeTheme === "leader" ? "Welcome to EduBeacon" : "Teachers Who Inspire. Ideas That Transform."}
+                  </h3>
+                </div>
+
+                {/* Profile Card Center */}
+                <div className="relative z-10 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 mb-5 flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-400 to-teal-200 text-[#061A10] font-black text-xl flex items-center justify-center shrink-0 shadow-md">
+                    {previewName.charAt(0) || "P"}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h5 className="font-extrabold text-base text-white truncate">{previewName || "Participant Name"}</h5>
+                    <p className="text-xs text-emerald-200 truncate">{previewDesignation || "Designation"}</p>
+                    <p className="text-[11px] text-slate-300 truncate mt-0.5 font-medium">{previewSchool || "School Name"}</p>
+                  </div>
+                </div>
+
+                {/* Date & Venue Footer */}
+                <div className="relative z-10 flex items-center justify-between text-[11px] text-slate-200 border-t border-white/15 pt-3">
+                  <span className="flex items-center gap-1 font-bold text-emerald-300">
+                    <Calendar className="w-3.5 h-3.5" /> 15–16 Nov 2027
+                  </span>
+                  <span className="flex items-center gap-1 text-slate-300">
+                    <MapPin className="w-3.5 h-3.5 text-emerald-300" /> Dehradun, India
+                  </span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </Container>
+      </section>
+
+      {/* ──────────────── 16. VOICES SHAPING THE FUTURE (SPEAKERS RAIL) ──────────────── */}
       <div id="speakers">
         <SpeakersSection />
       </div>
 
-      {/* ──────────────── 13. 2-DAY INTERACTIVE AGENDA ──────────────── */}
-      <section id="agenda" className="py-16 md:py-24 bg-[#F8FAF8]">
+      {/* ──────────────── 17. 2-DAY INTERACTIVE AGENDA ──────────────── */}
+      <section id="agenda" className="py-16 md:py-24 bg-[#F8FAF8] border-b border-line">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-10">
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#0E733B] bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-100">
@@ -882,8 +1515,79 @@ export default function ConferencePage() {
         </Container>
       </section>
 
-      {/* ──────────────── 14. SPONSORSHIP PACKAGES & PROSPECTUS ──────────────── */}
-      <section id="sponsorship" className="py-16 md:py-24 bg-white border-y border-line">
+      {/* ──────────────── 18. RECOGNITION & FELICITATION ──────────────── */}
+      <section id="recognition" className="py-16 md:py-24 bg-white border-b border-line">
+        <Container>
+          <div className="max-w-3xl mb-12">
+            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B] bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-200">
+              RECOGNITION & FELICITATION
+            </span>
+            <h2 className="font-bold font-display text-[32px] md:text-[44px] text-charcoal mt-3 mb-2 tracking-tight">
+              Celebrating Participation. Recognising Contribution.
+            </h2>
+            <p className="text-slate-600 text-[15.5px] leading-relaxed">
+              Recognise the schools, educators, innovators, institutions and partners who contribute to the EduBeacon ecosystem.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+            {recognitionCategories.map((cat) => (
+              <div
+                key={cat.title}
+                className="p-7 rounded-3xl bg-[#F8FAF8] border border-emerald-100 shadow-xs hover:border-emerald-300 hover:shadow-lg hover:bg-white transition-all duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 text-[#0E733B] flex items-center justify-center">
+                      <cat.icon className="w-6 h-6" strokeWidth={1.8} />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/60">
+                      {cat.badge}
+                    </span>
+                  </div>
+
+                  <h3 className="font-bold text-[18px] text-charcoal mb-2 font-display">
+                    {cat.title}
+                  </h3>
+
+                  <p className="text-[13px] text-slate-600 leading-relaxed">
+                    {cat.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Recognition Callout Card */}
+          <div className="p-8 rounded-3xl bg-gradient-to-r from-emerald-50 via-[#F8FAF8] to-emerald-50 border border-emerald-200 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="max-w-xl">
+              <h4 className="font-bold font-display text-[20px] text-charcoal mb-1">
+                Nominate Your Institution or Exemplary Educator
+              </h4>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Nominate deserving educators, innovative school programs, or collaborative partnerships for formal summit recognition and felicitation.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3 shrink-0">
+              <button
+                onClick={() => openModal("award-nominate")}
+                className="px-6 py-3 rounded-full font-bold text-xs uppercase tracking-wider text-white bg-[#0E733B] hover:bg-[#0B5C2F] shadow-sm transition-all"
+              >
+                Submit Nomination →
+              </button>
+              <button
+                onClick={() => openModal("school-register")}
+                className="px-6 py-3 rounded-full font-bold text-xs uppercase tracking-wider text-charcoal bg-white border border-line hover:bg-emerald-50 transition-all"
+              >
+                Register Delegates
+              </button>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* ──────────────── 19. SPONSORSHIP PACKAGES & PROSPECTUS ──────────────── */}
+      <section id="sponsorship" className="py-16 md:py-24 bg-[#F8FAF8] border-b border-line">
         <Container>
           <div className="max-w-3xl mx-auto text-center mb-12">
             <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0E733B] bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-200">
@@ -901,7 +1605,7 @@ export default function ConferencePage() {
             {sponsorshipPackages.map((pkg) => (
               <div
                 key={pkg.id}
-                className="relative flex flex-col rounded-3xl border border-line bg-[#F8FAF8] p-6 transition-all duration-300 hover:shadow-xl hover:border-emerald-300 hover:-translate-y-1"
+                className="relative flex flex-col rounded-3xl border border-line bg-white p-6 transition-all duration-300 hover:shadow-xl hover:border-emerald-300 hover:-translate-y-1"
               >
                 {pkg.badge && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
@@ -967,8 +1671,8 @@ export default function ConferencePage() {
         </Container>
       </section>
 
-      {/* ──────────────── 15. DELEGATE PASSES & REGISTRATION TIERS ──────────────── */}
-      <section id="passes" className="py-16 md:py-24 bg-[#F8FAF8]">
+      {/* ──────────────── 20. DELEGATE PASSES & REGISTRATION TIERS ──────────────── */}
+      <section id="passes" className="py-16 md:py-24 bg-white border-b border-line">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-12">
             <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B] bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-200">
@@ -1027,8 +1731,8 @@ export default function ConferencePage() {
         </Container>
       </section>
 
-      {/* ──────────────── 16. TESTIMONIALS (WHAT LEADERS SAY) ──────────────── */}
-      <section id="testimonials" className="py-16 md:py-24 bg-white border-y border-line">
+      {/* ──────────────── 21. TESTIMONIALS (WHAT LEADERS SAY) ──────────────── */}
+      <section id="testimonials" className="py-16 md:py-24 bg-[#F8FAF8] border-b border-line">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-12">
             <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B] bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-200">
@@ -1043,7 +1747,7 @@ export default function ConferencePage() {
             {conferenceTestimonials.map((t) => (
               <div
                 key={t.name}
-                className="p-7 rounded-3xl bg-[#F8FAF8] border border-emerald-100 flex flex-col justify-between shadow-xs hover:border-emerald-300 hover:shadow-md transition-all"
+                className="p-7 rounded-3xl bg-white border border-emerald-100 flex flex-col justify-between shadow-xs hover:border-emerald-300 hover:shadow-md transition-all"
               >
                 <div>
                   <Quote className="w-8 h-8 text-emerald-400 mb-4 opacity-70" />
@@ -1062,7 +1766,7 @@ export default function ConferencePage() {
         </Container>
       </section>
 
-      {/* ──────────────── 17. PREVIOUS EDITIONS TIMELINE ──────────────── */}
+      {/* ──────────────── 22. PREVIOUS EDITIONS TIMELINE ──────────────── */}
       <section id="editions" className="py-14 md:py-20 bg-[#FDFBF7] border-b border-line">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-10">
@@ -1092,7 +1796,7 @@ export default function ConferencePage() {
         </Container>
       </section>
 
-      {/* ──────────────── 18. OFFICIAL VENUE & EMBEDDED LOCATION MAP ──────────────── */}
+      {/* ──────────────── 23. OFFICIAL VENUE & EMBEDDED LOCATION MAP ──────────────── */}
       <section id="venue" className="py-16 md:py-24 bg-white border-b border-line">
         <Container>
           <div className="max-w-3xl mx-auto text-center mb-10">
@@ -1172,8 +1876,8 @@ export default function ConferencePage() {
         </Container>
       </section>
 
-      {/* ──────────────── 19. ACCORDION FAQS (12 FAQS) ──────────────── */}
-      <section id="faqs" className="py-16 md:py-24 bg-[#F8FAF8]">
+      {/* ──────────────── 24. ACCORDION FAQS (12 FAQS) ──────────────── */}
+      <section id="faqs" className="py-16 md:py-24 bg-[#F8FAF8] border-b border-line">
         <Container>
           <div className="text-center max-w-2xl mx-auto mb-12">
             <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B] bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-200">
@@ -1211,7 +1915,7 @@ export default function ConferencePage() {
         </Container>
       </section>
 
-      {/* ──────────────── 20. FINAL EMOTIONAL CTA ──────────────── */}
+      {/* ──────────────── 25. FINAL EMOTIONAL CTA ──────────────── */}
       <section className="py-20 bg-gradient-to-br from-[#061A10] via-[#0A2618] to-[#061A10] text-white text-center relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none opacity-40">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/20 rounded-full blur-3xl" />

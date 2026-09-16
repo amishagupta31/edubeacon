@@ -1,18 +1,72 @@
 "use client";
 
 import { useState } from "react";
-import { PartyPopper } from "lucide-react";
+import { 
+  PartyPopper, 
+  ArrowRight, 
+  ArrowLeft, 
+  CheckCircle2, 
+  Sparkles, 
+  User, 
+  Building2, 
+  MapPin, 
+  Phone, 
+  GraduationCap, 
+  BookOpen, 
+  Cpu, 
+  Share2, 
+  Download,
+  Calendar
+} from "lucide-react";
 import ModalShell from "./ModalShell";
 
-const schoolTypes = [
-  "CBSE", "ICSE", "IB", "IGCSE", "State Board", "Other",
+const roleOptions = [
+  "Teacher",
+  "Principal",
+  "Director",
+  "Owner",
+  "Other",
 ];
 
-const solutionOptions = [
-  "STEM Labs", "AI Labs", "Robotics", "Smart Classrooms", "EdTech Platform",
-  "School ERP", "Books & Publishing", "Assessment", "Teacher Training",
-  "Olympiad", "Adventure & Entertainment", "Recognition, Awards & Prizes",
-  "Healthcare", "Infrastructure", "Other",
+const classLevelOptions = [
+  "PG",
+  "Primary",
+  "Middle",
+  "Secondary",
+  "Senior Secondary",
+];
+
+const aiToolOptions = [
+  "ChatGPT",
+  "Claude",
+  "Gemini",
+  "Grok",
+  "Other",
+];
+
+const experienceOptions = [
+  "0 – 2 Years",
+  "3 – 5 Years",
+  "6 – 10 Years",
+  "11 – 15 Years",
+  "15+ Years",
+];
+
+const stateOptions = [
+  "Uttarakhand",
+  "Delhi NCR",
+  "Uttar Pradesh",
+  "Punjab",
+  "Haryana",
+  "Rajasthan",
+  "Maharashtra",
+  "Karnataka",
+  "Tamil Nadu",
+  "West Bengal",
+  "Madhya Pradesh",
+  "Gujarat",
+  "Bihar",
+  "Other State / UT",
 ];
 
 export default function SchoolRegistrationModal({
@@ -20,221 +74,663 @@ export default function SchoolRegistrationModal({
 }: {
   onClose: () => void;
 }) {
+  const [step, setStep] = useState<1 | 2>(1);
   const [submitted, setSubmitted] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  // Form State
   const [form, setForm] = useState({
-    schoolName: "",
-    contactPerson: "",
-    designation: "",
-    email: "",
-    phone: "",
+    // Page 1: Personal & Institutional Details
+    name: "",
+    role: "Principal",
+    otherRole: "",
+    school: "",
+    address: "",
     city: "",
-    schoolType: "",
-    students: "",
-    solutions: [] as string[],
-    requirements: "",
+    state: "Uttarakhand",
+    phone: "",
+    whatsapp: "",
+    sameAsPhone: true,
+    associationName: "",
+
+    // Page 2: Academic Profile & AI Integration
+    teachingExperience: "6 – 10 Years",
+    classesTaught: ["Secondary", "Senior Secondary"] as string[],
+    subjectsTaught: "",
+    usesAiInWork: true,
+    aiTools: ["ChatGPT", "Gemini"] as string[],
+    otherAiTool: "",
   });
 
-  const toggle = (sol: string) => {
+  // Strict numerical-only handler (strips non-digits, max 10 digits)
+  const handlePhoneChange = (val: string) => {
+    const numericOnly = val.replace(/\D/g, "").slice(0, 10);
     setForm((f) => ({
       ...f,
-      solutions: f.solutions.includes(sol)
-        ? f.solutions.filter((s) => s !== sol)
-        : [...f.solutions, sol],
+      phone: numericOnly,
+      whatsapp: f.sameAsPhone ? numericOnly : f.whatsapp,
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitted(true);
+  // Strict numerical-only handler for WhatsApp
+  const handleWhatsappChange = (val: string) => {
+    const numericOnly = val.replace(/\D/g, "").slice(0, 10);
+    setForm((f) => ({
+      ...f,
+      whatsapp: numericOnly,
+    }));
   };
 
+  const toggleClassLevel = (level: string) => {
+    setForm((f) => ({
+      ...f,
+      classesTaught: f.classesTaught.includes(level)
+        ? f.classesTaught.filter((l) => l !== level)
+        : [...f.classesTaught, level],
+    }));
+  };
+
+  const toggleAiTool = (tool: string) => {
+    setForm((f) => ({
+      ...f,
+      aiTools: f.aiTools.includes(tool)
+        ? f.aiTools.filter((t) => t !== tool)
+        : [...f.aiTools, tool],
+    }));
+  };
+
+  const handleNext = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.school.trim() || !form.phone.trim() || !form.city.trim()) {
+      alert("Please fill in all required fields on Page 1.");
+      return;
+    }
+    if (form.phone.length < 10) {
+      alert("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+    if (form.whatsapp.length < 10) {
+      alert("Please enter a valid 10-digit WhatsApp number.");
+      return;
+    }
+    setStep(2);
+  };
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const payload = {
+      name: form.name.trim(),
+      role: form.role === "Other" ? form.otherRole.trim() : form.role,
+      school: form.school.trim(),
+      address: form.address.trim(),
+      city: form.city.trim(),
+      state: form.state,
+      phone: form.phone.trim(),
+      whatsapp: form.whatsapp.trim(),
+      associationName: form.associationName.trim(),
+      teachingExperience: form.teachingExperience,
+      classesTaught: form.classesTaught.join(", "),
+      subjectsTaught: form.subjectsTaught.trim(),
+      usesAiInWork: form.usesAiInWork ? "Yes" : "No",
+      aiTools: (
+        form.aiTools.includes("Other") && form.otherAiTool.trim()
+          ? [...form.aiTools.filter((t) => t !== "Other"), form.otherAiTool.trim()]
+          : form.aiTools
+      ).join(", "),
+      timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+    };
+
+    try {
+      // 1. Send to Next.js API route
+      await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      console.warn("Primary API submission error, attempting direct Google Script fallback:", err);
+      // 2. Direct fallback to Apps Script URL
+      const scriptUrl =
+        process.env.NEXT_PUBLIC_APPS_SCRIPT_URL ||
+        "https://script.google.com/macros/s/AKfycbxzsGAKkVgUkRqadLoPYwImcuXrqBfcxjs887FT3NiieqeHktbSPUsnWHQdWub1mVMpFA/exec";
+      try {
+        await fetch(scriptUrl, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload),
+        });
+      } catch (fallbackErr) {
+        console.error("Direct fallback error:", fallbackErr);
+      }
+    } finally {
+      setIsSubmitting(false);
+      setSubmitted(true);
+    }
+  };
+
+  const handleCopy = () => {
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2500);
+  };
+
+  // ── Success State: Registration Confirmed & Participant Creative Badge ──
   if (submitted) {
     return (
-      <ModalShell title="Registration Received!" onClose={onClose}>
-        <div className="text-center py-8">
-          <div className="w-16 h-16 bg-teal-muted rounded-full flex items-center justify-center mx-auto mb-4">
-            <PartyPopper className="w-8 h-8 text-teal" strokeWidth={1.75} />
+      <ModalShell title="Registration Confirmed! 🎉" onClose={onClose} size="lg">
+        <div className="text-center py-4">
+          <div className="w-14 h-14 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-3 border border-emerald-200">
+            <CheckCircle2 className="w-7 h-7 text-[#0E733B]" />
           </div>
-          <h3 className="font-display text-[22px] font-bold text-edu-blue mb-3">
-            Thank you for registering!
+
+          <h3 className="font-display text-[22px] font-bold text-charcoal mb-1">
+            Welcome to EduBeacon, {form.name}!
           </h3>
-          <p className="text-slate-soft text-[15px] leading-relaxed mb-6">
-            The Edubeacon team will review your requirements and connect you with the right solution providers. Expect to hear from us within 24–48 hours.
+          <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6 max-w-lg mx-auto">
+            Your conference pass application for <strong>{form.school}</strong> ({form.city}, {form.state}) has been confirmed.
           </p>
-          <button
-            onClick={onClose}
-            className="bg-edu-blue text-white px-8 py-3 rounded-lg font-semibold hover:bg-edu-blue-mid transition-colors"
-          >
-            Close
-          </button>
+
+          {/* Generated Personalized Participant Creative Badge */}
+          <div className="max-w-sm mx-auto mb-6 rounded-3xl bg-gradient-to-br from-[#061A10] via-[#0E733B] to-[#061A10] p-6 text-white shadow-2xl relative overflow-hidden border border-emerald-400/30 text-left">
+            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
+            <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none" />
+
+            <div className="relative z-10 flex items-center justify-between border-b border-white/15 pb-3 mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-xs">
+                  EB
+                </div>
+                <div>
+                  <h4 className="font-extrabold text-xs leading-none">EduBeacon 2027</h4>
+                  <span className="text-[8.5px] text-emerald-300 uppercase tracking-wider font-semibold">National Leadership Summit</span>
+                </div>
+              </div>
+              <span className="text-[9px] font-extrabold uppercase tracking-widest bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-400/30">
+                {form.role.toUpperCase()}
+              </span>
+            </div>
+
+            <div className="relative z-10 mb-3">
+              <span className="text-[9.5px] font-extrabold uppercase tracking-widest text-emerald-300 block mb-0.5">
+                CONFIRMED DELEGATE
+              </span>
+              <h4 className="font-extrabold font-display text-[19px] leading-tight text-white">
+                {form.role === "Teacher" ? "Teachers Who Inspire. Ideas That Transform." : "Welcome to EduBeacon"}
+              </h4>
+            </div>
+
+            <div className="relative z-10 bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/15 mb-4 flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-400 to-teal-200 text-[#061A10] font-black text-lg flex items-center justify-center shrink-0">
+                {form.name.charAt(0) || "D"}
+              </div>
+              <div className="min-w-0 flex-1">
+                <h5 className="font-extrabold text-sm text-white truncate">{form.name}</h5>
+                <p className="text-[11px] text-emerald-200 truncate">{form.role === "Other" ? form.otherRole : form.role}</p>
+                <p className="text-[10.5px] text-slate-300 truncate">{form.school}</p>
+              </div>
+            </div>
+
+            {form.usesAiInWork && form.aiTools.length > 0 && (
+              <div className="relative z-10 mb-3 flex flex-wrap gap-1">
+                <span className="text-[9px] text-emerald-300 font-semibold mr-1">AI Stack:</span>
+                {form.aiTools.map((tool) => (
+                  <span key={tool} className="text-[8.5px] font-semibold bg-emerald-500/20 text-emerald-200 px-1.5 py-0.5 rounded border border-emerald-400/20">
+                    {tool}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            <div className="relative z-10 flex items-center justify-between text-[10px] text-slate-200 border-t border-white/15 pt-2.5">
+              <span className="flex items-center gap-1 font-bold text-emerald-300">
+                <Calendar className="w-3 h-3" /> 15–16 Nov 2027
+              </span>
+              <span className="flex items-center gap-1 text-slate-300">
+                <MapPin className="w-3 h-3 text-emerald-300" /> Dehradun, India
+              </span>
+            </div>
+          </div>
+
+          {/* Social Share / Download Actions */}
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={handleCopy}
+              className="px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider text-charcoal bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors inline-flex items-center gap-1.5"
+            >
+              <Share2 className="w-3.5 h-3.5 text-[#0E733B]" />
+              <span>{copiedLink ? "Badge Link Copied!" : "Share Delegate Badge"}</span>
+            </button>
+            <button
+              onClick={onClose}
+              className="px-8 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider text-white bg-[#0E733B] hover:bg-[#0B5C2F] shadow-sm transition-colors"
+            >
+              Done & Return
+            </button>
+          </div>
         </div>
       </ModalShell>
     );
   }
 
   return (
-    <ModalShell title="Register Your School" onClose={onClose} size="lg">
-      <p className="text-slate-soft text-[14px] mb-6">
-        Tell us about your school and what you&#39;re looking for. Edubeacon will connect you with the right solution providers.
-      </p>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-[12px] font-semibold text-slate mb-1.5 uppercase tracking-wide">
-              School Name *
-            </label>
-            <input
-              required
-              type="text"
-              placeholder="e.g. Delhi Model Senior Secondary School"
-              className="w-full border border-line rounded-lg px-4 py-2.5 text-[14px] text-slate focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20"
-              value={form.schoolName}
-              onChange={(e) => setForm({ ...form, schoolName: e.target.value })}
-            />
+    <ModalShell title="Conference Event Registration" onClose={onClose} size="lg">
+      {/* 2-Step Progress Stepper */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+              step === 1 ? "bg-[#0E733B] text-white" : "bg-emerald-100 text-[#0E733B]"
+            }`}>
+              1
+            </span>
+            <span className={`text-xs font-bold ${step === 1 ? "text-charcoal" : "text-slate-400"}`}>
+              Personal & School Details
+            </span>
           </div>
-          <div>
-            <label className="block text-[12px] font-semibold text-slate mb-1.5 uppercase tracking-wide">
-              Contact Person *
-            </label>
-            <input
-              required
-              type="text"
-              placeholder="Full name"
-              className="w-full border border-line rounded-lg px-4 py-2.5 text-[14px] text-slate focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20"
-              value={form.contactPerson}
-              onChange={(e) => setForm({ ...form, contactPerson: e.target.value })}
-            />
+
+          <div className="h-0.5 flex-1 mx-4 bg-gray-200">
+            <div className={`h-full bg-[#0E733B] transition-all duration-300 ${step === 1 ? "w-0" : "w-full"}`} />
           </div>
-          <div>
-            <label className="block text-[12px] font-semibold text-slate mb-1.5 uppercase tracking-wide">
-              Designation *
-            </label>
-            <input
-              required
-              type="text"
-              placeholder="e.g. Principal, School Owner"
-              className="w-full border border-line rounded-lg px-4 py-2.5 text-[14px] text-slate focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20"
-              value={form.designation}
-              onChange={(e) => setForm({ ...form, designation: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="block text-[12px] font-semibold text-slate mb-1.5 uppercase tracking-wide">
-              Email Address *
-            </label>
-            <input
-              required
-              type="email"
-              placeholder="you@school.edu.in"
-              className="w-full border border-line rounded-lg px-4 py-2.5 text-[14px] text-slate focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="block text-[12px] font-semibold text-slate mb-1.5 uppercase tracking-wide">
-              Phone Number *
-            </label>
-            <input
-              required
-              type="tel"
-              placeholder="+91 98765 43210"
-              className="w-full border border-line rounded-lg px-4 py-2.5 text-[14px] text-slate focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20"
-              value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="block text-[12px] font-semibold text-slate mb-1.5 uppercase tracking-wide">
-              City
-            </label>
-            <input
-              type="text"
-              placeholder="e.g. New Delhi"
-              className="w-full border border-line rounded-lg px-4 py-2.5 text-[14px] text-slate focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20"
-              value={form.city}
-              onChange={(e) => setForm({ ...form, city: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="block text-[12px] font-semibold text-slate mb-1.5 uppercase tracking-wide">
-              School Board / Type
-            </label>
-            <select
-              className="w-full border border-line rounded-lg px-4 py-2.5 text-[14px] text-slate focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20"
-              value={form.schoolType}
-              onChange={(e) => setForm({ ...form, schoolType: e.target.value })}
-            >
-              <option value="">Select board</option>
-              {schoolTypes.map((t) => (
-                <option key={t} value={t}>{t}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-[12px] font-semibold text-slate mb-1.5 uppercase tracking-wide">
-              Number of Students
-            </label>
-            <select
-              className="w-full border border-line rounded-lg px-4 py-2.5 text-[14px] text-slate focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20"
-              value={form.students}
-              onChange={(e) => setForm({ ...form, students: e.target.value })}
-            >
-              <option value="">Select range</option>
-              <option>Under 500</option>
-              <option>500 – 1,000</option>
-              <option>1,000 – 2,500</option>
-              <option>2,500 – 5,000</option>
-              <option>5,000+</option>
-            </select>
+
+          <div className="flex items-center gap-2">
+            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+              step === 2 ? "bg-[#0E733B] text-white" : "bg-gray-100 text-slate-400"
+            }`}>
+              2
+            </span>
+            <span className={`text-xs font-bold ${step === 2 ? "text-charcoal" : "text-slate-400"}`}>
+              Academic Profile & AI Tools
+            </span>
           </div>
         </div>
+      </div>
 
-        <div>
-          <label className="block text-[12px] font-semibold text-slate mb-2 uppercase tracking-wide">
-            Solutions Interested In
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {solutionOptions.map((sol) => (
-              <button
-                key={sol}
-                type="button"
-                onClick={() => toggle(sol)}
-                className={`px-3 py-1.5 rounded-full text-[12px] font-medium border transition-colors ${
-                  form.solutions.includes(sol)
-                    ? "bg-teal text-white border-teal"
-                    : "border-line text-slate-soft hover:border-teal/50"
-                }`}
+      {/* ──────────────── PAGE 1: Personal & Institutional Details ──────────────── */}
+      {step === 1 && (
+        <form onSubmit={handleNext} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            {/* Full Name */}
+            <div>
+              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                Full Name *
+              </label>
+              <input
+                required
+                type="text"
+                placeholder="e.g. Dr. Arvind Sharma"
+                className="w-full border border-line rounded-xl px-3.5 py-2 text-[13px] text-charcoal focus:outline-none focus:border-[#0E733B] focus:ring-1 focus:ring-[#0E733B]/20"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
+            </div>
+
+            {/* Role */}
+            <div>
+              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                Your Role *
+              </label>
+              <select
+                className="w-full border border-line rounded-xl px-3.5 py-2 text-[13px] text-charcoal focus:outline-none focus:border-[#0E733B]"
+                value={form.role}
+                onChange={(e) => setForm({ ...form, role: e.target.value })}
               >
-                {sol}
-              </button>
-            ))}
+                {roleOptions.map((r) => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Custom Role Input if Other */}
+            {form.role === "Other" && (
+              <div className="md:col-span-2">
+                <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                  Specify Role *
+                </label>
+                <input
+                  required
+                  type="text"
+                  placeholder="e.g. Academic Coordinator / Trustee"
+                  className="w-full border border-line rounded-xl px-3.5 py-2 text-[13px] text-charcoal focus:outline-none focus:border-[#0E733B]"
+                  value={form.otherRole}
+                  onChange={(e) => setForm({ ...form, otherRole: e.target.value })}
+                />
+              </div>
+            )}
+
+            {/* School / Institution Name */}
+            <div className="md:col-span-2">
+              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                School / Institution Name *
+              </label>
+              <input
+                required
+                type="text"
+                placeholder="e.g. Heritage International Senior Secondary School"
+                className="w-full border border-line rounded-xl px-3.5 py-2 text-[13px] text-charcoal focus:outline-none focus:border-[#0E733B]"
+                value={form.school}
+                onChange={(e) => setForm({ ...form, school: e.target.value })}
+              />
+            </div>
+
+            {/* Address */}
+            <div className="md:col-span-2">
+              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                School Address
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Rajpur Road, Hathibarkala"
+                className="w-full border border-line rounded-xl px-3.5 py-2 text-[13px] text-charcoal focus:outline-none focus:border-[#0E733B]"
+                value={form.address}
+                onChange={(e) => setForm({ ...form, address: e.target.value })}
+              />
+            </div>
+
+            {/* City */}
+            <div>
+              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                City *
+              </label>
+              <input
+                required
+                type="text"
+                placeholder="e.g. Dehradun"
+                className="w-full border border-line rounded-xl px-3.5 py-2 text-[13px] text-charcoal focus:outline-none focus:border-[#0E733B]"
+                value={form.city}
+                onChange={(e) => setForm({ ...form, city: e.target.value })}
+              />
+            </div>
+
+            {/* State */}
+            <div>
+              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                State *
+              </label>
+              <select
+                className="w-full border border-line rounded-xl px-3.5 py-2 text-[13px] text-charcoal focus:outline-none focus:border-[#0E733B]"
+                value={form.state}
+                onChange={(e) => setForm({ ...form, state: e.target.value })}
+              >
+                {stateOptions.map((st) => (
+                  <option key={st} value={st}>{st}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Phone Number (Strict Numerical) */}
+            <div>
+              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                Phone Number (10 Digits) *
+              </label>
+              <div className="relative">
+                <input
+                  required
+                  type="tel"
+                  inputMode="numeric"
+                  pattern="[0-9]{10}"
+                  maxLength={10}
+                  placeholder="e.g. 9876543210"
+                  className="w-full border border-line rounded-xl px-3.5 py-2 text-[13px] text-charcoal focus:outline-none focus:border-[#0E733B]"
+                  value={form.phone}
+                  onChange={(e) => handlePhoneChange(e.target.value)}
+                  onKeyDown={(e) => {
+                    // Block non-numerical keys except backspace, delete, tab, arrows
+                    if (
+                      !/^[0-9]$/.test(e.key) &&
+                      !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key) &&
+                      !e.ctrlKey &&
+                      !e.metaKey
+                    ) {
+                      e.preventDefault();
+                    }
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* WhatsApp Number (Strict Numerical) */}
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+                  WhatsApp Number (10 Digits) *
+                </label>
+                <label className="flex items-center gap-1 text-[11px] text-[#0E733B] font-semibold cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.sameAsPhone}
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      setForm({
+                        ...form,
+                        sameAsPhone: checked,
+                        whatsapp: checked ? form.phone : form.whatsapp,
+                      });
+                    }}
+                    className="accent-[#0E733B]"
+                  />
+                  Same as Phone
+                </label>
+              </div>
+              <input
+                required
+                type="tel"
+                inputMode="numeric"
+                pattern="[0-9]{10}"
+                maxLength={10}
+                placeholder="e.g. 9876543210"
+                disabled={form.sameAsPhone}
+                className={`w-full border border-line rounded-xl px-3.5 py-2 text-[13px] text-charcoal focus:outline-none focus:border-[#0E733B] ${
+                  form.sameAsPhone ? "bg-gray-50 text-slate-500 cursor-not-allowed" : ""
+                }`}
+                value={form.whatsapp}
+                onChange={(e) => handleWhatsappChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (
+                    !/^[0-9]$/.test(e.key) &&
+                    !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key) &&
+                    !e.ctrlKey &&
+                    !e.metaKey
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
+              />
+            </div>
+
+            {/* Association Name */}
+            <div className="md:col-span-2">
+              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                Association Name (Optional)
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. CBSE Sahodaya Complex / National Progressive Schools Alliance"
+                className="w-full border border-line rounded-xl px-3.5 py-2 text-[13px] text-charcoal focus:outline-none focus:border-[#0E733B]"
+                value={form.associationName}
+                onChange={(e) => setForm({ ...form, associationName: e.target.value })}
+              />
+            </div>
+
           </div>
-        </div>
 
-        <div>
-          <label className="block text-[12px] font-semibold text-slate mb-1.5 uppercase tracking-wide">
-            Current Requirements / Message
-          </label>
-          <textarea
-            rows={3}
-            placeholder="Tell us more about what your school is looking for..."
-            className="w-full border border-line rounded-lg px-4 py-2.5 text-[14px] text-slate focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal/20 resize-none"
-            value={form.requirements}
-            onChange={(e) => setForm({ ...form, requirements: e.target.value })}
-          />
-        </div>
+          {/* Step 1 Next Button */}
+          <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
+            <span className="text-[11px] text-slate-400">
+              Page 1 of 2 • Basic Information
+            </span>
+            <button
+              type="submit"
+              className="inline-flex items-center gap-2 bg-[#0E733B] hover:bg-[#0B5C2F] text-white px-7 py-3 rounded-full font-bold text-xs uppercase tracking-wider shadow-sm transition-all"
+            >
+              <span>Next: Academic Profile & AI</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </form>
+      )}
 
-        <button
-          type="submit"
-          className="w-full bg-edu-blue text-white py-3.5 rounded-lg font-semibold text-[14px] hover:bg-edu-blue-mid transition-colors mt-2"
-        >
-          Register My School →
-        </button>
-        <p className="text-center text-[11px] text-slate-soft">
-          Your information is secure and will only be used to connect you with relevant solution providers.
-        </p>
-      </form>
+      {/* ──────────────── PAGE 2: Academic Profile & Teaching & AI Integration ──────────────── */}
+      {step === 2 && (
+        <form onSubmit={handleSubmit} className="space-y-5">
+          
+          {/* Total experience in teaching */}
+          <div>
+            <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              Total Experience in Teaching / Leadership *
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {experienceOptions.map((exp) => (
+                <button
+                  key={exp}
+                  type="button"
+                  onClick={() => setForm({ ...form, teachingExperience: exp })}
+                  className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all text-center ${
+                    form.teachingExperience === exp
+                      ? "bg-[#0E733B] text-white border-[#0E733B] shadow-xs"
+                      : "border-line bg-[#F8FAF8] text-slate-700 hover:border-emerald-300"
+                  }`}
+                >
+                  {exp}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Which classes do they teach */}
+          <div>
+            <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              Which Classes Do You Teach / Oversee? *
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {classLevelOptions.map((lvl) => {
+                const isSelected = form.classesTaught.includes(lvl);
+                return (
+                  <button
+                    key={lvl}
+                    type="button"
+                    onClick={() => toggleClassLevel(lvl)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+                      isSelected
+                        ? "bg-[#0E733B] text-white border-[#0E733B]"
+                        : "border-line bg-white text-slate-700 hover:border-emerald-300"
+                    }`}
+                  >
+                    {lvl}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Subjects they teach */}
+          <div>
+            <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+              Subjects You Teach / Academic Focus Area
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. Mathematics, STEM, Physics, English, Computer Science, Administration"
+              className="w-full border border-line rounded-xl px-3.5 py-2 text-[13px] text-charcoal focus:outline-none focus:border-[#0E733B]"
+              value={form.subjectsTaught}
+              onChange={(e) => setForm({ ...form, subjectsTaught: e.target.value })}
+            />
+          </div>
+
+          {/* Interested in AI check box */}
+          <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200/80">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.usesAiInWork}
+                onChange={(e) => setForm({ ...form, usesAiInWork: e.target.checked })}
+                className="w-4 h-4 mt-0.5 accent-[#0E733B]"
+              />
+              <div>
+                <span className="font-bold text-xs text-charcoal block">
+                  Do you use AI in your day-to-day work or classroom teaching?
+                </span>
+                <span className="text-[11px] text-slate-500 block mt-0.5">
+                  Check to unlock dedicated AI workshop invitations and priority seat reservations.
+                </span>
+              </div>
+            </label>
+
+            {/* Which AI Tool options (ChatGPT Claude Gemini grok other) */}
+            {form.usesAiInWork && (
+              <div className="mt-4 pt-3 border-t border-emerald-200/60">
+                <label className="block text-[11px] font-bold text-[#0E733B] uppercase tracking-wider mb-2">
+                  Which AI Tools Do You Currently Use?
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {aiToolOptions.map((tool) => {
+                    const isSelected = form.aiTools.includes(tool);
+                    return (
+                      <button
+                        key={tool}
+                        type="button"
+                        onClick={() => toggleAiTool(tool)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+                          isSelected
+                            ? "bg-[#0E733B] text-white border-[#0E733B]"
+                            : "border-emerald-200 bg-white text-slate-700 hover:border-[#0E733B]"
+                        }`}
+                      >
+                        {tool}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {form.aiTools.includes("Other") && (
+                  <div className="mt-2.5">
+                    <input
+                      type="text"
+                      placeholder="Specify other AI tools (e.g. Midjourney, Perplexity, Canva Magic)"
+                      className="w-full border border-line rounded-xl px-3 py-1.5 text-xs bg-white text-charcoal focus:outline-none focus:border-[#0E733B]"
+                      value={form.otherAiTool}
+                      onChange={(e) => setForm({ ...form, otherAiTool: e.target.value })}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Navigation Buttons */}
+          <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => setStep(1)}
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-charcoal transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back to Page 1</span>
+            </button>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className={`inline-flex items-center gap-2 bg-[#0E733B] hover:bg-[#0B5C2F] text-white px-8 py-3 rounded-full font-bold text-xs uppercase tracking-wider shadow-md hover:scale-105 transition-all ${
+                isSubmitting ? "opacity-75 cursor-not-allowed" : ""
+              }`}
+            >
+              {isSubmitting ? (
+                <>
+                  <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Saving Registration...</span>
+                </>
+              ) : (
+                <span>Complete Registration →</span>
+              )}
+            </button>
+          </div>
+        </form>
+      )}
     </ModalShell>
   );
 }

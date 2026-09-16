@@ -100,8 +100,8 @@ export default function Hero() {
           <div className="absolute -top-5 -left-4 sm:-top-7 sm:-left-6 w-20 sm:w-26 h-20 sm:h-26 border-t-[5px] sm:border-t-[7px] border-l-[5px] sm:border-l-[7px] border-transparent rounded-tl-2xl pointer-events-none [border-image:linear-gradient(to_bottom_right,#34D399,#0E733B)_1]" />
           <div className="absolute -bottom-5 -right-4 sm:-bottom-7 sm:-right-6 w-18 sm:w-24 h-18 sm:h-24 border-b-[5px] sm:border-b-[6px] border-r-[5px] sm:border-r-[6px] border-transparent rounded-br-2xl pointer-events-none [border-image:linear-gradient(to_top_left,#10B981,#059669)_1]" />
 
-          {/* Main Card Shell */}
-          <div className="relative rounded-2xl sm:rounded-3xl bg-[#061A10]/90 border border-emerald-500/30 px-5 sm:px-9 py-7 sm:py-9 shadow-2xl backdrop-blur-xl">
+          {/* Main Card Shell with Glassmorphism */}
+          <div className="relative rounded-2xl sm:rounded-3xl bg-[#061A10]/60 border border-emerald-400/30 px-5 sm:px-9 py-7 sm:py-9 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.15)] backdrop-blur-2xl backdrop-saturate-150">
             
             {/* Center Brand Badge */}
             <div className="flex items-center justify-center gap-2 mb-2.5">

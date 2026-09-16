@@ -219,6 +219,24 @@ export interface Vendor {
 
 export const featuredVendors: Vendor[] = [
   {
+    id: "v-deep-connection",
+    name: "Deep Connection",
+    category: "EdTech Platforms",
+    description:
+      "A focused education innovation platform bringing next-generation learning solutions closer to schools, institutions, and education decision-makers.",
+    featured: true,
+    tagline: "Connecting Innovation With Institutions",
+  },
+  {
+    id: "v-igo",
+    name: "India Genius Olympiad",
+    category: "Olympiad",
+    description:
+      "Premier national-level academic olympiads and talent search competitions fostering analytical thinking, problem solving, and excellence in K-12 students.",
+    featured: true,
+    tagline: "Inspiring Academic Excellence",
+  },
+  {
     id: "v1",
     name: "NovaStem India",
     category: "STEM Labs",
