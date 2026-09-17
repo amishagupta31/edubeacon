@@ -25,7 +25,6 @@ export default function Hero() {
     const reduced = prefersReducedMotion();
 
     const ctx = gsap.context(() => {
-      if (!cardRef.current) return;
       if (reduced) {
         gsap.set(cardRef.current, {
           opacity: 1,

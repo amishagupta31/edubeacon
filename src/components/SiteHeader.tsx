@@ -97,13 +97,6 @@ export default function SiteHeader() {
       } else {
         router.push(href);
       }
-    } else if (href.startsWith("/events/conference#")) {
-      const id = href.replace("/events/conference#", "");
-      if (pathname === "/events/conference") {
-        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-      } else {
-        router.push(href);
-      }
     } else {
       router.push(href);
     }
@@ -237,7 +230,7 @@ export default function SiteHeader() {
           </div>
 
           <button
-            onClick={() => handleNavClick("/events/conference#speakers")}
+            onClick={() => handleNavClick("/#speakers")}
             className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
           >
             Speakers
@@ -408,7 +401,7 @@ export default function SiteHeader() {
             </div>
 
             <button
-              onClick={() => handleNavClick("/events/conference#speakers")}
+              onClick={() => handleNavClick("/#speakers")}
               className="rounded-lg px-3 py-2 text-[14px] font-medium text-slate text-left hover:bg-emerald-50 hover:text-[#0E733B]"
             >
               Speakers

@@ -1629,10 +1629,10 @@ export default function ConferencePage() {
                 </div>
 
                 <button
-                  onClick={() => openModal("sponsor-register", { packageId: pkg.id, packageName: pkg.name })}
-                  className="w-full text-center py-3 rounded-full font-bold text-xs uppercase tracking-wider bg-[#0E733B] hover:bg-[#0B5C2F] text-white shadow-sm transition-all hover:scale-[1.02]"
+                  onClick={() => openModal("vendor-register")}
+                  className="w-full text-center py-3 rounded-full font-bold text-xs uppercase tracking-wider bg-[#0E733B] hover:bg-[#0B5C2F] text-white shadow-sm transition-colors"
                 >
-                  Register as {pkg.name.replace(" Partner", "")} →
+                  Inquire Package →
                 </button>
               </div>
             ))}
@@ -1644,28 +1644,6 @@ export default function ConferencePage() {
               className="text-xs font-bold text-[#0E733B] hover:underline"
             >
               {compareOpen ? "Hide" : "Compare"} All Deliverables ↓
-            </button>
-          </div>
-
-          {/* Quick Sponsor Registration & Custom Inquiries Banner */}
-          <div className="mt-10 bg-gradient-to-r from-[#064E3B] via-[#0E733B] to-[#059669] rounded-3xl p-6 sm:p-8 text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="space-y-2 text-center md:text-left">
-              <div className="inline-flex items-center gap-2 bg-white/15 px-3 py-1 rounded-full text-xs font-semibold text-emerald-200">
-                <Sparkles className="w-3.5 h-3.5 text-emerald-300" />
-                <span>Direct Sponsor & Exhibitor Onboarding</span>
-              </div>
-              <h3 className="text-xl sm:text-2xl font-bold tracking-tight">
-                Register Your Brand as an Official Sponsor
-              </h3>
-              <p className="text-emerald-100/80 text-xs sm:text-sm max-w-xl">
-                Lock in your exhibition booth, keynote slot, and guaranteed 1-on-1 meetings with 1,200+ school leaders & trustees.
-              </p>
-            </div>
-            <button
-              onClick={() => openModal("sponsor-register", { packageId: "gold" })}
-              className="shrink-0 bg-white text-[#0E733B] hover:bg-emerald-50 px-7 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider shadow-md transition-all hover:scale-105"
-            >
-              Register as Sponsor →
             </button>
           </div>
 
