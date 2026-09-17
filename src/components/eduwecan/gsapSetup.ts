@@ -15,16 +15,19 @@ let registered = false;
  */
 export function ensureGsapRegistered() {
   if (registered || typeof window === "undefined") return;
-  gsap.registerPlugin(ScrollTrigger, CustomEase);
-  CustomEase.create("ewcEntrance", "0.22, 1, 0.36, 1"); // Premium Entrance
-  CustomEase.create("ewcInteraction", "0.16, 1, 0.3, 1"); // Smooth Fast Interaction
-  CustomEase.create("ewcCinematic", "0.76, 0, 0.24, 1"); // Cinematic Reveal
+  try {
+    gsap.registerPlugin(ScrollTrigger, CustomEase);
+    CustomEase.create("ewcEntrance", "0.22, 1, 0.36, 1");
+    CustomEase.create("ewcInteraction", "0.16, 1, 0.3, 1");
+    CustomEase.create("ewcCinematic", "0.76, 0, 0.24, 1");
+  } catch (e) {
+    console.warn("GSAP CustomEase registration notice:", e);
+  }
   registered = true;
 }
 
-/** useLayoutEffect on the client, a no-op-safe useEffect during SSR. */
-export const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+/** useEffect on the client for safe DOM and ScrollTrigger lifecycle. */
+export const useIsomorphicLayoutEffect = useEffect;
 
 export function prefersReducedMotion(): boolean {
   if (typeof window === "undefined") return false;

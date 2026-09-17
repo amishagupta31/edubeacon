@@ -16,8 +16,8 @@ export default function Opportunities() {
 
   useIsomorphicLayoutEffect(() => {
     ensureGsapRegistered();
-    if (prefersReducedMotion()) {
-      gsap.set(cardRefs.current, { opacity: 1, y: 0 });
+    if (prefersReducedMotion() || !sectionRef.current) {
+      if (cardRefs.current) gsap.set(cardRefs.current, { opacity: 1, y: 0 });
       return;
     }
     const ctx = gsap.context(() => {

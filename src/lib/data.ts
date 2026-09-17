@@ -80,6 +80,7 @@ export interface SolutionCategoryItem {
   name: SolutionCategory | string;
   description: string;
   color: string;
+  href?: string;
 }
 
 export const solutionCategories: SolutionCategoryItem[] = [
@@ -152,6 +153,7 @@ export const solutionCategories: SolutionCategoryItem[] = [
     name: "Olympiad",
     description: "Competitive academic olympiads, talent search exams, and national-level student challenges.",
     color: "amber-pastel",
+    href: "https://geniusolympiad.in/",
   },
   {
     id: "adventure",

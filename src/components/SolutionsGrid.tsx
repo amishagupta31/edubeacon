@@ -67,6 +67,11 @@ export default function SolutionsGrid() {
           {displayed.map((cat, i) => (
             <div
               key={cat.id}
+              onClick={() => {
+                if (cat.href) {
+                  window.open(cat.href, "_blank", "noopener,noreferrer");
+                }
+              }}
               className={`bg-white border border-line rounded-2xl p-5 flex flex-col gap-3 shadow-sm hover:shadow-xl hover:border-[#0E733B]/40 hover:-translate-y-1 transition-all duration-300 cursor-pointer group reveal reveal-delay-${Math.min(i + 1, 4)}`}
             >
               <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center group-hover:bg-[#0E733B] transition-colors duration-300">
@@ -80,12 +85,25 @@ export default function SolutionsGrid() {
                   {cat.description}
                 </p>
               </div>
-              <button
-                className="text-[12px] font-bold text-[#0E733B] hover:text-[#0B5C2F] transition-colors flex items-center gap-1 mt-auto pt-1"
-                aria-label={`Explore ${cat.name} solutions`}
-              >
-                Explore →
-              </button>
+              {cat.href ? (
+                <a
+                  href={cat.href}
+                  target={cat.href.startsWith("http") ? "_blank" : undefined}
+                  rel={cat.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  className="text-[12px] font-bold text-[#0E733B] hover:text-[#0B5C2F] transition-colors flex items-center gap-1 mt-auto pt-1 group-hover:underline"
+                  aria-label={`Explore ${cat.name} solutions`}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Explore →
+                </a>
+              ) : (
+                <button
+                  className="text-[12px] font-bold text-[#0E733B] hover:text-[#0B5C2F] transition-colors flex items-center gap-1 mt-auto pt-1"
+                  aria-label={`Explore ${cat.name} solutions`}
+                >
+                  Explore →
+                </button>
+              )}
             </div>
           ))}
         </div>

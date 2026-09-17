@@ -15,7 +15,7 @@ export async function POST(request: Request) {
         new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
       sheetId:
         process.env.GOOGLE_SHEET_ID ||
-        "1sFJCrRnl8bQ2chHddxe4t1XsGv84jkxDMf-c25kNxa0",
+        "19hSvVoE5Om9rCjRfDW_pcrZMfKOanjInfegc6Ib1gqo",
     };
 
     // Forward to Google Apps Script Web App

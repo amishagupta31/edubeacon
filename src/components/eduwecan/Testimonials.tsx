@@ -32,31 +32,51 @@ export default function Testimonials() {
 
   useIsomorphicLayoutEffect(() => {
     ensureGsapRegistered();
-    if (prefersReducedMotion()) return;
+    if (prefersReducedMotion() || !sectionRef.current) return;
+    
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        "[data-testimonial-heading]",
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          ease: EASE.entrance,
-          scrollTrigger: { trigger: sectionRef.current, start: "top 78%", toggleActions: "play none none none", once: true },
-        }
-      );
-      gsap.fromTo(
-        "[data-testimonial-stack]",
-        { opacity: 0, scale: 0.94 },
-        {
-          opacity: 1,
-          scale: 1,
-          duration: 0.8,
-          ease: EASE.entrance,
-          scrollTrigger: { trigger: sectionRef.current, start: "top 75%", toggleActions: "play none none none", once: true },
-        }
-      );
+      const heading = sectionRef.current?.querySelector("[data-testimonial-heading]");
+      const stack = sectionRef.current?.querySelector("[data-testimonial-stack]");
+
+      if (heading) {
+        gsap.fromTo(
+          heading,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            ease: EASE.entrance,
+            scrollTrigger: { 
+              trigger: heading, 
+              start: "top 85%", 
+              toggleActions: "play none none none", 
+              once: true 
+            },
+          }
+        );
+      }
+
+      if (stack) {
+        gsap.fromTo(
+          stack,
+          { opacity: 0, scale: 0.94 },
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.8,
+            ease: EASE.entrance,
+            scrollTrigger: { 
+              trigger: stack, 
+              start: "top 80%", 
+              toggleActions: "play none none none", 
+              once: true 
+            },
+          }
+        );
+      }
     }, sectionRef);
+
     return () => ctx.revert();
   }, []);
 

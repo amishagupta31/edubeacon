@@ -20,7 +20,7 @@ export default function About() {
 
   useIsomorphicLayoutEffect(() => {
     ensureGsapRegistered();
-    if (prefersReducedMotion()) return;
+    if (prefersReducedMotion() || !sectionRef.current) return;
 
     const ctx = gsap.context(() => {
       gsap.fromTo(

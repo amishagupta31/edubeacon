@@ -109,10 +109,10 @@ export default function SponsorshipPackages() {
                 </ul>
 
                 <button
-                  onClick={() => openModal("vendor-register")}
+                  onClick={() => openModal("sponsor-register", { packageId: pkg.id, packageName: pkg.name })}
                   className="w-full py-3.5 rounded-xl font-bold text-[14px] bg-gradient-to-r from-[#0E733B] via-[#059669] to-[#10B981] text-white hover:opacity-90 transition-all shadow-sm"
                 >
-                  Become a {pkg.name} →
+                  Register as {pkg.name} →
                 </button>
               </div>
             );

@@ -9,12 +9,14 @@ import {
 } from "react";
 import SchoolRegistrationModal from "./SchoolRegistrationModal";
 import VendorRegistrationModal from "./VendorRegistrationModal";
+import SponsorRegistrationModal from "./SponsorRegistrationModal";
 import InterestModal from "./InterestModal";
 import AwardNominationModal from "./AwardNominationModal";
 
 type ModalType =
   | "school-register"
   | "vendor-register"
+  | "sponsor-register"
   | "interest"
   | "award-nominate"
   | null;
@@ -59,6 +61,12 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
       )}
       {activeModal === "vendor-register" && (
         <VendorRegistrationModal onClose={closeModal} />
+      )}
+      {activeModal === "sponsor-register" && (
+        <SponsorRegistrationModal
+          onClose={closeModal}
+          defaultPackageId={meta.packageId}
+        />
       )}
       {activeModal === "interest" && (
         <InterestModal onClose={closeModal} vendorName={meta.vendorName} />
