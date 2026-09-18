@@ -7,7 +7,7 @@ on:
 
 env:
   PROJECT_ID: edubeacon
-  REGION: asia-south1
+  REGION: asia-southeast1
   SERVICE: edubeacon
   REPO: edubeacon-repo
 
