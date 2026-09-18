@@ -16,11 +16,7 @@ export default function Testimonials() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
-  const [reduced, setReduced] = useState(false);
-
-  useEffect(() => {
-    setReduced(prefersReducedMotion());
-  }, []);
+  const [reduced] = useState(() => prefersReducedMotion());
 
   useEffect(() => {
     if (paused || reduced) return;

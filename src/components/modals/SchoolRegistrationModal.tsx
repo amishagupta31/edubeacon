@@ -2,19 +2,10 @@
 
 import { useState } from "react";
 import { 
-  PartyPopper, 
   ArrowRight, 
   ArrowLeft, 
   CheckCircle2, 
-  Sparkles, 
-  User, 
-  Building2, 
   MapPin, 
-  Phone, 
-  GraduationCap, 
-  BookOpen, 
-  Cpu, 
-  Share2, 
   Download,
   Calendar
 } from "lucide-react";
@@ -76,7 +67,6 @@ export default function SchoolRegistrationModal({
 }) {
   const [step, setStep] = useState<1 | 2>(1);
   const [submitted, setSubmitted] = useState(false);
-  const [copiedLink, setCopiedLink] = useState(false);
 
   // Form State
   const [form, setForm] = useState({
@@ -182,40 +172,260 @@ export default function SchoolRegistrationModal({
           : form.aiTools
       ).join(", "),
       timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+      sheetId: "13h3F3aniqSv5SeQznxvbrMgPy6oIbezAqod4a97NaVs",
     };
 
+    const scriptUrl =
+      process.env.NEXT_PUBLIC_APPS_SCRIPT_URL ||
+      "https://script.google.com/macros/s/AKfycbzlzgY9QkRq7YKmEtwn2BUIia_JHstY96C43e0rxV7Zt00NNiHR5qJ43I-dJaNnFCJjgQ/exec";
+
     try {
-      // 1. Send to Next.js API route
-      await fetch("/api/register", {
+      // Direct frontend submission to Google Apps Script Web App
+      await fetch(scriptUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload),
       });
     } catch (err) {
-      console.warn("Primary API submission error, attempting direct Google Script fallback:", err);
-      // 2. Direct fallback to Apps Script URL
-      const scriptUrl =
-        process.env.NEXT_PUBLIC_APPS_SCRIPT_URL ||
-        "https://script.google.com/macros/s/AKfycbxzsGAKkVgUkRqadLoPYwImcuXrqBfcxjs887FT3NiieqeHktbSPUsnWHQdWub1mVMpFA/exec";
-      try {
-        await fetch(scriptUrl, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload),
-        });
-      } catch (fallbackErr) {
-        console.error("Direct fallback error:", fallbackErr);
-      }
+      console.error("Direct Google Sheet submission error:", err);
     } finally {
       setIsSubmitting(false);
       setSubmitted(true);
     }
   };
 
-  const handleCopy = () => {
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2500);
+  const handleDownloadBadge = () => {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const width = 1200;
+    const height = 750;
+    canvas.width = width;
+    canvas.height = height;
+
+    // Background Dark Emerald Gradient
+    const bgGrad = ctx.createLinearGradient(0, 0, width, height);
+    bgGrad.addColorStop(0, "#05160E");
+    bgGrad.addColorStop(0.5, "#0B4B27");
+    bgGrad.addColorStop(1, "#04130A");
+    ctx.fillStyle = bgGrad;
+
+    // Rounded Card
+    const r = 36;
+    ctx.beginPath();
+    ctx.moveTo(r, 0);
+    ctx.lineTo(width - r, 0);
+    ctx.quadraticCurveTo(width, 0, width, r);
+    ctx.lineTo(width, height - r);
+    ctx.quadraticCurveTo(width, height, width - r, height);
+    ctx.lineTo(r, height);
+    ctx.quadraticCurveTo(0, height, 0, height - r);
+    ctx.lineTo(0, r);
+    ctx.quadraticCurveTo(0, 0, r, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    // Subtle Outer Card Border
+    ctx.strokeStyle = "rgba(110, 231, 183, 0.4)";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    // Ambient radial glow
+    const glowGrad = ctx.createRadialGradient(width - 150, 150, 10, width - 150, 150, 400);
+    glowGrad.addColorStop(0, "rgba(52, 211, 153, 0.25)");
+    glowGrad.addColorStop(1, "rgba(52, 211, 153, 0)");
+    ctx.fillStyle = glowGrad;
+    ctx.fillRect(0, 0, width, height);
+
+    // Decorative Dot Grid
+    ctx.fillStyle = "rgba(255, 255, 255, 0.04)";
+    for (let x = 40; x < width - 40; x += 32) {
+      for (let y = 40; y < height - 40; y += 32) {
+        ctx.beginPath();
+        ctx.arc(x, y, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Top Header - Logo Box
+    const logoX = 70;
+    const logoY = 65;
+    const logoSize = 64;
+    ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(logoX, logoY, logoSize, logoSize, 16);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "bold 26px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("EB", logoX + logoSize / 2, logoY + logoSize / 2);
+
+    // Brand Name & Subtitle
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "bold 32px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    ctx.fillText("EduBeacon 2027", logoX + logoSize + 20, logoY + 30);
+
+    ctx.fillStyle = "#6EE7B7";
+    ctx.font = "bold 15px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    ctx.fillText("NATIONAL LEADERSHIP SUMMIT", logoX + logoSize + 20, logoY + 56);
+
+    // Role Tag Pill (Top Right)
+    const displayRole = (form.role === "Other" ? form.otherRole : form.role) || "DELEGATE";
+    const roleText = displayRole.toUpperCase();
+    ctx.font = "bold 17px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    const pillWidth = ctx.measureText(roleText).width + 36;
+    const pillHeight = 44;
+    const pillX = width - 70 - pillWidth;
+    const pillY = 75;
+
+    ctx.fillStyle = "rgba(16, 185, 129, 0.25)";
+    ctx.strokeStyle = "rgba(52, 211, 153, 0.5)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(pillX, pillY, pillWidth, pillHeight, 22);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "#6EE7B7";
+    ctx.textAlign = "center";
+    ctx.fillText(roleText, pillX + pillWidth / 2, pillY + 28);
+
+    // Divider Line
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(70, 160);
+    ctx.lineTo(width - 70, 160);
+    ctx.stroke();
+
+    // Main Tagline
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#34D399";
+    ctx.font = "bold 16px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    ctx.fillText("CONFIRMED SUMMIT DELEGATE", 70, 205);
+
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "bold 36px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    const headline = form.role === "Teacher" 
+      ? "Teachers Who Inspire. Ideas That Transform." 
+      : "Welcome to EduBeacon Summit";
+    ctx.fillText(headline, 70, 252);
+
+    // Profile Box
+    const boxX = 70;
+    const boxY = 290;
+    const boxW = width - 140;
+    const boxH = 230;
+
+    ctx.fillStyle = "rgba(255, 255, 255, 0.08)";
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(boxX, boxY, boxW, boxH, 24);
+    ctx.fill();
+    ctx.stroke();
+
+    // Avatar Icon
+    const avX = boxX + 35;
+    const avY = boxY + 45;
+    const avR = 55;
+    const avGrad = ctx.createLinearGradient(avX, avY, avX + avR * 2, avY + avR * 2);
+    avGrad.addColorStop(0, "#34D399");
+    avGrad.addColorStop(1, "#5EEAD4");
+    ctx.fillStyle = avGrad;
+    ctx.beginPath();
+    ctx.arc(avX + avR, avY + avR, avR, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#04130A";
+    ctx.font = "bold 48px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    const initial = (form.name || "D").trim().charAt(0).toUpperCase();
+    ctx.fillText(initial, avX + avR, avY + avR);
+
+    // Participant Text Info
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "bold 34px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    ctx.fillText(form.name || "Delegate Name", boxX + 175, boxY + 75);
+
+    ctx.fillStyle = "#A7F3D0";
+    ctx.font = "600 22px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    ctx.fillText(displayRole, boxX + 175, boxY + 115);
+
+    ctx.fillStyle = "#E2E8F0";
+    ctx.font = "500 20px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    const schoolLocation = form.city ? `${form.school} • ${form.city}, ${form.state}` : form.school;
+    ctx.fillText(schoolLocation, boxX + 175, boxY + 155);
+
+    // AI Tools Stack (if applicable)
+    if (form.usesAiInWork && form.aiTools.length > 0) {
+      let tagX = boxX + 175;
+      ctx.fillStyle = "#6EE7B7";
+      ctx.font = "bold 15px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+      ctx.fillText("AI Stack:", tagX, boxY + 198);
+      tagX += 78;
+
+      form.aiTools.slice(0, 4).forEach((tool) => {
+        ctx.font = "bold 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+        const tw = ctx.measureText(tool).width + 20;
+        ctx.fillStyle = "rgba(16, 185, 129, 0.25)";
+        ctx.strokeStyle = "rgba(52, 211, 153, 0.4)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(tagX, boxY + 180, tw, 28, 14);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#E6FFFA";
+        ctx.fillText(tool, tagX + 10, boxY + 199);
+        tagX += tw + 10;
+      });
+    }
+
+    // Bottom Divider
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(70, 560);
+    ctx.lineTo(width - 70, 560);
+    ctx.stroke();
+
+    // Footer Info
+    ctx.fillStyle = "#34D399";
+    ctx.font = "bold 20px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    ctx.fillText("🗓️  15–16 November 2027", 70, 615);
+
+    ctx.fillStyle = "#CBD5E1";
+    ctx.font = "bold 20px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    ctx.fillText("📍  Dehradun, Uttarakhand, India", 430, 615);
+
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#94A3B8";
+    ctx.font = "bold 16px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    ctx.fillText("VERIFIED DELEGATE PASS", width - 70, 615);
+
+    // Instant Fast Download
+    const imageURL = canvas.toDataURL("image/png");
+    const downloadLink = document.createElement("a");
+    const safeName = (form.name || "Delegate").trim().replace(/[^a-zA-Z0-9]/g, "_");
+    downloadLink.download = `EduBeacon-Delegate-Badge-${safeName}.png`;
+    downloadLink.href = imageURL;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
   };
 
   // ── Success State: Registration Confirmed & Participant Creative Badge ──
@@ -295,20 +505,20 @@ export default function SchoolRegistrationModal({
             </div>
           </div>
 
-          {/* Social Share / Download Actions */}
+          {/* Action Buttons: Instant High-Res Download & Close */}
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button
-              onClick={handleCopy}
-              className="px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider text-charcoal bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors inline-flex items-center gap-1.5"
+              onClick={handleDownloadBadge}
+              className="px-6 py-3 rounded-full font-bold text-xs uppercase tracking-wider text-white bg-[#0E733B] hover:bg-[#0B5C2F] shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer"
             >
-              <Share2 className="w-3.5 h-3.5 text-[#0E733B]" />
-              <span>{copiedLink ? "Badge Link Copied!" : "Share Delegate Badge"}</span>
+              <Download className="w-4 h-4" />
+              <span>Download Delegate Badge</span>
             </button>
             <button
               onClick={onClose}
-              className="px-8 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider text-white bg-[#0E733B] hover:bg-[#0B5C2F] shadow-sm transition-colors"
+              className="px-6 py-3 rounded-full font-bold text-xs uppercase tracking-wider text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer"
             >
-              Done & Return
+              Done & Close
             </button>
           </div>
         </div>
