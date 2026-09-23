@@ -19062,3 +19062,52 @@ Import trace:
     ./src/app/layout.tsx
 
 
+✓ Compiled in 905ms
+⚠ [next]/internal/font/google/fraunces_5db97fbf.module.css
+Warning: Error while requesting resource
+There was an issue establishing a connection while requesting https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/fraunces_5db97fbf.module.css
+    [next]/internal/font/google/fraunces_5db97fbf.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/inter_f4213802.module.css
+Warning: Error while requesting resource
+There was an issue establishing a connection while requesting https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/inter_f4213802.module.css
+    [next]/internal/font/google/inter_f4213802.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/fraunces_5db97fbf.module.css
+Warning: next/font: warning:
+Failed to download Fraunces from Google Fonts. Using a fallback font instead.
+If you are offline or behind a proxy, self-host the font with next/font/local, or set HTTP_PROXY/HTTPS_PROXY so Next.js can reach fonts.googleapis.com.
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/fraunces_5db97fbf.module.css
+    [next]/internal/font/google/fraunces_5db97fbf.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/inter_f4213802.module.css
+Warning: next/font: warning:
+Failed to download Inter from Google Fonts. Using a fallback font instead.
+If you are offline or behind a proxy, self-host the font with next/font/local, or set HTTP_PROXY/HTTPS_PROXY so Next.js can reach fonts.googleapis.com.
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/inter_f4213802.module.css
+    [next]/internal/font/google/inter_f4213802.js
+    ./src/app/layout.tsx
+
+
+ GET /events/conference 200 in 412ms (next.js: 244ms, application-code: 168ms)
+✓ Compiled in 3.6s
