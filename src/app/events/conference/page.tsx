@@ -130,16 +130,16 @@ const whyAttend = [
 
 // ── FAQs ──
 const faqs = [
-  { q: "Who should attend?", a: "Principals, school directors and leaders, teachers and educators, heads of departments, university and education-department representatives, board members, EdTech founders, startups and investors." },
-  { q: "Is registration free or paid?", a: "To Be Announced." },
-  { q: "What is the venue?", a: "Shivalik University, Dehradun, Uttarakhand." },
-  { q: "What is the event date?", a: "11th October 2026." },
-  { q: "What time does the conference start?", a: "The conference runs from 10:00 AM to 5:00 PM." },
-  { q: "Is group registration available?", a: "To Be Announced." },
-  { q: "Is parking available?", a: "To Be Announced." },
-  { q: "How can schools register?", a: "Click “Register as School / Educator” on this page and complete the registration form. Your email is verified with a one-time code before your registration is confirmed." },
-  { q: "How can companies become sponsors?", a: "Click “Become a Sponsor” on this page, or write to us directly to discuss partnership opportunities." },
-  { q: "How can I contact EduBeacon?", a: `Email ${siteConfig.email} or call ${siteConfig.phone}.` },
+  { q: "Who should attend?", a: "Principals, school directors and leaders, teachers and educators, heads of departments, university and education-department representatives, board members, EdTech founders, startups and investors" },
+  { q: "Is registration free or paid?", a: "To Be Announced" },
+  { q: "What is the venue?", a: "Shivalik University, Dehradun, Uttarakhand" },
+  { q: "What is the event date?", a: "11th October 2026" },
+  { q: "What time does the conference start?", a: "The conference runs from 10:00 AM to 5:00 PM" },
+  { q: "Is group registration available?", a: "To Be Announced" },
+  { q: "Is parking available?", a: "To Be Announced" },
+  { q: "How can schools register?", a: "Click “Register as School / Educator” on this page and complete the registration form. Your email is verified with a one-time code before your registration is confirmed" },
+  { q: "How can companies become sponsors?", a: "Click “Become a Sponsor” on this page, or write to us directly to discuss partnership opportunities" },
+  { q: "How can I contact EduBeacon?", a: `Email ${siteConfig.email} or call ${siteConfig.phone}` },
 ];
 
 // ── Small helpers ──
@@ -818,7 +818,7 @@ export default function ConferencePage() {
             </h2>
           </div>
 
-          <div className="max-w-3xl mx-auto space-y-3 reveal reveal-delay-2">
+          <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 reveal reveal-delay-2 items-start">
             {faqs.map((faq, i) => {
               const isOpen = openFaq === i;
               return (

@@ -18832,3 +18832,233 @@ Import trace:
 [browser] Image with src "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=1200" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
 [browser] Image with src "https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&q=80&w=1400" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
 [browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+⚠ [next]/internal/font/google/fraunces_5db97fbf.module.css
+Warning: Error while requesting resource
+There was an issue establishing a connection while requesting https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/fraunces_5db97fbf.module.css
+    [next]/internal/font/google/fraunces_5db97fbf.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/inter_f4213802.module.css
+Warning: Error while requesting resource
+There was an issue establishing a connection while requesting https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/inter_f4213802.module.css
+    [next]/internal/font/google/inter_f4213802.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/fraunces_5db97fbf.module.css
+Warning: next/font: warning:
+Failed to download Fraunces from Google Fonts. Using a fallback font instead.
+If you are offline or behind a proxy, self-host the font with next/font/local, or set HTTP_PROXY/HTTPS_PROXY so Next.js can reach fonts.googleapis.com.
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/fraunces_5db97fbf.module.css
+    [next]/internal/font/google/fraunces_5db97fbf.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/inter_f4213802.module.css
+Warning: next/font: warning:
+Failed to download Inter from Google Fonts. Using a fallback font instead.
+If you are offline or behind a proxy, self-host the font with next/font/local, or set HTTP_PROXY/HTTPS_PROXY so Next.js can reach fonts.googleapis.com.
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/inter_f4213802.module.css
+    [next]/internal/font/google/inter_f4213802.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/fraunces_5db97fbf.module.css
+Warning: Error while requesting resource
+There was an issue establishing a connection while requesting https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/fraunces_5db97fbf.module.css
+    [next]/internal/font/google/fraunces_5db97fbf.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/inter_f4213802.module.css
+Warning: Error while requesting resource
+There was an issue establishing a connection while requesting https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/inter_f4213802.module.css
+    [next]/internal/font/google/inter_f4213802.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/fraunces_5db97fbf.module.css
+Warning: next/font: warning:
+Failed to download Fraunces from Google Fonts. Using a fallback font instead.
+If you are offline or behind a proxy, self-host the font with next/font/local, or set HTTP_PROXY/HTTPS_PROXY so Next.js can reach fonts.googleapis.com.
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/fraunces_5db97fbf.module.css
+    [next]/internal/font/google/fraunces_5db97fbf.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/inter_f4213802.module.css
+Warning: next/font: warning:
+Failed to download Inter from Google Fonts. Using a fallback font instead.
+If you are offline or behind a proxy, self-host the font with next/font/local, or set HTTP_PROXY/HTTPS_PROXY so Next.js can reach fonts.googleapis.com.
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/inter_f4213802.module.css
+    [next]/internal/font/google/inter_f4213802.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/fraunces_5db97fbf.module.css
+Warning: Error while requesting resource
+There was an issue establishing a connection while requesting https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/fraunces_5db97fbf.module.css
+    [next]/internal/font/google/fraunces_5db97fbf.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/inter_f4213802.module.css
+Warning: Error while requesting resource
+There was an issue establishing a connection while requesting https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/inter_f4213802.module.css
+    [next]/internal/font/google/inter_f4213802.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/fraunces_5db97fbf.module.css
+Warning: next/font: warning:
+Failed to download Fraunces from Google Fonts. Using a fallback font instead.
+If you are offline or behind a proxy, self-host the font with next/font/local, or set HTTP_PROXY/HTTPS_PROXY so Next.js can reach fonts.googleapis.com.
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/fraunces_5db97fbf.module.css
+    [next]/internal/font/google/fraunces_5db97fbf.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/inter_f4213802.module.css
+Warning: next/font: warning:
+Failed to download Inter from Google Fonts. Using a fallback font instead.
+If you are offline or behind a proxy, self-host the font with next/font/local, or set HTTP_PROXY/HTTPS_PROXY so Next.js can reach fonts.googleapis.com.
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/inter_f4213802.module.css
+    [next]/internal/font/google/inter_f4213802.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/fraunces_5db97fbf.module.css
+Warning: Error while requesting resource
+There was an issue establishing a connection while requesting https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/fraunces_5db97fbf.module.css
+    [next]/internal/font/google/fraunces_5db97fbf.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/inter_f4213802.module.css
+Warning: Error while requesting resource
+There was an issue establishing a connection while requesting https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/inter_f4213802.module.css
+    [next]/internal/font/google/inter_f4213802.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/fraunces_5db97fbf.module.css
+Warning: next/font: warning:
+Failed to download Fraunces from Google Fonts. Using a fallback font instead.
+If you are offline or behind a proxy, self-host the font with next/font/local, or set HTTP_PROXY/HTTPS_PROXY so Next.js can reach fonts.googleapis.com.
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/fraunces_5db97fbf.module.css
+    [next]/internal/font/google/fraunces_5db97fbf.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/inter_f4213802.module.css
+Warning: next/font: warning:
+Failed to download Inter from Google Fonts. Using a fallback font instead.
+If you are offline or behind a proxy, self-host the font with next/font/local, or set HTTP_PROXY/HTTPS_PROXY so Next.js can reach fonts.googleapis.com.
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/inter_f4213802.module.css
+    [next]/internal/font/google/inter_f4213802.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/fraunces_5db97fbf.module.css
+Warning: Error while requesting resource
+There was an issue establishing a connection while requesting https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/fraunces_5db97fbf.module.css
+    [next]/internal/font/google/fraunces_5db97fbf.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/inter_f4213802.module.css
+Warning: Error while requesting resource
+There was an issue establishing a connection while requesting https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/inter_f4213802.module.css
+    [next]/internal/font/google/inter_f4213802.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/fraunces_5db97fbf.module.css
+Warning: next/font: warning:
+Failed to download Fraunces from Google Fonts. Using a fallback font instead.
+If you are offline or behind a proxy, self-host the font with next/font/local, or set HTTP_PROXY/HTTPS_PROXY so Next.js can reach fonts.googleapis.com.
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/fraunces_5db97fbf.module.css
+    [next]/internal/font/google/fraunces_5db97fbf.js
+    ./src/app/layout.tsx
+
+
+⚠ [next]/internal/font/google/inter_f4213802.module.css
+Warning: next/font: warning:
+Failed to download Inter from Google Fonts. Using a fallback font instead.
+If you are offline or behind a proxy, self-host the font with next/font/local, or set HTTP_PROXY/HTTPS_PROXY so Next.js can reach fonts.googleapis.com.
+
+Import trace:
+  Server Component:
+    [next]/internal/font/google/inter_f4213802.module.css
+    [next]/internal/font/google/inter_f4213802.js
+    ./src/app/layout.tsx
+
+
