@@ -222,7 +222,7 @@ export default function SchoolRegistrationModal({
   // something a visitor can actually act on instead of the technical message.
   const describeVerificationError = (err: unknown, fallback: string) => {
     if (err instanceof Error && /failed to fetch|network ?error|load failed/i.test(err.message)) {
-      return "Network error — please check your internet connection and try again.";
+      return "Network error, please check your internet connection and try again.";
     }
     return err instanceof Error ? err.message : fallback;
   };

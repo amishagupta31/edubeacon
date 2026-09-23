@@ -32,7 +32,7 @@ const fraunces = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "EduBeacon — The Future of Education, Connected.",
+  title: "EduBeacon, The Future of Education, Connected.",
   description:
     "EduBeacon connects schools, education leaders, startups, vendors and solution providers to create meaningful partnerships and discover the best solutions for the future of education.",
   keywords: "education platform, school solutions, EdTech, STEM labs, education conference, school vendors, India",

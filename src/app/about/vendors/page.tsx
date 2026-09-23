@@ -3,7 +3,7 @@ import FeaturedVendors from "@/components/FeaturedVendors";
 import ForVendors from "@/components/ForVendors";
 
 export const metadata: Metadata = {
-  title: "Vendors — EduBeacon",
+  title: "Vendors, EduBeacon",
   description: "Solution providers on EduBeacon, and how to list your solution.",
 };
 

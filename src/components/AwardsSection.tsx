@@ -39,7 +39,7 @@ export default function AwardsSection() {
               <div className="absolute inset-0 bg-gradient-to-t from-[#0A0E17]/60 to-transparent" />
               <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-md rounded-xl px-4 py-2.5 shadow-md">
                 <p className="text-[12.5px] font-bold text-charcoal">Awards Ceremony</p>
-                <p className="text-[11px] text-[#0E733B] font-semibold">Day 2 — Evening Gala</p>
+                <p className="text-[11px] text-[#0E733B] font-semibold">Day 2, Evening Gala</p>
               </div>
             </div>
 
