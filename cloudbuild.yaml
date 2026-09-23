@@ -1,0 +1,58 @@
+# cloudbuild.yaml — build & deploy EduBeacon (Next.js) to Cloud Run
+#
+# Required substitutions (pass with `--substitutions` or set as Trigger vars):
+#   _REGION                 Cloud Run region, e.g. asia-south1
+#   _SERVICE                Cloud Run service name, e.g. edubeacon
+#   _AR_REPO                Artifact Registry repo name, e.g. edubeacon
+#   _CLERK_PUBLISHABLE_KEY  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY — this is NOT a
+#                           secret, it is safe to pass as a plain substitution.
+#   _RUN_SA                 Cloud Run runtime service account email (the one
+#                           granted `roles/secretmanager.secretAccessor` below —
+#                           see DEPLOYMENT.md).
+#
+# CLERK_SECRET_KEY is intentionally absent from this file. It is never built
+# into the image and never passed as a substitution/build-arg — it is
+# injected straight from Secret Manager into the *running* Cloud Run
+# container via --update-secrets, so it only ever exists as a real secret
+# value at deploy/runtime, never in source, image layers, or build logs.
+
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --build-arg
+      - NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${_CLERK_PUBLISHABLE_KEY}
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_SERVICE}:$SHORT_SHA
+      - .
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_SERVICE}:$SHORT_SHA
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_SERVICE}
+      - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_SERVICE}:$SHORT_SHA
+      - --region=${_REGION}
+      - --service-account=${_RUN_SA}
+      - --update-secrets=CLERK_SECRET_KEY=clerk-secret-key:latest
+      - --update-env-vars=NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${_CLERK_PUBLISHABLE_KEY}
+      - --allow-unauthenticated
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPO}/${_SERVICE}:$SHORT_SHA
+
+substitutions:
+  _REGION: asia-south1
+  _AR_REPO: edubeacon
+  _SERVICE: edubeacon
+  _CLERK_PUBLISHABLE_KEY: ""
+  _RUN_SA: ""
+
+options:
+  logging: CLOUD_LOGGING_ONLY

@@ -18,7 +18,15 @@ const AREAS = ["a", "b", "c", "d", "e"] as const;
 const DIRECTIONS: Array<"left" | "right" | "up"> = ["left", "right", "up", "up", "right"];
 const WIPES: Array<"horizontal" | "vertical"> = ["horizontal", "vertical", "vertical", "horizontal", "horizontal"];
 
-export default function GridPanels() {
+interface GridPanelsProps {
+  eyebrow?: string;
+  title?: React.ReactNode;
+}
+
+export default function GridPanels({
+  eyebrow = "Moments",
+  title = <>An Education Story, <br className="hidden sm:block" />Told in Moments</>,
+}: GridPanelsProps = {}) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
   const overlayRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -95,11 +103,10 @@ export default function GridPanels() {
         <div className="mb-6 md:mb-8 flex flex-col items-start gap-2">
           <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-[#0E733B] text-[11px] font-bold uppercase tracking-[0.2em] px-4 py-1 rounded-full border border-emerald-500/20">
             <div className="w-1.5 h-1.5 rounded-full bg-[#0E733B]" />
-            <span>Moments</span>
+            <span>{eyebrow}</span>
           </div>
           <h2 className="font-bold text-[30px] leading-[1.1] md:text-[40px] text-charcoal tracking-tight">
-            An Education Story, <br className="hidden sm:block" />
-            Told in Moments
+            {title}
           </h2>
         </div>
 

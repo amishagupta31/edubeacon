@@ -34,7 +34,7 @@ export const img = {
   // EdTech / tablet in classroom
   edtech: unsplash("photo-1593079831268-3381b0db4a77", "auto=format&fit=crop&q=80&w=1200"),
   // AI / innovation lab
-  aiLab: unsplash("photo-1677756119517-756a188d2d94", "auto=format&fit=crop&q=80&w=1200"),
+  aiLab: unsplash("photo-1531482615713-2afd69097998", "auto=format&fit=crop&q=80&w=1200"),
   // Video thumbnail: energetic session
   videoThumb: unsplash("photo-1550305080-4e029753abcf", "auto=format&fit=crop&q=80&w=800"),
   // Conference audience

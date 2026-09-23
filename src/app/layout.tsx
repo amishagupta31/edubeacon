@@ -4,7 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import MobileStickyCta from "@/components/MobileStickyCta";
+
 import ModalProvider from "@/components/modals/ModalProvider";
 import ScrollReveal from "@/components/ScrollReveal";
 
@@ -50,9 +50,8 @@ export default function RootLayout({
           <ModalProvider>
             <ScrollReveal />
             <SiteHeader />
-            <main className="flex-1 pb-16 md:pb-0">{children}</main>
+            <main className="flex-1">{children}</main>
             <SiteFooter />
-            <MobileStickyCta />
           </ModalProvider>
         </ClerkProvider>
       </body>

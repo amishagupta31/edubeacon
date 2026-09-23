@@ -10,6 +10,14 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+
+# NEXT_PUBLIC_* vars are inlined into the client JS bundle by `next build`.
+# It is NOT a secret (it's the Clerk publishable key), so it is safe to pass
+# as a build arg. It must be supplied here — setting it only as a Cloud Run
+# runtime env var has no effect, because the bundle is already built by then.
+ARG NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+
 RUN npm run build
 
 # ---------- runner ----------
