@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
-  Sparkles,
   CheckCircle2,
   Calendar,
   MapPin,
@@ -16,19 +15,15 @@ import {
   Handshake,
   Mic,
   ChevronDown,
-  TrendingUp,
   HeartHandshake,
   Award,
   Landmark,
   Rocket,
-  Download,
   Coffee,
-  ImageIcon,
   Compass,
 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import { useModal } from "@/components/modals/ModalProvider";
-import GridPanels from "@/components/eduwecan/GridPanels";
 import { img } from "@/lib/images";
 import { siteConfig } from "@/lib/data";
 
@@ -49,7 +44,7 @@ const EVENT = {
 
 const CONFERENCE_DATE = new Date("2026-10-11T10:00:00+05:30");
 
-// ── Three Conference Conversations ──
+// ── Three Conference Conversations (Focus Pillars, part of "About the Conference") ──
 const focusPillars = [
   {
     num: "01",
@@ -77,7 +72,7 @@ const focusPillars = [
   },
 ];
 
-// ── Conference Timeline (agenda, unified with panel / presentation / round table / award detail) ──
+// ── Conference Timeline (Agenda — also carries Panel Discussions / Featured Presentations / Round Tables / Awards detail inline) ──
 const agendaItems = [
   { time: "10:00 – 10:30 AM", type: "Networking", icon: Users, title: "Registration & Networking", detail: "Attendees arrive, register and meet education leaders, startups, educators and fellow participants." },
   { time: "10:30 – 10:45 AM", type: "Opening", icon: Mic, title: "Welcome Address by EduBeacon & Lighting of Lamp", detail: "Opening and welcome by EduBeacon, followed by the inauguration." },
@@ -92,14 +87,6 @@ const agendaItems = [
   { time: "3:30 – 4:15 PM", type: "Round Table", icon: Handshake, title: "Sponsor Startups × Eligible Schools", detail: "Curated, closed-door sessions connecting startups directly with school decision-makers and educators. Topics — To Be Announced based on confirmed sponsors." },
   { time: "4:15 – 4:45 PM", type: "Awards", icon: Trophy, title: "Excellence in Education Awards Ceremony", detail: "Recognising excellence and innovation in education. Award categories — To Be Announced.", cta: true },
   { time: "4:45 – 5:00 PM", type: "Closing", icon: CheckCircle2, title: "Closing Remarks & Vote of Thanks" },
-];
-
-// ── Four Conference Tracks ──
-const conferenceTracks = [
-  { num: "01", title: "Education Leadership", icon: GraduationCap, desc: "Leadership, institutional transformation and the future of education.", topics: ["Institutional Governance", "Curriculum Evolution", "Culture & Wellbeing"] },
-  { num: "02", title: "AI & Emerging Tech", icon: Cpu, desc: "AI, digital transformation, smart classrooms and emerging technologies.", topics: ["Responsible AI", "Automated Assessment", "Smart Campus Infrastructure"] },
-  { num: "03", title: "EdTech & Innovation", icon: Sparkles, desc: "Startups, solution providers, product showcases and school–startup collaboration.", topics: ["Institutional Pilots", "Product Validation", "Scalable Classroom Technology"] },
-  { num: "04", title: "Investment & Partnership", icon: TrendingUp, desc: "VC conversations, university partnerships, founders and institutional opportunities.", topics: ["VC × Higher Education", "Ecosystem Syndicates", "Commercial Scaling"] },
 ];
 
 // ── Audience ──
@@ -126,6 +113,56 @@ const whyAttend = [
   { num: "02", verb: "Connect", icon: Handshake, items: ["Connect with startups", "Meet other education leaders", "Meet school decision-makers", "Increase visibility within the education ecosystem"] },
   { num: "03", verb: "Explore", icon: Rocket, items: ["Explore partnerships", "Explore NEP-related implementation", "Explore new teaching approaches", "Explore institutional pilots"] },
   { num: "04", verb: "Collaborate", icon: Users, items: ["Discuss institutional transformation", "Participate in knowledge-sharing sessions", "Showcase products and solutions", "Participate in round tables", "Build education partnerships"] },
+];
+
+// ── Event Highlights / At a Glance ──
+const eventHighlights = [
+  { icon: Users, label: "250+ School Leaders / Participants" },
+  { icon: Handshake, label: "10+ Startups" },
+  { icon: Award, label: "10+ Heads of Departments" },
+  { icon: Mic, label: "Panel Discussions" },
+  { icon: Landmark, label: "Featured Presentations" },
+  { icon: HeartHandshake, label: "Round Tables" },
+  { icon: Trophy, label: "Awards Ceremony" },
+];
+
+// ── Panel Discussions (dedicated block — same two panels as in the Agenda) ──
+const panelDiscussions = [
+  {
+    num: "01",
+    icon: Cpu,
+    title: "Future of Education & Employment in the Era of AI",
+    subtitle: "How Should Schools Prepare Children",
+    detail: "How should schools prepare children? Moderator & panelists — To Be Announced.",
+  },
+  {
+    num: "02",
+    icon: HeartHandshake,
+    title: "Holistic Development",
+    subtitle: "Role of the Holistic Progress Card & ICSE Active Program; Developmental & Learning Issues in Children and Proactive Solutions",
+    detail: "Developmental & learning issues in children and proactive solutions. Moderator & panelists — To Be Announced.",
+  },
+];
+
+// ── Featured Presentations (dedicated block — same three presentations as in the Agenda) ──
+const featuredPresentationsList = [
+  { icon: Landmark, org: "Shivalik University", detail: "A Center of Excellence for Education." },
+  { icon: HeartHandshake, org: "Deep Connection / KiddiCove", detail: "Presented by Monika Sharma." },
+  { icon: Trophy, org: "India Genius Olympiad", detail: "Presented by Amit Sehgal." },
+];
+
+// ── Round Tables (Sponsor–School Matchmaking) ──
+const roundTables = [
+  { num: "01", title: "Sponsor Startup × Eligible Schools", topic: "Topic — To Be Announced" },
+  { num: "02", title: "Sponsor Startup × Eligible Schools", topic: "Topic — To Be Announced" },
+];
+
+// ── Excellence in Education Awards — proposed categories (placeholders, to be finalized) ──
+const awardCategories = [
+  "Best Innovation in Teaching",
+  "Outstanding Principal",
+  "Best NEP-Aligned School",
+  "Excellence in Child Development Practices",
 ];
 
 // ── FAQs ──
@@ -251,7 +288,7 @@ export default function ConferencePage() {
     <div className="bg-warm-ivory text-charcoal min-h-screen overflow-x-hidden">
 
       {/* ════════════════════════════════════════════════════════════════
-          1. CINEMATIC HERO
+          1. HERO BANNER
       ════════════════════════════════════════════════════════════════ */}
       <section className="relative min-h-[92vh] flex flex-col justify-between overflow-hidden bg-[#0A1A10] text-white">
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
@@ -355,10 +392,8 @@ export default function ConferencePage() {
         </div>
       </section>
 
-
-
       {/* ════════════════════════════════════════════════════════════════
-          2. ABOUT / STORY
+          2. ABOUT THE CONFERENCE
       ════════════════════════════════════════════════════════════════ */}
       <section id="about" className="py-20 md:py-28 bg-white border-b border-line">
         <Container>
@@ -390,7 +425,7 @@ export default function ConferencePage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════════
-          3. THREE CONFERENCE CONVERSATIONS
+          2b. THREE CONFERENCE CONVERSATIONS (Focus Pillars, part of About)
       ════════════════════════════════════════════════════════════════ */}
       <section className="bg-white">
         {focusPillars.map((pillar, idx) => (
@@ -437,7 +472,65 @@ export default function ConferencePage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════════
-          4. CONFERENCE TIMELINE / AGENDA
+          3. WHY ATTEND
+      ════════════════════════════════════════════════════════════════ */}
+      <section className="py-20 md:py-28 bg-white border-b border-line">
+        <Container>
+          <div className="max-w-2xl mb-16 reveal">
+            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B]">Why Attend</span>
+            <h2 className="font-display font-bold text-[34px] sm:text-[48px] text-charcoal leading-[1.05] tracking-tight mt-4">
+              Something for Every Seat at the Table
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-14">
+            {whyAttend.map((item, idx) => (
+              <div key={item.num} className={`flex gap-6 reveal reveal-delay-${(idx % 4) + 1}`}>
+                <span className="font-display font-extrabold text-[48px] leading-none text-[#0E733B]/15 shrink-0">
+                  {item.num}
+                </span>
+                <div>
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <item.icon className="w-5 h-5 text-[#0E733B]" strokeWidth={1.8} />
+                    <h3 className="font-display font-bold text-[22px] text-charcoal">{item.verb}</h3>
+                  </div>
+                  <ul className="space-y-1.5">
+                    {item.items.map((line) => (
+                      <li key={line} className="flex items-start gap-2 text-[14px] text-slate-600">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#0E733B] shrink-0 mt-1" />
+                        <span>{line}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════
+          4. EVENT HIGHLIGHTS / AT A GLANCE
+      ════════════════════════════════════════════════════════════════ */}
+      <section className="py-14 md:py-16 bg-[#F8FAF8] border-b border-line">
+        <Container>
+          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 reveal">
+            {eventHighlights.map((item) => (
+              <div key={item.label} className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white border border-emerald-100 text-[#0E733B] flex items-center justify-center shrink-0">
+                  <item.icon className="w-5 h-5" strokeWidth={1.8} />
+                </div>
+                <span className="text-[13.5px] font-bold text-charcoal whitespace-nowrap">{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════
+          5. AGENDA / SCHEDULE
+          (also carries Panel Discussions / Featured Presentations /
+          Round Tables / Awards detail inline, per item below)
       ════════════════════════════════════════════════════════════════ */}
       <section id="timeline" className="py-20 md:py-28 bg-white border-b border-line">
         <Container>
@@ -493,107 +586,7 @@ export default function ConferencePage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════════
-          5. FOUR CONFERENCE TRACKS
-      ════════════════════════════════════════════════════════════════ */}
-      <section id="tracks" className="py-20 md:py-28 bg-[#0A1A10] text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <Container className="relative z-10">
-          <div className="max-w-2xl mb-14 reveal">
-            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-emerald-300">Four Conference Tracks</span>
-            <h2 className="font-display font-bold text-[34px] sm:text-[48px] text-white leading-[1.05] tracking-tight mt-4">
-              One Ecosystem. Four Conversations
-            </h2>
-          </div>
-
-          <div className="flex flex-col lg:flex-row gap-3 reveal reveal-delay-2">
-            {conferenceTracks.map((track) => (
-              <div
-                key={track.num}
-                className="group relative flex-1 lg:hover:flex-[1.7] transition-[flex-grow] duration-500 ease-out bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-emerald-400/30 rounded-2xl p-7 lg:p-8 min-h-[280px] lg:min-h-[460px] flex flex-col justify-between overflow-hidden"
-              >
-                <div>
-                  <span className="text-[12px] font-bold text-emerald-400/60 tracking-widest">TRACK {track.num}</span>
-                  <div className="w-11 h-11 rounded-xl bg-white/10 border border-white/15 text-emerald-300 flex items-center justify-center my-4 group-hover:bg-[#0E733B] group-hover:text-white group-hover:border-transparent transition-colors">
-                    <track.icon className="w-5 h-5" strokeWidth={1.8} />
-                  </div>
-                  <h3 className="font-display font-bold text-[21px] lg:text-[24px] text-white mb-2.5 leading-tight">
-                    {track.title}
-                  </h3>
-                  <p className="text-[13px] text-slate-300 leading-relaxed max-w-[28ch]">{track.desc}</p>
-                </div>
-
-                {/* Mobile / always-visible topics */}
-                <div className="lg:hidden mt-6 space-y-2 pt-4 border-t border-white/10">
-                  {track.topics.map((t) => (
-                    <div key={t} className="flex items-center gap-2 text-[12px] font-medium text-emerald-200">
-                      <div className="w-1 h-1 rounded-full bg-emerald-400 shrink-0" />
-                      <span>{t}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Desktop hover-reveal topics */}
-                <div className="hidden lg:block mt-6 max-h-0 opacity-0 group-hover:max-h-40 group-hover:opacity-100 transition-all duration-500 overflow-hidden">
-                  <div className="space-y-2 pt-4 border-t border-white/10">
-                    {track.topics.map((t) => (
-                      <div key={t} className="flex items-center gap-2 text-[12px] font-medium text-emerald-200">
-                        <div className="w-1 h-1 rounded-full bg-emerald-400 shrink-0" />
-                        <span>{t}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* ════════════════════════════════════════════════════════════════
-          6. WHO'S IN THE ROOM
-      ════════════════════════════════════════════════════════════════ */}
-      <section className="py-20 md:py-28 bg-white border-b border-line">
-        <Container>
-          <div className="max-w-2xl mb-10 reveal">
-            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B]">Who&apos;s in the Room</span>
-            <h2 className="font-display font-bold text-[34px] sm:text-[48px] text-charcoal leading-[1.05] tracking-tight mt-4">
-              Built for the Education Ecosystem
-            </h2>
-          </div>
-
-          <p className="reveal reveal-delay-1 font-display text-[22px] sm:text-[30px] md:text-[34px] leading-[1.4] text-charcoal/80 max-w-4xl mb-16">
-            {audiencePersonas.map((p, i) => (
-              <span key={p}>
-                <span className="font-semibold text-charcoal">{p}</span>
-                {i < audiencePersonas.length - 1 && <span className="text-[#0E733B] mx-2.5">·</span>}
-              </span>
-            ))}
-          </p>
-
-          <div className="grid grid-cols-3 gap-6 max-w-2xl mb-16 reveal reveal-delay-2">
-            {participationStats.map((stat) => (
-              <StatBlock key={stat.label} value={stat.value} suffix={stat.suffix} label={stat.label} tone="light" />
-            ))}
-          </div>
-
-          {/* Participating Schools — coming soon */}
-          <div className="reveal reveal-delay-3 pt-10 border-t border-line">
-            <p className="text-[12.5px] font-bold uppercase tracking-wider text-slate-400 mb-4">
-              Participating Schools — logos to appear here as confirmed
-            </p>
-            <div className="grid grid-cols-4 sm:grid-cols-8 gap-3 max-w-2xl">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="aspect-square rounded-xl bg-[#F8FAF8] border border-dashed border-line flex items-center justify-center text-slate-300">
-                  <Building2 className="w-4 h-4" strokeWidth={1.5} />
-                </div>
-              ))}
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* ════════════════════════════════════════════════════════════════
-          7. SPEAKERS & DISTINGUISHED GUESTS
+          6. SPEAKERS & DISTINGUISHED GUESTS
       ════════════════════════════════════════════════════════════════ */}
       <section id="speakers" className="py-20 md:py-28 bg-[#F8FAF8] border-b border-line">
         <Container>
@@ -653,36 +646,44 @@ export default function ConferencePage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════════
-          8. WHY ATTEND
+          7. PANEL DISCUSSIONS
       ════════════════════════════════════════════════════════════════ */}
       <section className="py-20 md:py-28 bg-white border-b border-line">
         <Container>
           <div className="max-w-2xl mb-16 reveal">
-            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B]">Why Attend</span>
+            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B]">Panel Discussions</span>
             <h2 className="font-display font-bold text-[34px] sm:text-[48px] text-charcoal leading-[1.05] tracking-tight mt-4">
-              Something for Every Seat at the Table
+              Conversations That Matter
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-14">
-            {whyAttend.map((item, idx) => (
-              <div key={item.num} className={`flex gap-6 reveal reveal-delay-${(idx % 4) + 1}`}>
-                <span className="font-display font-extrabold text-[48px] leading-none text-[#0E733B]/15 shrink-0">
-                  {item.num}
-                </span>
-                <div>
-                  <div className="flex items-center gap-2.5 mb-3">
-                    <item.icon className="w-5 h-5 text-[#0E733B]" strokeWidth={1.8} />
-                    <h3 className="font-display font-bold text-[22px] text-charcoal">{item.verb}</h3>
+          <div className="space-y-14">
+            {panelDiscussions.map((panel, idx) => (
+              <div
+                key={panel.num}
+                className={`flex flex-col lg:flex-row gap-8 lg:gap-14 reveal reveal-delay-${idx + 1} ${idx < panelDiscussions.length - 1 ? "pb-14 border-b border-line" : ""}`}
+              >
+                <div className="lg:w-[45%] shrink-0">
+                  <div className="flex items-center gap-4 mb-4">
+                    <span className="font-display font-extrabold text-[44px] leading-none text-[#0E733B]/15">{panel.num}</span>
+                    <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-100 text-[#0E733B] flex items-center justify-center">
+                      <panel.icon className="w-5 h-5" strokeWidth={1.8} />
+                    </div>
                   </div>
-                  <ul className="space-y-1.5">
-                    {item.items.map((line) => (
-                      <li key={line} className="flex items-start gap-2 text-[14px] text-slate-600">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#0E733B] shrink-0 mt-1" />
-                        <span>{line}</span>
-                      </li>
+                  <h3 className="font-display font-bold text-[24px] sm:text-[28px] text-charcoal leading-tight mb-2">{panel.title}</h3>
+                  <p className="text-[14.5px] font-semibold text-emerald-800 mb-4">{panel.subtitle}</p>
+                  <p className="text-slate-600 text-[15px] leading-relaxed">{panel.detail}</p>
+                </div>
+
+                <div className="lg:flex-1">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-4">Moderator & Panelists — To Be Announced</p>
+                  <div className="grid grid-cols-4 gap-3 max-w-md">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                      <div key={i} className="aspect-square rounded-xl bg-[#F8FAF8] border border-dashed border-line flex items-center justify-center text-slate-300 font-display font-bold text-lg">
+                        ?
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               </div>
             ))}
@@ -691,7 +692,136 @@ export default function ConferencePage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════════
-          9. VENUE
+          8. FEATURED PRESENTATIONS
+      ════════════════════════════════════════════════════════════════ */}
+      <section className="py-20 md:py-28 bg-[#F8FAF8] border-b border-line">
+        <Container>
+          <div className="max-w-2xl mb-14 reveal">
+            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B]">Featured Presentations</span>
+            <h2 className="font-display font-bold text-[34px] sm:text-[48px] text-charcoal leading-[1.05] tracking-tight mt-4">
+              From Our Partners
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 reveal reveal-delay-2">
+            {featuredPresentationsList.map((fp) => (
+              <div key={fp.org} className="p-7 rounded-2xl bg-white border border-line">
+                <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-100 text-[#0E733B] flex items-center justify-center mb-5">
+                  <fp.icon className="w-5 h-5" strokeWidth={1.8} />
+                </div>
+                <h4 className="font-display font-bold text-[19px] text-charcoal mb-2">{fp.org}</h4>
+                <p className="text-[14px] text-slate-500 leading-relaxed">{fp.detail}</p>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════
+          9. ROUND TABLES (SPONSOR–SCHOOL MATCHMAKING)
+      ════════════════════════════════════════════════════════════════ */}
+      <section className="py-20 md:py-28 bg-white border-b border-line">
+        <Container>
+          <div className="mb-4 reveal">
+            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B]">Round Tables</span>
+            <h2 className="font-display font-bold text-[34px] sm:text-[48px] text-charcoal leading-[1.05] tracking-tight mt-4 mb-4 lg:whitespace-nowrap">
+              Sponsor–School Matchmaking
+            </h2>
+            <p className="text-slate-600 text-[15px] leading-relaxed max-w-2xl">
+              Curated, closed-door sessions connecting startups directly with school decision-makers and educators. Topics — To Be Announced based on confirmed sponsors.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-10 reveal reveal-delay-2 max-w-3xl">
+            {roundTables.map((rt) => (
+              <div key={rt.num} className="p-7 rounded-2xl border border-line bg-[#F8FAF8]">
+                <span className="font-display font-extrabold text-[36px] leading-none text-[#0E733B]/15">{rt.num}</span>
+                <h4 className="font-bold text-[17px] text-charcoal mt-3 mb-1.5">Round Table {Number(rt.num)}</h4>
+                <p className="text-[14px] text-slate-600 mb-1">{rt.title}</p>
+                <p className="text-[12.5px] text-slate-400 font-semibold">{rt.topic}</p>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════
+          10. EXCELLENCE IN EDUCATION AWARDS
+      ════════════════════════════════════════════════════════════════ */}
+      <section className="py-20 md:py-28 bg-[#0A1A10] text-white border-b border-line">
+        <Container>
+          <div className="max-w-2xl mb-10 reveal">
+            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-emerald-300">Excellence in Education Awards</span>
+            <h2 className="font-display font-bold text-[34px] sm:text-[48px] text-white leading-[1.05] tracking-tight mt-4 mb-4">
+              Recognising Excellence & Innovation
+            </h2>
+            <p className="text-slate-300 text-[15px] leading-relaxed">
+              Recognising excellence and innovation in education. Final award categories are To Be Announced — proposed categories below.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2.5 mb-10 reveal reveal-delay-2">
+            {awardCategories.map((cat) => (
+              <span key={cat} className="text-[12.5px] font-semibold text-emerald-200 bg-white/[0.06] border border-white/10 px-4 py-2 rounded-full">
+                {cat}
+              </span>
+            ))}
+          </div>
+
+          <button
+            onClick={() => openModal("award-nominate")}
+            className="reveal reveal-delay-3 inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold text-[13px] uppercase tracking-wider text-white bg-[#0E733B] hover:bg-[#0B5C2F] shadow-md hover:scale-105 transition-all duration-300"
+          >
+            Submit Nomination →
+          </button>
+        </Container>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════
+          11. PARTICIPATING SCHOOLS ("Who's in the Room")
+      ════════════════════════════════════════════════════════════════ */}
+      <section className="py-20 md:py-28 bg-white border-b border-line">
+        <Container>
+          <div className="max-w-2xl mb-10 reveal">
+            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0E733B]">Who&apos;s in the Room</span>
+            <h2 className="font-display font-bold text-[34px] sm:text-[48px] text-charcoal leading-[1.05] tracking-tight mt-4">
+              Built for the Education Ecosystem
+            </h2>
+          </div>
+
+          <p className="reveal reveal-delay-1 font-display text-[22px] sm:text-[30px] md:text-[34px] leading-[1.4] text-charcoal/80 max-w-4xl mb-16">
+            {audiencePersonas.map((p, i) => (
+              <span key={p}>
+                <span className="font-semibold text-charcoal">{p}</span>
+                {i < audiencePersonas.length - 1 && <span className="text-[#0E733B] mx-2.5">·</span>}
+              </span>
+            ))}
+          </p>
+
+          <div className="grid grid-cols-3 gap-6 max-w-2xl mb-16 reveal reveal-delay-2">
+            {participationStats.map((stat) => (
+              <StatBlock key={stat.label} value={stat.value} suffix={stat.suffix} label={stat.label} tone="light" />
+            ))}
+          </div>
+
+          {/* Participating Schools — coming soon */}
+          <div className="reveal reveal-delay-3 pt-10 border-t border-line">
+            <p className="text-[12.5px] font-bold uppercase tracking-wider text-slate-400 mb-4">
+              Participating Schools — logos to appear here as confirmed
+            </p>
+            <div className="grid grid-cols-4 sm:grid-cols-8 gap-3 max-w-2xl">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="aspect-square rounded-xl bg-[#F8FAF8] border border-dashed border-line flex items-center justify-center text-slate-300">
+                  <Building2 className="w-4 h-4" strokeWidth={1.5} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════
+          13. VENUE & TRAVEL INFO
       ════════════════════════════════════════════════════════════════ */}
       <section id="venue" className="py-20 md:py-28 bg-[#F8FAF8] border-b border-line">
         <Container>
@@ -745,7 +875,7 @@ export default function ConferencePage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════════
-          10. SCHOOL / SPONSOR CTA
+          12 + 14. OUR PARTNERS & SPONSORS + REGISTRATION
       ════════════════════════════════════════════════════════════════ */}
       <section id="register" className="bg-white">
         <div className="grid grid-cols-1 lg:grid-cols-2">
@@ -802,12 +932,7 @@ export default function ConferencePage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════════
-          MOMENTS
-      ════════════════════════════════════════════════════════════════ */}
-      <GridPanels eyebrow="Past Conference Gallery" title="Our Previous Editions" />
-
-      {/* ════════════════════════════════════════════════════════════════
-          FAQ
+          15. FAQ
       ════════════════════════════════════════════════════════════════ */}
       <section className="py-20 md:py-28 bg-[#F8FAF8] border-b border-line">
         <Container>
@@ -841,10 +966,6 @@ export default function ConferencePage() {
           </div>
         </Container>
       </section>
-
-
-
-
 
     </div>
   );
