@@ -28,16 +28,16 @@ export default function SolutionsGrid() {
     <section id="solutions" className="py-14 md:py-20 bg-[#F8FAF8]">
       <Container>
         {/* Header */}
-        <div className="max-w-3xl mb-8 reveal">
-          <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-[#0E733B] text-[11px] font-bold uppercase tracking-[0.2em] px-4.5 py-1.5 rounded-full mb-4 border border-emerald-500/20">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#0E733B]" />
+        <div className="max-w-6xl mb-12 reveal">
+          <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-[#0E733B] text-[10.5px] font-bold uppercase tracking-[0.25em] px-4 py-1.5 rounded-full mb-6 border border-emerald-500/20">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#0E733B] animate-pulse" />
             <span>Solution Categories</span>
           </div>
-          <h2 className="font-bold text-[34px] md:text-[44px] text-charcoal leading-[1.1] mb-3 tracking-tight">
+          <h2 className="font-display font-bold text-[42px] md:text-[56px] lg:text-[64px] text-charcoal leading-[1.05] mb-4 tracking-tight whitespace-nowrap md:whitespace-normal">
             Find the Right Solutions{" "}
-            <span className="text-[#0E733B]">for Your School</span>
+            <span className="text-[#0E733B] font-bold">for Your School</span>
           </h2>
-          <p className="text-[15.5px] leading-relaxed text-slate-soft font-normal">
+          <p className="text-[16px] leading-relaxed text-slate-600 font-normal max-w-[65ch]">
             Explore innovative products, services and solutions designed for the modern education ecosystem.
           </p>
         </div>

@@ -15,6 +15,8 @@ import {
   ShieldCheck
 } from "lucide-react";
 import Container from "@/components/ui/Container";
+import GridPanels from "@/components/eduwecan/GridPanels";
+import { useModal } from "@/components/modals/ModalProvider";
 import { img } from "@/lib/images";
 
 const eventPillars = [
@@ -101,6 +103,8 @@ const eventPillars = [
 ];
 
 export default function EventsHubPage() {
+  const { openModal } = useModal();
+
   return (
     <div className="min-h-screen bg-[#FAFCFA]">
       {/* Hero Header */}
@@ -222,6 +226,9 @@ export default function EventsHubPage() {
         </Container>
       </section>
 
+      {/* Gallery of events so far */}
+      <GridPanels />
+
       {/* CTA Box */}
       <section className="py-12 bg-white border-t border-line">
         <Container>
@@ -239,8 +246,14 @@ export default function EventsHubPage() {
             </div>
             
             <div className="flex flex-wrap gap-3.5 shrink-0">
+              <button
+                onClick={() => openModal("school-register")}
+                className="rounded-xl bg-[#0E733B] border border-white/30 px-6 py-3 text-xs md:text-sm font-bold text-white hover:bg-[#0B5C2F] transition-colors shadow-sm"
+              >
+                Register for Next Event
+              </button>
               <Link
-                href="/#contact"
+                href="/contact"
                 className="rounded-xl bg-white px-6 py-3 text-xs md:text-sm font-bold text-[#0E733B] hover:bg-emerald-50 transition-colors shadow-sm"
               >
                 Inquire for Partnerships

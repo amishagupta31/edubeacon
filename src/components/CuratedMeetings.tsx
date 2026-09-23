@@ -63,8 +63,8 @@ export default function CuratedMeetings() {
             <span>Curated Connections</span>
           </div>
           <h2 className="font-bold text-[32px] md:text-[42px] text-charcoal leading-[1.15] mb-3 tracking-tight">
-            Meaningful Connections.{" "}
-            <span className="text-[#0E733B]">Real Opportunities.</span>
+            Meaningful Connections{" "}
+            <span className="text-[#0E733B]">Real Opportunities</span>
           </h2>
           <p className="text-[15.5px] leading-relaxed text-slate-soft max-w-[54ch] mx-auto font-normal">
             EduBeacon goes beyond the crowded exhibition floor. We facilitate pre-matched, high-intent 1:1 conversations between schools and solution providers.

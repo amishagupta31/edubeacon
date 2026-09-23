@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Target, School, BarChart3, Handshake, Mic, Megaphone, Rocket } from "lucide-react";
 import { useModal } from "./modals/ModalProvider";
 import Container from "./ui/Container";
@@ -17,6 +18,7 @@ const benefits = [
 
 export default function ForVendors() {
   const { openModal } = useModal();
+  const router = useRouter();
 
   return (
     <section id="for-vendors" className="py-14 md:py-20 bg-[#FDFBF7]">
@@ -91,7 +93,9 @@ export default function ForVendors() {
               </button>
               <button
                 onClick={() => {
-                  document.getElementById("sponsorship")?.scrollIntoView({ behavior: "smooth" });
+                  const target = document.getElementById("sponsorship");
+                  if (target) target.scrollIntoView({ behavior: "smooth" });
+                  else router.push("/about/sponsors");
                 }}
                 className="border border-[#0E733B] text-[#0E733B] px-8 py-4 rounded-full font-semibold text-[15px] hover:bg-[#0E733B] hover:text-white transition-all shadow-sm"
               >

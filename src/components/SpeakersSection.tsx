@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import {
   gsap,
@@ -22,6 +23,7 @@ const cardBackgrounds = [
 ];
 
 export default function SpeakersSection() {
+  const router = useRouter();
   const sectionRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -120,7 +122,9 @@ export default function SpeakersSection() {
 
           <button
             onClick={() => {
-              document.getElementById("agenda")?.scrollIntoView({ behavior: "smooth" });
+              const target = document.getElementById("agenda");
+              if (target) target.scrollIntoView({ behavior: "smooth" });
+              else router.push("/events/conference#agenda");
             }}
             className="self-start md:self-auto shrink-0 inline-flex items-center gap-2 rounded-full border border-[#0E733B]/30 bg-white px-6 py-2.5 text-[13px] font-semibold text-[#0E733B] shadow-sm transition-all hover:bg-emerald-50 hover:border-[#0E733B]/50"
           >

@@ -10,10 +10,10 @@ const footerLinks = [
   {
     title: "Platform",
     links: [
-      { label: "About Edubeacon", href: "/#about" },
-      { label: "Find Solutions", href: "/#solutions" },
-      { label: "For Schools", href: "/#for-schools" },
-      { label: "For Vendors", href: "/#for-vendors" },
+      { label: "About Edubeacon", href: "/about/our-story" },
+      { label: "Find Solutions", href: "/solutions" },
+      { label: "For Schools", href: "/about/schools" },
+      { label: "For Vendors", href: "/about/vendors" },
     ],
   },
   {
@@ -29,19 +29,19 @@ const footerLinks = [
   {
     title: "Get Involved",
     links: [
-      { label: "Register Your School", href: "/#for-schools" },
-      { label: "List Your Solution", href: "/#for-vendors" },
-      { label: "Sponsorship", href: "/#sponsorship" },
+      { label: "Register Your School", href: "/about/schools" },
+      { label: "List Your Solution", href: "/about/vendors" },
+      { label: "Sponsorship", href: "/about/sponsors" },
       { label: "Awards", href: "/#awards" },
     ],
   },
   {
     title: "Resources",
     links: [
-      { label: "Magazine", href: "/#magazine" },
-      { label: "Partners", href: "/#partners" },
-      { label: "Testimonials", href: "/#testimonials" },
-      { label: "Contact", href: "/#contact" },
+      { label: "Magazine", href: "/about/news-stories#magazine" },
+      { label: "Partners", href: "/about/sponsors#partners" },
+      { label: "Testimonials", href: "/about/news-stories#testimonials" },
+      { label: "Contact", href: "/contact" },
     ],
   },
 ];

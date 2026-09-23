@@ -1,54 +1,34 @@
 import Hero from "@/components/eduwecan/Hero";
 import HeroStats from "@/components/HeroStats";
 import AboutSection from "@/components/AboutSection";
-import GridPanels from "@/components/eduwecan/GridPanels";
 import SolutionsGrid from "@/components/SolutionsGrid";
 import FeaturedVendors from "@/components/FeaturedVendors";
-import ForSchools from "@/components/ForSchools";
-import ForVendors from "@/components/ForVendors";
 import CuratedMeetings from "@/components/CuratedMeetings";
 import AwardsSection from "@/components/AwardsSection";
-import Testimonials from "@/components/eduwecan/Testimonials";
-import ContactSection from "@/components/ContactSection";
 
 export default function Home() {
   return (
     <>
-      {/* 1. Hero */}
+      {/* 1. Introduction of the organisation */}
       <Hero />
 
-      {/* Community Stats Bar */}
+      {/* 2. Key Metrics */}
       <HeroStats />
 
-      {/* 2. About Section */}
+      {/* 3. Our Specialities */}
       <AboutSection />
 
-      {/* Visual Grid Panels */}
-      <GridPanels />
-
-      {/* 3. Solutions Grid */}
+      {/* 4. Our Solutions overview */}
       <SolutionsGrid />
 
-      {/* 4. Featured Vendors */}
+      {/* 5. Solution Providers */}
       <FeaturedVendors />
 
-      {/* 5. For Schools */}
-      <ForSchools />
-
-      {/* 6. For Vendors */}
-      <ForVendors />
-
-      {/* 7. Curated Meetings */}
+      {/* 6. Our Process */}
       <CuratedMeetings />
 
-      {/* 8. Awards Section */}
+      {/* 7. Awards */}
       <AwardsSection />
-
-      {/* 9. Testimonials & Stories */}
-      <Testimonials />
-
-      {/* 10. Contact */}
-      <ContactSection />
     </>
   );
 }

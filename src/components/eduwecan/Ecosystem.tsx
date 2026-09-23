@@ -150,7 +150,7 @@ export default function Ecosystem() {
             className="flex w-[280px] shrink-0 flex-col items-start justify-center gap-4 md:w-[380px]"
           >
             <h3 className="font-display text-[28px] leading-[1.15] font-medium md:text-[34px]" style={{ color: "var(--color-ewc-ink)" }}>
-              Better Connected. Stronger Together.
+              Better Connected. Stronger Together
             </h3>
             <button
               onClick={() => document.getElementById("join")?.scrollIntoView({ behavior: "smooth" })}

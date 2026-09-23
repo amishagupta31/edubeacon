@@ -1,0 +1,220 @@
+
+> techevent@0.1.0 dev
+> next dev
+
+▲ Next.js 16.3.4 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.109:3000
+- Environments: .env.local
+✓ Ready in 610ms
+✓ Running next.config.ts took 45ms
+
+Attention: Clerk collects telemetry data from its SDKs when connected to development instances.
+The data collected is used to inform Clerk's product roadmap.
+To learn more, including how to opt-out from the telemetry program, visit: https://clerk.com/docs/telemetry.
+
+ GET /events/conference 200 in 1352ms (next.js: 644ms, application-code: 709ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+[browser] Cannot initialize Smart CAPTCHA widget because the `clerk-captcha` DOM element was not found; falling back to Invisible CAPTCHA widget. If you are using a custom flow, visit https://clerk.com/docs/guides/development/custom-flows/authentication/bot-sign-up-protection for instructions 
+    at ia (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:17:2471)
+    at async il.managedOrInvisible (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:17:5430)
+    at async nq.getCaptchaToken (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:18:136625)
+    at async nq._create (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:18:136904)
+    at async (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:18:137205)
+    at async nN (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:18:99439)
+    at async sendVerificationCode (src/components/modals/SchoolRegistrationModal.tsx:214:38)
+  212 |     setIsSendingCode(true);
+  213 |     try {
+> 214 |       const { error: createError } = await signUp.create({ emailAddress: email });
+      |                                      ^
+  215 |
+  216 |       if (createError && createError.code === "form_identifier_exists") {
+  217 |         // Already registered with Clerk before — sign them back in with an email code instead (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:17:2471)
+[browser] [Cloudflare Turnstile] Ignored message from unexpected source for event: requestExtraParams. (https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit:2:17362)
+[browser] [Cloudflare Turnstile] Error: 600010. (https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit:2:17362)
+[browser] [Cloudflare Turnstile] Error: 600010. (https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit:2:17362)
+[browser] [Cloudflare Turnstile] Error: 600010. (https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit:2:17362)
+ GET /events/conference 200 in 277ms (next.js: 13ms, application-code: 264ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+[browser] Cannot initialize Smart CAPTCHA widget because the `clerk-captcha` DOM element was not found; falling back to Invisible CAPTCHA widget. If you are using a custom flow, visit https://clerk.com/docs/guides/development/custom-flows/authentication/bot-sign-up-protection for instructions 
+    at ia (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:17:2471)
+    at async il.managedOrInvisible (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:17:5430)
+    at async nq.getCaptchaToken (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:18:136625)
+    at async nq._create (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:18:136904)
+    at async (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:18:137205)
+    at async nN (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:18:99439)
+    at async sendVerificationCode (src/components/modals/SchoolRegistrationModal.tsx:215:38)
+  213 |     setIsSendingCode(true);
+  214 |     try {
+> 215 |       const { error: createError } = await signUp.create({ emailAddress: email });
+      |                                      ^
+  216 |       console.log("[dbg] create result", JSON.stringify(createError));
+  217 |
+  218 |       if (createError && createError.code === "form_identifier_exists") { (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:17:2471)
+[browser] [Cloudflare Turnstile] Ignored message from unexpected source for event: requestExtraParams. (https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit:2:17362)
+[browser] [Cloudflare Turnstile] Error: 600010. (https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit:2:17362)
+ GET /events/conference 200 in 215ms (next.js: 11ms, application-code: 204ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ GET /events/conference 200 in 178ms (next.js: 7ms, application-code: 172ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ GET / 200 in 1242ms (next.js: 507ms, application-code: 735ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ GET /events/conference 200 in 148ms (next.js: 42ms, application-code: 106ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ GET /events/conference 200 in 198ms (next.js: 7ms, application-code: 192ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+✓ Compiled in 149ms
+ GET /events/conference 200 in 33ms (next.js: 11ms, application-code: 22ms)
+ GET / 200 in 126ms (next.js: 10ms, application-code: 115ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ GET /events/conference 200 in 133ms (next.js: 4ms, application-code: 129ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ POST /events/conference 200 in 191ms (next.js: 18ms, application-code: 174ms)
+  └─ ƒ invalidateCacheAction() in 23ms node_modules/@clerk/nextjs/dist/esm/app-router/server-actions.js
+ GET /events/conference 200 in 121ms (next.js: 15ms, application-code: 106ms)
+[browser] Clerk - DEPRECATION WARNING: "user.update({ unsafeMetadata })" is deprecated and will be removed in the next major release.
+Use user.updateMetadata({ unsafeMetadata }) for partial updates (deep merge) instead. (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:18:147728)
+ GET /events 200 in 881ms (next.js: 692ms, application-code: 190ms)
+[browser] Image with src "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80&w=1200" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://images.unsplash.com/photo-1558403194-611308249627?auto=format&fit=crop&q=80&w=1200" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1200" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=1400" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET /events 200 in 158ms (next.js: 62ms, application-code: 97ms)
+ GET /events/conference 200 in 522ms (next.js: 442ms, application-code: 80ms)
+ GET /events 200 in 99ms (next.js: 21ms, application-code: 78ms)
+ GET /events/conference 200 in 93ms (next.js: 16ms, application-code: 77ms)
+ GET /events/roundtable 200 in 788ms (next.js: 663ms, application-code: 125ms)
+ GET /events 200 in 100ms (next.js: 13ms, application-code: 87ms)
+ GET /events/conference 200 in 106ms (next.js: 17ms, application-code: 89ms)
+ GET /events/conference 200 in 84ms (next.js: 13ms, application-code: 71ms)
+ GET /events/conference 200 in 118ms (next.js: 48ms, application-code: 70ms)
+✓ Compiled in 1502ms
+✓ Compiled in 220ms
+✓ Compiled in 168ms
+✓ Compiled in 250ms
+✓ Compiled in 123ms
+✓ Compiled in 206ms
+✓ Compiled in 2.4s
+ GET /events/conference 200 in 215ms (next.js: 42ms, application-code: 173ms)
+ GET /events/conference 200 in 1684ms (next.js: 428ms, application-code: 1256ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+✓ Compiled in 1774ms
+ GET /events/conference 200 in 209ms (next.js: 53ms, application-code: 156ms)
+✓ Compiled in 1198ms
+ GET /events/conference 200 in 194ms (next.js: 45ms, application-code: 149ms)
+✓ Compiled in 1413ms
+ GET /events/conference 200 in 153ms (next.js: 41ms, application-code: 112ms)
+✓ Finished filesystem cache database compaction in 11.5s
+✓ Compiled in 601ms
+ GET /events/conference 200 in 290ms (next.js: 96ms, application-code: 194ms)
+ GET /events/conference 200 in 233ms (next.js: 10ms, application-code: 223ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ GET /events/conference 200 in 224ms (next.js: 9ms, application-code: 215ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ GET /events/conference 200 in 469ms (next.js: 318ms, application-code: 151ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ GET /events/conference 200 in 162ms (next.js: 6ms, application-code: 156ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+✓ Compiled in 1250ms
+ GET /events/conference 200 in 291ms (next.js: 142ms, application-code: 149ms)
+ GET /events/conference 200 in 925ms (next.js: 311ms, application-code: 615ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ GET /events/conference 200 in 3.1s (next.js: 670ms, application-code: 2.5s)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ GET /events/conference 200 in 1387ms (next.js: 331ms, application-code: 1055ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ GET /events/conference 200 in 695ms (next.js: 101ms, application-code: 594ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ POST /events/conference 200 in 169ms (next.js: 25ms, application-code: 144ms)
+  └─ ƒ invalidateCacheAction() in 15ms node_modules/@clerk/nextjs/dist/esm/app-router/server-actions.js
+ GET /events/conference 200 in 176ms (next.js: 27ms, application-code: 149ms)
+ GET /events/conference 200 in 397ms (next.js: 13ms, application-code: 383ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ POST /events/conference 200 in 98ms (next.js: 14ms, application-code: 84ms)
+  └─ ƒ invalidateCacheAction() in 6ms node_modules/@clerk/nextjs/dist/esm/app-router/server-actions.js
+ GET /events/conference 200 in 120ms (next.js: 16ms, application-code: 104ms)
+ GET /events/conference 200 in 247ms (next.js: 11ms, application-code: 236ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ GET /events/conference 200 in 387ms (next.js: 15ms, application-code: 373ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ POST /events/conference 200 in 96ms (next.js: 12ms, application-code: 85ms)
+  └─ ƒ invalidateCacheAction() in 12ms node_modules/@clerk/nextjs/dist/esm/app-router/server-actions.js
+ GET / 200 in 829ms (next.js: 809ms, application-code: 21ms)
+ GET / 200 in 117ms (next.js: 52ms, application-code: 65ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ GET /events/conference 200 in 584ms (next.js: 82ms, application-code: 501ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ POST /events/conference 200 in 85ms (next.js: 15ms, application-code: 71ms)
+  └─ ƒ invalidateCacheAction() in 5ms node_modules/@clerk/nextjs/dist/esm/app-router/server-actions.js
+ GET /events/conference 200 in 70ms (next.js: 41ms, application-code: 30ms)
+ GET /events/conference 200 in 354ms (next.js: 13ms, application-code: 341ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ POST /events/conference 200 in 254ms (next.js: 49ms, application-code: 205ms)
+  └─ ƒ invalidateCacheAction() in 12ms node_modules/@clerk/nextjs/dist/esm/app-router/server-actions.js
+ GET / 200 in 140ms (next.js: 24ms, application-code: 116ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ GET / 200 in 41ms (next.js: 6ms, application-code: 35ms)
+ GET / 200 in 560ms (next.js: 167ms, application-code: 392ms)
+ GET / 200 in 266ms (next.js: 32ms, application-code: 234ms)
+ GET /events/conference 200 in 170ms (next.js: 78ms, application-code: 92ms)
+ GET /events/conference 200 in 227ms (next.js: 27ms, application-code: 200ms)
+ POST /events/conference 200 in 307ms (next.js: 24ms, application-code: 283ms)
+  └─ ƒ invalidateCacheAction() in 19ms node_modules/@clerk/nextjs/dist/esm/app-router/server-actions.js
+ GET /events/conference 200 in 289ms (next.js: 186ms, application-code: 103ms)
+✓ Compiled in 347ms
+ GET /events/conference 200 in 31ms (next.js: 10ms, application-code: 21ms)
+✓ Compiled in 188ms
+ GET /events/conference 200 in 69ms (next.js: 14ms, application-code: 55ms)
+ GET /events/conference 200 in 1130ms (next.js: 46ms, application-code: 1085ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ POST /events/conference 200 in 13.6s (next.js: 9.1s, application-code: 4.5s)
+  └─ ƒ invalidateCacheAction() in 16ms node_modules/@clerk/nextjs/dist/esm/app-router/server-actions.js
+ GET / 200 in 1622ms (next.js: 1497ms, application-code: 125ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ GET / 200 in 4.6s (next.js: 73ms, application-code: 4.5s)
+ POST / 200 in 3.8s (next.js: 2.4s, application-code: 1370ms)
+  └─ ƒ invalidateCacheAction() in 42ms node_modules/@clerk/nextjs/dist/esm/app-router/server-actions.js
+ GET / 200 in 83ms (next.js: 31ms, application-code: 52ms)
+[browser] Clerk - DEPRECATION WARNING: "user.update({ unsafeMetadata })" is deprecated and will be removed in the next major release.
+Use user.updateMetadata({ unsafeMetadata }) for partial updates (deep merge) instead. (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:18:147728)
+ GET / 200 in 5.3s (next.js: 898ms, application-code: 4.4s)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ GET /events/conference 200 in 1354ms (next.js: 487ms, application-code: 867ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ GET / 200 in 1863ms (next.js: 592ms, application-code: 1271ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ GET /events 200 in 522ms (next.js: 397ms, application-code: 124ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80&w=1200" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://images.unsplash.com/photo-1558403194-611308249627?auto=format&fit=crop&q=80&w=1200" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1200" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=1400" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET /events/roadshows 200 in 563ms (next.js: 501ms, application-code: 62ms)
+[browser] Image with src "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=1200" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://images.unsplash.com/photo-1573497620053-ea5300f94f21?auto=format&fit=crop&q=80&w=1200" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&q=80&w=1400" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET /events/conference 200 in 693ms (next.js: 305ms, application-code: 387ms)
+ GET / 200 in 244ms (next.js: 31ms, application-code: 213ms)
+ GET /events/conference 200 in 500ms (next.js: 15ms, application-code: 485ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ GET /events/conference 200 in 694ms (next.js: 13ms, application-code: 681ms)
+ GET /events/conference 200 in 820ms (next.js: 14ms, application-code: 807ms)
+[browser] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview (https://divine-grouse-8275.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js:12:7855)
+ GET /events/conference 200 in 112ms (next.js: 43ms, application-code: 69ms)
+ GET /events/conference 200 in 101ms (next.js: 20ms, application-code: 82ms)
+✓ Compiled in 4.4s
+✓ Compiled in 542ms
+ GET /events/conference 200 in 32ms (next.js: 7ms, application-code: 25ms)
+ GET /events/conference 200 in 338ms (next.js: 91ms, application-code: 247ms)
+ GET /events/conference 200 in 31ms (next.js: 8ms, application-code: 23ms)
+✓ Compiled in 97ms
+✓ Compiled in 254ms
+ GET /events/conference 200 in 47ms (next.js: 14ms, application-code: 32ms)
+ GET /events/conference 200 in 30ms (next.js: 7ms, application-code: 23ms)
+✓ Compiled in 99ms
+ GET /events/conference 200 in 33ms (next.js: 8ms, application-code: 25ms)
+✓ Compiled in 85ms
+ GET /events/conference 200 in 31ms (next.js: 9ms, application-code: 22ms)
+✓ Compiled in 96ms
+ GET /events/conference 200 in 31ms (next.js: 6ms, application-code: 25ms)
+✓ Compiled in 106ms

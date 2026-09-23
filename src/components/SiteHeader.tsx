@@ -4,18 +4,33 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
-import { 
-  ChevronDown, 
-  Compass, 
-  Trophy, 
-  HeartHandshake, 
-  Users, 
-  ArrowRight
+import type { ComponentType } from "react";
+import {
+  ChevronDown,
+  Compass,
+  Trophy,
+  HeartHandshake,
+  Users,
+  BookOpen,
+  School,
+  Store,
+  Mic,
+  Handshake,
+  Newspaper,
 } from "lucide-react";
 import Container from "./ui/Container";
 import { useModal } from "./modals/ModalProvider";
 
-const eventDropdownItems = [
+interface DropdownItem {
+  name: string;
+  label: string;
+  desc: string;
+  href: string;
+  icon: ComponentType<{ className?: string }>;
+  accent: string;
+}
+
+const eventDropdownItems: DropdownItem[] = [
   {
     name: "Roadshows",
     label: "City Roadshows",
@@ -50,13 +65,245 @@ const eventDropdownItems = [
   },
 ];
 
+const aboutDropdownItems: DropdownItem[] = [
+  {
+    name: "Our Story",
+    label: "Our Story",
+    desc: "Who we are and what we're doing for education",
+    href: "/about/our-story",
+    icon: BookOpen,
+    accent: "text-[#0E733B] bg-emerald-50",
+  },
+  {
+    name: "Schools",
+    label: "Schools",
+    desc: "Schools on EduBeacon, and how to register yours",
+    href: "/about/schools",
+    icon: School,
+    accent: "text-[#0E733B] bg-emerald-50",
+  },
+  {
+    name: "Vendors",
+    label: "Vendors",
+    desc: "Solution providers, and how to list your solution",
+    href: "/about/vendors",
+    icon: Store,
+    accent: "text-[#0E733B] bg-emerald-50",
+  },
+  {
+    name: "Speakers",
+    label: "Speakers",
+    desc: "The voices shaping the future of education",
+    href: "/about/speakers",
+    icon: Mic,
+    accent: "text-[#0E733B] bg-emerald-50",
+  },
+  {
+    name: "Sponsors",
+    label: "Sponsors",
+    desc: "Our partners and sponsorship opportunities",
+    href: "/about/sponsors",
+    icon: Handshake,
+    accent: "text-[#0E733B] bg-emerald-50",
+  },
+  {
+    name: "News Stories",
+    label: "News Stories",
+    desc: "Stories and articles published by EduBeacon",
+    href: "/about/news-stories",
+    icon: Newspaper,
+    accent: "text-[#0E733B] bg-emerald-50",
+  },
+];
+
+function NavDropdown({
+  label,
+  heading,
+  items,
+  allLink,
+  active,
+  isRegister,
+  onRegisterClick,
+  dropdownId,
+  openDropdown,
+  setOpenDropdown,
+}: {
+  label: string;
+  heading: string;
+  items: DropdownItem[];
+  allLink?: { href: string; text: string };
+  active: boolean;
+  isRegister?: boolean;
+  onRegisterClick?: (type: "partner" | "educator") => void;
+  dropdownId: string;
+  openDropdown: string | null;
+  setOpenDropdown: (id: string | null) => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isOpen = openDropdown === dropdownId;
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen, setOpenDropdown]);
+
+  if (isRegister) {
+    return (
+      <div className="relative" ref={ref}>
+        <button
+          onClick={() => setOpenDropdown(isOpen ? null : dropdownId)}
+          onMouseEnter={() => setOpenDropdown(dropdownId)}
+          className={`flex items-center gap-2 whitespace-nowrap rounded-full font-bold transition-all ${
+            isOpen
+              ? "bg-[#0B5C2F] text-white px-5 py-2 text-[12px] uppercase tracking-wider shadow-md"
+              : "bg-[#0E733B] hover:bg-[#0B5C2F] px-5 py-2 text-[12px] uppercase tracking-wider text-white shadow-md shadow-emerald-900/20 hover:scale-105 active:scale-95 transition-all duration-300"
+          }`}
+        >
+          <span>REGISTER NOW</span>
+          <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+        </button>
+
+        {isOpen && (
+          <div
+            onMouseLeave={() => setOpenDropdown(null)}
+            className="absolute top-full right-0 mt-2 w-80 rounded-2xl border border-line bg-white p-2.5 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200 z-50"
+          >
+            <div className="px-3 py-2 border-b border-gray-100">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                {heading}
+              </span>
+            </div>
+
+            <div className="space-y-1 mt-1.5">
+              {items.map((item) => (
+                <button
+                  key={item.name}
+                  onClick={() => {
+                    setOpenDropdown(null);
+                    onRegisterClick?.(item.name === "As a partner" ? "partner" : "educator");
+                  }}
+                  className="w-full group flex items-start gap-3 rounded-xl p-2.5 transition-all hover:bg-emerald-50/60 text-left"
+                >
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${item.accent}`}>
+                    <item.icon className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-charcoal group-hover:text-[#0E733B] transition-colors">
+                      {item.name}
+                    </h4>
+                    <p className="text-[11px] text-slate-500 leading-snug line-clamp-1 mt-0.5">
+                      {item.desc}
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpenDropdown(isOpen ? null : dropdownId)}
+        onMouseEnter={() => setOpenDropdown(dropdownId)}
+        className={`flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1.5 font-bold transition-all ${
+          active || isOpen
+            ? "bg-emerald-50 text-[#0E733B]"
+            : "text-slate-700 hover:bg-emerald-50 hover:text-[#0E733B]"
+        }`}
+      >
+        <span>{label}</span>
+        <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+      </button>
+
+      {isOpen && (
+        <div
+          onMouseLeave={() => setOpenDropdown(null)}
+          className="absolute top-full left-0 mt-2 w-80 rounded-2xl border border-line bg-white p-2.5 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200 z-50"
+        >
+          <div className="px-3 py-2 border-b border-gray-100 flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              {heading}
+            </span>
+            {allLink && (
+              <Link
+                href={allLink.href}
+                onClick={() => setOpenDropdown(null)}
+                className="text-[11px] font-bold text-[#0E733B] hover:underline"
+              >
+                {allLink.text}
+              </Link>
+            )}
+          </div>
+
+          <div className="space-y-1 mt-1.5">
+            {items.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                onClick={() => setOpenDropdown(null)}
+                className="group flex items-start gap-3 rounded-xl p-2.5 transition-all hover:bg-emerald-50/60"
+              >
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${item.accent}`}>
+                  <item.icon className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-charcoal group-hover:text-[#0E733B] transition-colors">
+                    {item.name}
+                  </h4>
+                  <p className="text-[11px] text-slate-500 leading-snug line-clamp-1 mt-0.5">
+                    {item.desc}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [eventsOpen, setEventsOpen] = useState(false);
   const [mobileEventsOpen, setMobileEventsOpen] = useState(true);
-  
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [registerModalOpen, setRegisterModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"partner" | "educator">("educator");
+
+  // Educator form state
+  const [educatorForm, setEducatorForm] = useState({
+    schoolName: "",
+    principalName: "",
+    email: "",
+    phone: "",
+    city: "",
+    requirements: "",
+  });
+
+  // Partner form state
+  const [partnerForm, setPartnerForm] = useState({
+    companyName: "",
+    contactPerson: "",
+    email: "",
+    phone: "",
+    website: "",
+    category: "",
+    description: "",
+  });
+
   const { openModal } = useModal();
   const router = useRouter();
   const pathname = usePathname();
@@ -75,43 +322,215 @@ export default function SiteHeader() {
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
-  // Close dropdown on outside click
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setEventsOpen(false);
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && registerModalOpen) {
+        setRegisterModalOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [registerModalOpen]);
 
   const handleNavClick = (href: string) => {
     setOpen(false);
-    setEventsOpen(false);
-    
-    if (href.startsWith("/#")) {
-      const id = href.replace("/#", "");
-      if (pathname === "/") {
-        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-      } else {
-        router.push(href);
-      }
-    } else {
-      router.push(href);
-    }
+    router.push(href);
   };
 
   const isEventsActive = pathname.startsWith("/events");
+  const isAboutActive = pathname.startsWith("/about");
 
   return (
-    <header
-      className={`sticky top-0 z-50 transition-all duration-500 border-none ${
-        scrolled
-          ? "pt-3 px-3 sm:px-6 md:px-8 pointer-events-none"
-          : "bg-[#F8FAF8]"
-      }`}
-    >
+    <>
+      {/* Register Modal with Tabs */}
+      {registerModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+          onClick={() => setRegisterModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in slide-in-from-bottom-4 duration-300"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <div className="sticky top-0 bg-white flex justify-end p-4 border-b border-gray-100">
+              <button
+                onClick={() => setRegisterModalOpen(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+                aria-label="Close modal"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex gap-0 border-b border-gray-100 sticky top-16 bg-white">
+              <button
+                onClick={() => setActiveTab("educator")}
+                className={`flex-1 py-4 px-4 text-sm font-semibold transition-all ${
+                  activeTab === "educator"
+                    ? "text-[#0E733B] border-b-2 border-[#0E733B]"
+                    : "text-slate-500 hover:text-charcoal"
+                }`}
+              >
+                As an Educator
+              </button>
+              <button
+                onClick={() => setActiveTab("partner")}
+                className={`flex-1 py-4 px-4 text-sm font-semibold transition-all ${
+                  activeTab === "partner"
+                    ? "text-[#0E733B] border-b-2 border-[#0E733B]"
+                    : "text-slate-500 hover:text-charcoal"
+                }`}
+              >
+                As a partner
+              </button>
+            </div>
+
+            {/* Tab Content - Educator Form */}
+            {activeTab === "educator" && (
+              <div className="p-6 space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <input
+                    type="text"
+                    placeholder="School Name *"
+                    value={educatorForm.schoolName}
+                    onChange={(e) => setEducatorForm({ ...educatorForm, schoolName: e.target.value })}
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/20"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Principal Name *"
+                    value={educatorForm.principalName}
+                    onChange={(e) => setEducatorForm({ ...educatorForm, principalName: e.target.value })}
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/20"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <input
+                    type="email"
+                    placeholder="Email *"
+                    value={educatorForm.email}
+                    onChange={(e) => setEducatorForm({ ...educatorForm, email: e.target.value })}
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/20"
+                  />
+                  <input
+                    type="tel"
+                    placeholder="Phone *"
+                    value={educatorForm.phone}
+                    onChange={(e) => setEducatorForm({ ...educatorForm, phone: e.target.value })}
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/20"
+                  />
+                </div>
+                <input
+                  type="text"
+                  placeholder="City *"
+                  value={educatorForm.city}
+                  onChange={(e) => setEducatorForm({ ...educatorForm, city: e.target.value })}
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/20"
+                />
+                <textarea
+                  placeholder="What solutions are you looking for? *"
+                  value={educatorForm.requirements}
+                  onChange={(e) => setEducatorForm({ ...educatorForm, requirements: e.target.value })}
+                  rows={3}
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/20"
+                />
+                <button
+                  onClick={() => setRegisterModalOpen(false)}
+                  className="w-full bg-[#0E733B] hover:bg-[#0B5C2F] text-white py-3 rounded-lg font-bold text-sm transition-colors"
+                >
+                  Register Your School
+                </button>
+              </div>
+            )}
+
+            {/* Tab Content - Partner Form */}
+            {activeTab === "partner" && (
+              <div className="p-6 space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <input
+                    type="text"
+                    placeholder="Company Name *"
+                    value={partnerForm.companyName}
+                    onChange={(e) => setPartnerForm({ ...partnerForm, companyName: e.target.value })}
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/20"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Contact Person *"
+                    value={partnerForm.contactPerson}
+                    onChange={(e) => setPartnerForm({ ...partnerForm, contactPerson: e.target.value })}
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/20"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <input
+                    type="email"
+                    placeholder="Email *"
+                    value={partnerForm.email}
+                    onChange={(e) => setPartnerForm({ ...partnerForm, email: e.target.value })}
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/20"
+                  />
+                  <input
+                    type="tel"
+                    placeholder="Phone *"
+                    value={partnerForm.phone}
+                    onChange={(e) => setPartnerForm({ ...partnerForm, phone: e.target.value })}
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/20"
+                  />
+                </div>
+                <input
+                  type="url"
+                  placeholder="Website"
+                  value={partnerForm.website}
+                  onChange={(e) => setPartnerForm({ ...partnerForm, website: e.target.value })}
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/20"
+                />
+                <select
+                  value={partnerForm.category}
+                  onChange={(e) => setPartnerForm({ ...partnerForm, category: e.target.value })}
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/20"
+                >
+                  <option value="">Solution Category *</option>
+                  <option value="stem">STEM Labs</option>
+                  <option value="ai">AI & Machine Learning</option>
+                  <option value="robotics">Robotics</option>
+                  <option value="smart-classroom">Smart Classroom</option>
+                  <option value="erp">School ERP</option>
+                  <option value="assessment">Assessment Tools</option>
+                  <option value="other">Other</option>
+                </select>
+                <textarea
+                  placeholder="Solution Description *"
+                  value={partnerForm.description}
+                  onChange={(e) => setPartnerForm({ ...partnerForm, description: e.target.value })}
+                  rows={3}
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/20"
+                />
+                <button
+                  onClick={() => setRegisterModalOpen(false)}
+                  className="w-full bg-[#0E733B] hover:bg-[#0B5C2F] text-white py-3 rounded-lg font-bold text-sm transition-colors"
+                >
+                  Submit Your Solution
+                </button>
+              </div>
+            )}
+
+          </div>
+        </div>
+      )}
+
+      {/* Header */}
+      <header
+        className={`sticky top-0 z-50 transition-all duration-500 border-none ${
+          scrolled
+            ? "pt-3 px-3 sm:px-6 md:px-8 pointer-events-none"
+            : "bg-[#F8FAF8]"
+        }`}
+      >
       <div
         className={`mx-auto transition-all duration-500 pointer-events-auto ${
           scrolled
@@ -145,155 +564,69 @@ export default function SiteHeader() {
 
         {/* ──────────────── Desktop Navigation Links (Directly Visible) ──────────────── */}
         <nav className="hidden xl:flex items-center gap-0.5 2xl:gap-1 text-[13px]">
-          <button
-            onClick={() => handleNavClick("/#about")}
-            className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
+          <Link
+            href="/"
+            onClick={() => setOpen(false)}
+            className={`whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold transition-all hover:text-[#0E733B] hover:bg-emerald-50 ${
+              pathname === "/" ? "text-[#0E733B]" : "text-slate-700"
+            }`}
           >
-            About
-          </button>
-          <button
-            onClick={() => handleNavClick("/#solutions")}
-            className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
+            Home
+          </Link>
+          <Link
+            href="/solutions"
+            onClick={() => setOpen(false)}
+            className={`whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold transition-all hover:text-[#0E733B] hover:bg-emerald-50 ${
+              pathname === "/solutions" ? "text-[#0E733B]" : "text-slate-700"
+            }`}
           >
-            Solutions
-          </button>
-          <button
-            onClick={() => handleNavClick("/#for-schools")}
-            className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
-          >
-            Schools
-          </button>
-          <button
-            onClick={() => handleNavClick("/#for-vendors")}
-            className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
-          >
-            Vendors
-          </button>
+            Our Solutions
+          </Link>
 
-          {/* Events Dropdown */}
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setEventsOpen(!eventsOpen)}
-              onMouseEnter={() => setEventsOpen(true)}
-              className={`flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1.5 font-bold transition-all ${
-                isEventsActive || eventsOpen
-                  ? "bg-emerald-50 text-[#0E733B]"
-                  : "text-slate-700 hover:bg-emerald-50 hover:text-[#0E733B]"
-              }`}
-            >
-              <span>Events</span>
-              <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${eventsOpen ? "rotate-180" : ""}`} />
-            </button>
+          <NavDropdown
+            label="About"
+            heading="About EduBeacon"
+            items={aboutDropdownItems}
+            active={isAboutActive}
+            dropdownId="about"
+            openDropdown={openDropdown}
+            setOpenDropdown={setOpenDropdown}
+          />
 
-            {eventsOpen && (
-              <div 
-                onMouseLeave={() => setEventsOpen(false)}
-                className="absolute top-full left-0 mt-2 w-80 rounded-2xl border border-line bg-white p-2.5 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200 z-50"
-              >
-                <div className="px-3 py-2 border-b border-gray-100 flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    EduBeacon Events
-                  </span>
-                  <Link
-                    href="/events"
-                    onClick={() => setEventsOpen(false)}
-                    className="text-[11px] font-bold text-[#0E733B] hover:underline"
-                  >
-                    All Events →
-                  </Link>
-                </div>
-
-                <div className="space-y-1 mt-1.5">
-                  {eventDropdownItems.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      onClick={() => setEventsOpen(false)}
-                      className="group flex items-start gap-3 rounded-xl p-2.5 transition-all hover:bg-emerald-50/60"
-                    >
-                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${item.accent}`}>
-                        <item.icon className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-bold text-charcoal group-hover:text-[#0E733B] transition-colors">
-                          {item.name}
-                        </h4>
-                        <p className="text-[11px] text-slate-500 leading-snug line-clamp-1 mt-0.5">
-                          {item.desc}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <button
-            onClick={() => handleNavClick("/#speakers")}
-            className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
-          >
-            Speakers
-          </button>
-          <button
-            onClick={() => handleNavClick("/events/conference#sponsorship")}
-            className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
-          >
-            Sponsorship
-          </button>
-          <button
-            onClick={() => handleNavClick("/#awards")}
-            className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
-          >
-            Awards
-          </button>
-          <button
-            onClick={() => handleNavClick("/#testimonials")}
-            className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
-          >
-            Testimonials
-          </button>
-          <button
-            onClick={() => handleNavClick("/#contact")}
-            className="whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold text-slate-700 hover:text-[#0E733B] hover:bg-emerald-50 transition-all"
-          >
-            Contact
-          </button>
+          <NavDropdown
+            label="Events"
+            heading="EduBeacon Events"
+            items={eventDropdownItems}
+            allLink={{ href: "/events", text: "All Events →" }}
+            active={isEventsActive}
+            dropdownId="events"
+            openDropdown={openDropdown}
+            setOpenDropdown={setOpenDropdown}
+          />
         </nav>
 
-        {/* ──────────────── Right Action Button (Partner + Register in Both States) ──────────────── */}
+        {/* ──────────────── Right Action Buttons (Contact Us + Register Dropdown) ──────────────── */}
         <div className="hidden xl:flex items-center gap-2.5">
-          {scrolled ? (
-            <>
-              <button
-                onClick={() => openModal("vendor-register")}
-                className="whitespace-nowrap text-[12.5px] font-bold text-[#0E733B] hover:text-[#0B5C2F] transition-colors px-3 py-1.5 rounded-full hover:bg-emerald-50"
-              >
-                Partner
-              </button>
-              <button
-                onClick={() => openModal("school-register")}
-                className="rounded-full bg-[#0E733B] hover:bg-[#0B5C2F] px-5 py-2 text-[12px] font-extrabold uppercase tracking-wider text-white shadow-md shadow-emerald-900/20 hover:scale-105 active:scale-95 transition-all duration-300"
-              >
-                REGISTER NOW
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() => openModal("vendor-register")}
-                className="whitespace-nowrap text-[13px] font-semibold text-[#0E733B] hover:text-[#0B5C2F] transition-colors px-3 py-2 rounded-full hover:bg-emerald-50"
-              >
-                Partner
-              </button>
-              <button
-                onClick={() => openModal("school-register")}
-                className="whitespace-nowrap rounded-full bg-[#0E733B] px-5 py-2.5 text-[13px] font-semibold text-white shadow-sm transition-colors hover:bg-[#0B5C2F]"
-              >
-                Register School
-              </button>
-            </>
-          )}
+          <Link
+            href="/contact"
+            onClick={() => setOpen(false)}
+            className={`whitespace-nowrap font-semibold transition-colors px-3 rounded-full hover:bg-emerald-50 ${
+              scrolled
+                ? "text-[12.5px] font-bold text-[#0E733B] hover:text-[#0B5C2F] py-1.5"
+                : "text-[13px] text-[#0E733B] hover:text-[#0B5C2F] py-2"
+            }`}
+          >
+            Contact Us
+          </Link>
+          <button
+            onClick={() => setRegisterModalOpen(true)}
+            className={`flex items-center gap-2 whitespace-nowrap rounded-full font-bold transition-all bg-[#0E733B] hover:bg-[#0B5C2F] text-white shadow-md shadow-emerald-900/20 hover:scale-105 active:scale-95 transition-all duration-300 ${
+              scrolled ? "px-5 py-2 text-[12px] uppercase tracking-wider" : "px-5 py-2.5 text-[13px]"
+            }`}
+          >
+            <span>REGISTER NOW</span>
+            <ChevronDown className="h-3.5 w-3.5" />
+          </button>
         </div>
 
         {/* ──────────────── Mobile Hamburger ──────────────── */}
@@ -324,30 +657,46 @@ export default function SiteHeader() {
       {open && (
         <div className="border-t border-line bg-white xl:hidden shadow-2xl max-h-[calc(100vh-72px)] overflow-y-auto pointer-events-auto">
           <Container className="flex flex-col gap-1 py-4">
-            <button
-              onClick={() => handleNavClick("/#about")}
+            <Link
+              href="/"
+              onClick={() => setOpen(false)}
               className="rounded-lg px-3 py-2 text-[14px] font-medium text-slate text-left hover:bg-emerald-50 hover:text-[#0E733B]"
             >
-              About
-            </button>
-            <button
-              onClick={() => handleNavClick("/#solutions")}
+              Home
+            </Link>
+            <Link
+              href="/solutions"
+              onClick={() => setOpen(false)}
               className="rounded-lg px-3 py-2 text-[14px] font-medium text-slate text-left hover:bg-emerald-50 hover:text-[#0E733B]"
             >
-              Solutions
-            </button>
-            <button
-              onClick={() => handleNavClick("/#for-schools")}
-              className="rounded-lg px-3 py-2 text-[14px] font-medium text-slate text-left hover:bg-emerald-50 hover:text-[#0E733B]"
-            >
-              Schools
-            </button>
-            <button
-              onClick={() => handleNavClick("/#for-vendors")}
-              className="rounded-lg px-3 py-2 text-[14px] font-medium text-slate text-left hover:bg-emerald-50 hover:text-[#0E733B]"
-            >
-              Vendors
-            </button>
+              Our Solutions
+            </Link>
+
+            {/* Mobile About Accordion */}
+            <div className="rounded-xl bg-emerald-50/50 border border-emerald-100 p-2 my-1">
+              <button
+                onClick={() => setMobileAboutOpen(!mobileAboutOpen)}
+                className="w-full flex items-center justify-between px-2 py-1.5 text-[14px] font-bold text-[#0E733B]"
+              >
+                <span>About</span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${mobileAboutOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {mobileAboutOpen && (
+                <div className="mt-1 space-y-1 pl-2 pt-1 border-t border-emerald-200">
+                  {aboutDropdownItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      className="block px-2 py-1.5 text-[13px] font-medium text-slate-700 hover:text-[#0E733B]"
+                    >
+                      • {item.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Mobile Events Accordion */}
             <div className="rounded-xl bg-emerald-50/50 border border-emerald-100 p-2 my-1">
@@ -400,57 +749,28 @@ export default function SiteHeader() {
               )}
             </div>
 
-            <button
-              onClick={() => handleNavClick("/#speakers")}
-              className="rounded-lg px-3 py-2 text-[14px] font-medium text-slate text-left hover:bg-emerald-50 hover:text-[#0E733B]"
-            >
-              Speakers
-            </button>
-            <button
-              onClick={() => handleNavClick("/events/conference#sponsorship")}
-              className="rounded-lg px-3 py-2 text-[14px] font-medium text-slate text-left hover:bg-emerald-50 hover:text-[#0E733B]"
-            >
-              Sponsorship
-            </button>
-            <button
-              onClick={() => handleNavClick("/#awards")}
-              className="rounded-lg px-3 py-2 text-[14px] font-medium text-slate text-left hover:bg-emerald-50 hover:text-[#0E733B]"
-            >
-              Awards
-            </button>
-            <button
-              onClick={() => handleNavClick("/#testimonials")}
-              className="rounded-lg px-3 py-2 text-[14px] font-medium text-slate text-left hover:bg-emerald-50 hover:text-[#0E733B]"
-            >
-              Testimonials
-            </button>
-            <button
-              onClick={() => handleNavClick("/#contact")}
-              className="rounded-lg px-3 py-2 text-[14px] font-medium text-slate text-left hover:bg-emerald-50 hover:text-[#0E733B]"
-            >
-              Contact
-            </button>
-
             <div className="mt-3 flex flex-col gap-3 border-t border-line pt-4">
+              <Link
+                href="/contact"
+                onClick={() => setOpen(false)}
+                className="w-full border border-gray-300 text-charcoal py-3 rounded-full font-semibold text-[14px] hover:bg-gray-50 text-center"
+              >
+                Contact Us
+              </Link>
               <button
                 onClick={() => {
                   setOpen(false);
-                  openModal("school-register");
+                  setRegisterModalOpen(true);
                 }}
                 className="w-full bg-[#0E733B] hover:bg-[#0B5C2F] text-white py-3 rounded-full font-bold text-[14px] shadow-md transition-colors"
               >
                 REGISTER NOW
-              </button>
-              <button
-                onClick={() => { setOpen(false); openModal("vendor-register"); }}
-                className="w-full border border-gray-300 text-charcoal py-3 rounded-full font-semibold text-[14px] hover:bg-gray-50"
-              >
-                Join as Partner
               </button>
             </div>
           </Container>
         </div>
       )}
     </header>
+    </>
   );
 }

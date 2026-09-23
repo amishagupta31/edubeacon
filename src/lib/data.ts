@@ -32,12 +32,12 @@ export const siteConfig = {
   email: "connect@edubeacon.com",
   phone: "+91 98765 43210",
   location: "Hotel Aketa, Dehradun, Uttarakhand",
-  conferenceDate: new Date("2027-11-15T09:00:00+05:30"),
-  conferenceVenue: "Hotel Aketa, Rajpur Road",
+  conferenceDate: new Date("2026-10-11T10:00:00+05:30"),
+  conferenceVenue: "Shivalik University",
   conferenceCity: "Dehradun, Uttarakhand, India",
-  conferenceLocationMapUrl: "https://share.google/g2ShK4g4eKqOSN45a",
-  conferenceEventName: "EduBeacon Education Leadership Conference 2027",
-  conferenceEventDate: "15–16 November 2027",
+  conferenceLocationMapUrl: "https://www.google.com/maps/search/?api=1&query=Shivalik+University+Dehradun",
+  conferenceEventName: "AI, NEP & the Future of Learning — An EduBeacon Conference",
+  conferenceEventDate: "11 October 2026",
 };
 
 /* ─────────────────────────────────────────

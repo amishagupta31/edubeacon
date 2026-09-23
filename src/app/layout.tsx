@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Fraunces } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
@@ -45,13 +46,15 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-warm-ivory text-slate antialiased">
-        <ModalProvider>
-          <ScrollReveal />
-          <SiteHeader />
-          <main className="flex-1 pb-16 md:pb-0">{children}</main>
-          <SiteFooter />
-          <MobileStickyCta />
-        </ModalProvider>
+        <ClerkProvider>
+          <ModalProvider>
+            <ScrollReveal />
+            <SiteHeader />
+            <main className="flex-1 pb-16 md:pb-0">{children}</main>
+            <SiteFooter />
+            <MobileStickyCta />
+          </ModalProvider>
+        </ClerkProvider>
       </body>
     </html>
   );

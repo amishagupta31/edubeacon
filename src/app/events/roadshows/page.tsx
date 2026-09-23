@@ -458,7 +458,7 @@ export default function RoadshowsPage() {
               </h2>
             </div>
             <Link
-              href="/#solutions"
+              href="/solutions"
               className="text-xs font-bold text-[#0E733B] hover:underline mt-2 md:mt-0 flex items-center gap-1"
             >
               Explore Solutions Directory →

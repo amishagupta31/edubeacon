@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { School, Search, Handshake, Rocket, Sparkles } from "lucide-react";
 import Container from "./ui/Container";
 import { useModal } from "./modals/ModalProvider";
@@ -76,6 +77,7 @@ const pillars = [
 
 export default function AboutSection() {
   const { openModal } = useModal();
+  const router = useRouter();
   const [activeStep, setActiveStep] = useState(0);
 
   useEffect(() => {
@@ -94,9 +96,9 @@ export default function AboutSection() {
             <span>About Edubeacon</span>
           </div>
           <h2 className="font-bold text-[34px] md:text-[44px] text-charcoal leading-[1.1] text-balance mb-4 tracking-tight">
-            One Platform.{" "}
+            One Platform{" "}
             <span className="text-[#0E733B]">Endless Education</span>{" "}
-            Possibilities.
+            Possibilities
           </h2>
           <p className="text-[16px] leading-relaxed text-slate-soft max-w-[54ch] mx-auto font-normal">
             Edubeacon is the bridge between schools looking for the right
@@ -142,11 +144,11 @@ export default function AboutSection() {
                   </button>
                 ) : (
                   <button
-                    onClick={() =>
-                      document
-                        .getElementById(pillar.ctaTarget!)
-                        ?.scrollIntoView({ behavior: "smooth" })
-                    }
+                    onClick={() => {
+                      const target = document.getElementById(pillar.ctaTarget!);
+                      if (target) target.scrollIntoView({ behavior: "smooth" });
+                      else router.push(`/${pillar.ctaTarget}`);
+                    }}
                     className="inline-flex items-center gap-2 text-white font-semibold text-[13.5px] px-6 py-3 rounded-xl transition-all duration-200 hover:opacity-90 hover:-translate-y-0.5 shadow-sm"
                     style={{ background: pillar.accent }}
                   >

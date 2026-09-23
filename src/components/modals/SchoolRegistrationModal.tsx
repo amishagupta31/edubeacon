@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { 
-  ArrowRight, 
-  ArrowLeft, 
-  CheckCircle2, 
-  MapPin, 
+import {
+  ArrowRight,
+  ArrowLeft,
+  CheckCircle2,
+  MapPin,
   Download,
-  Calendar
+  Calendar,
 } from "lucide-react";
+import { useClerk, useSignIn, useSignUp } from "@clerk/nextjs";
 import ModalShell from "./ModalShell";
 
 const roleOptions = [
@@ -43,6 +44,21 @@ const experienceOptions = [
   "15+ Years",
 ];
 
+const exploringOptions = [
+  "Teacher Training",
+  "Student Counselling",
+  "Recruitment Services",
+  "AI / Robotics / STEM Labs",
+  "Special Classes – Art Therapy / Music / Yoga / IIT Coaching / NEET",
+  "Smart Screens / Projectors",
+  "Marketing Services",
+  "Admission Agents",
+  "School Cafeteria Vendors / Vending Machines",
+  "Printing & Publishing",
+  "ERP / CRM / Billing",
+  "Other",
+];
+
 const stateOptions = [
   "Uttarakhand",
   "Delhi NCR",
@@ -60,18 +76,21 @@ const stateOptions = [
   "Other State / UT",
 ];
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function SchoolRegistrationModal({
   onClose,
 }: {
   onClose: () => void;
 }) {
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [submitted, setSubmitted] = useState(false);
 
   // Form State
   const [form, setForm] = useState({
     // Page 1: Personal & Institutional Details
     name: "",
+    email: "",
     role: "Principal",
     otherRole: "",
     school: "",
@@ -90,6 +109,10 @@ export default function SchoolRegistrationModal({
     usesAiInWork: true,
     aiTools: ["ChatGPT", "Gemini"] as string[],
     otherAiTool: "",
+
+    // Page 3: Services / products being explored
+    exploringServices: [] as string[],
+    otherExploring: "",
   });
 
   // Strict numerical-only handler (strips non-digits, max 10 digits)
@@ -129,10 +152,32 @@ export default function SchoolRegistrationModal({
     }));
   };
 
+  const toggleExploring = (option: string) => {
+    setForm((f) => ({
+      ...f,
+      exploringServices: f.exploringServices.includes(option)
+        ? f.exploringServices.filter((o) => o !== option)
+        : [...f.exploringServices, option],
+    }));
+  };
+
+  const handleNextToExploring = (e: React.FormEvent) => {
+    e.preventDefault();
+    setStep(3);
+  };
+
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name.trim() || !form.school.trim() || !form.phone.trim() || !form.city.trim()) {
+    if (!form.name.trim() || !form.email.trim() || !form.school.trim() || !form.phone.trim() || !form.city.trim()) {
       alert("Please fill in all required fields on Page 1.");
+      return;
+    }
+    if (!EMAIL_REGEX.test(form.email.trim())) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+    if (!emailVerified) {
+      alert("Please verify your email address before continuing.");
       return;
     }
     if (form.phone.length < 10) {
@@ -148,12 +193,136 @@ export default function SchoolRegistrationModal({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  // ── Clerk: email-code verification, scoped to this conference registration only ──
+  const clerk = useClerk();
+  const { signUp } = useSignUp();
+  const { signIn } = useSignIn();
 
-    const payload = {
+  const [verifyMode, setVerifyMode] = useState<"signup" | "signin" | null>(null);
+  const [codeSent, setCodeSent] = useState(false);
+  const [code, setCode] = useState("");
+  const [verifyError, setVerifyError] = useState("");
+  const [isSendingCode, setIsSendingCode] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(false);
+
+  // Editing the email after sending/verifying a code invalidates that attempt
+  const handleEmailChange = (value: string) => {
+    setForm((f) => ({ ...f, email: value }));
+    if (emailVerified || codeSent) {
+      setEmailVerified(false);
+      setCodeSent(false);
+      setVerifyMode(null);
+      setCode("");
+      setVerifyError("");
+    }
+  };
+
+  // ClerkJS surfaces a raw "TypeError: Failed to fetch" for connectivity blips — show
+  // something a visitor can actually act on instead of the technical message.
+  const describeVerificationError = (err: unknown, fallback: string) => {
+    if (err instanceof Error && /failed to fetch|network ?error|load failed/i.test(err.message)) {
+      return "Network error — please check your internet connection and try again.";
+    }
+    return err instanceof Error ? err.message : fallback;
+  };
+
+  const sendVerificationCode = async () => {
+    const email = form.email.trim();
+    if (!email) return;
+    setVerifyError("");
+    setIsSendingCode(true);
+    try {
+      // Clerk allows only one active session per browser. If this browser is already
+      // signed in (e.g. from an earlier registration), "session_exists" would otherwise
+      // block a fresh sign-up here.
+      if (clerk.session) {
+        const alreadySignedInAsThisEmail = clerk.user?.emailAddresses?.some(
+          (e) => e.emailAddress.toLowerCase() === email.toLowerCase()
+        );
+        if (alreadySignedInAsThisEmail) {
+          // Already verified as this exact person in this browser — no need to re-verify
+          setEmailVerified(true);
+          return;
+        }
+        // A different email on this device — clear the old session before starting fresh
+        try {
+          await clerk.signOut();
+        } catch {
+          // A network blip here shouldn't block the attempt below — signUp.create()
+          // will tell us plainly (via "session_exists") if the old session is still around.
+        }
+      }
+
+      let { error: createError } = await signUp.create({ emailAddress: email });
+
+      // If a stale session is still around (e.g. the sign-out above didn't land because of a
+      // network blip), clear it and retry once instead of leaving the person stuck.
+      if (createError && createError.code === "session_exists") {
+        try {
+          await clerk.signOut();
+        } catch {
+          // ignore — the retry below will surface a clear error if this still fails
+        }
+        ({ error: createError } = await signUp.create({ emailAddress: email }));
+      }
+
+      if (createError && createError.code === "form_identifier_exists") {
+        // Already registered with Clerk before — sign them back in with an email code instead
+        const { error: signInError } = await signIn.create({ identifier: email });
+        if (signInError) {
+          setVerifyError(signInError.message || "Could not send a verification code. Please try again.");
+          return;
+        }
+        const supportsEmailCode = signIn.supportedFirstFactors?.some((f) => f.strategy === "email_code");
+        if (!supportsEmailCode) {
+          setVerifyError("This email can't be verified by code. Please use a different email address.");
+          return;
+        }
+        const { error: sendError } = await signIn.emailCode.sendCode();
+        if (sendError) {
+          setVerifyError(sendError.message || "Could not send a verification code. Please try again.");
+          return;
+        }
+        setVerifyMode("signin");
+        setCodeSent(true);
+        return;
+      }
+
+      if (createError) {
+        setVerifyError(createError.message || "Could not send a verification code. Please try again.");
+        return;
+      }
+
+      // Some Clerk instances require a password to sign up — fill one in automatically
+      if (signUp.missingFields.includes("password")) {
+        const generatedPassword = `Edb${Math.random().toString(36).slice(2)}${Date.now()}!Aa`;
+        const { error: passwordError } = await signUp.password({ password: generatedPassword });
+        if (passwordError) {
+          setVerifyError(passwordError.message || "Could not send a verification code. Please try again.");
+          return;
+        }
+      }
+
+      const { error: codeError } = await signUp.verifications.sendEmailCode();
+      if (codeError) {
+        setVerifyError(codeError.message || "Could not send a verification code. Please try again.");
+        return;
+      }
+      setVerifyMode("signup");
+      setCodeSent(true);
+    } catch (err) {
+      setVerifyError(describeVerificationError(err, "Could not send a verification code. Please try again."));
+    } finally {
+      setIsSendingCode(false);
+    }
+  };
+
+  const finalizeRegistration = async () => {
+    setIsSubmitting(true);
+    const registration = {
       name: form.name.trim(),
+      email: form.email.trim(),
       role: form.role === "Other" ? form.otherRole.trim() : form.role,
       school: form.school.trim(),
       address: form.address.trim(),
@@ -171,28 +340,83 @@ export default function SchoolRegistrationModal({
           ? [...form.aiTools.filter((t) => t !== "Other"), form.otherAiTool.trim()]
           : form.aiTools
       ).join(", "),
-      timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
-      sheetId: "13h3F3aniqSv5SeQznxvbrMgPy6oIbezAqod4a97NaVs",
+      exploringServices: (
+        form.exploringServices.includes("Other") && form.otherExploring.trim()
+          ? [...form.exploringServices.filter((o) => o !== "Other"), form.otherExploring.trim()]
+          : form.exploringServices
+      ).join(", "),
+      registeredAt: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
     };
 
-    const scriptUrl =
-      process.env.NEXT_PUBLIC_APPS_SCRIPT_URL ||
-      "https://script.google.com/macros/s/AKfycbzlzgY9QkRq7YKmEtwn2BUIia_JHstY96C43e0rxV7Zt00NNiHR5qJ43I-dJaNnFCJjgQ/exec";
-
     try {
-      // Direct frontend submission to Google Apps Script Web App
-      await fetch(scriptUrl, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload),
+      // Store the registration on the now-verified Clerk user (visible in the Clerk Dashboard)
+      await clerk.user?.update({
+        unsafeMetadata: {
+          ...(clerk.user.unsafeMetadata || {}),
+          conferenceRegistration: registration,
+        },
       });
     } catch (err) {
-      console.error("Direct Google Sheet submission error:", err);
+      console.error("Failed to save conference registration to Clerk:", err);
     } finally {
       setIsSubmitting(false);
       setSubmitted(true);
     }
+  };
+
+  const handleVerifyInlineCode = async () => {
+    if (code.length < 6) return;
+    setVerifyError("");
+    setIsVerifying(true);
+    try {
+      if (verifyMode === "signup") {
+        const { error } = await signUp.verifications.verifyEmailCode({ code });
+        if (error) {
+          setVerifyError(error.message || "That code didn't work. Please try again.");
+          return;
+        }
+        if (signUp.status === "complete") {
+          const { error: finalizeError } = await signUp.finalize();
+          if (finalizeError) {
+            setVerifyError(finalizeError.message || "Could not verify your email. Please try again.");
+            return;
+          }
+          setEmailVerified(true);
+        } else {
+          setVerifyError("That code didn't complete verification. Please check it and try again.");
+        }
+      } else if (verifyMode === "signin") {
+        const { error } = await signIn.emailCode.verifyCode({ code });
+        if (error) {
+          setVerifyError(error.message || "That code didn't work. Please try again.");
+          return;
+        }
+        if (signIn.status === "complete") {
+          const { error: finalizeError } = await signIn.finalize();
+          if (finalizeError) {
+            setVerifyError(finalizeError.message || "Could not verify your email. Please try again.");
+            return;
+          }
+          setEmailVerified(true);
+        } else {
+          setVerifyError("That code didn't complete verification. Please check it and try again.");
+        }
+      }
+    } catch (err) {
+      setVerifyError(describeVerificationError(err, "That code didn't work. Please try again."));
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleCompleteRegistration = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!emailVerified) {
+      alert("Please verify your email address on Page 1 before completing registration.");
+      setStep(1);
+      return;
+    }
+    await finalizeRegistration();
   };
 
   const handleDownloadBadge = () => {
@@ -272,11 +496,11 @@ export default function SchoolRegistrationModal({
     ctx.textBaseline = "alphabetic";
     ctx.fillStyle = "#FFFFFF";
     ctx.font = "bold 32px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-    ctx.fillText("EduBeacon 2027", logoX + logoSize + 20, logoY + 30);
+    ctx.fillText("EduBeacon 2026", logoX + logoSize + 20, logoY + 30);
 
     ctx.fillStyle = "#6EE7B7";
     ctx.font = "bold 15px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-    ctx.fillText("NATIONAL LEADERSHIP SUMMIT", logoX + logoSize + 20, logoY + 56);
+    ctx.fillText("AI, NEP & THE FUTURE OF LEARNING", logoX + logoSize + 20, logoY + 56);
 
     // Role Tag Pill (Top Right)
     const displayRole = (form.role === "Other" ? form.otherRole : form.role) || "DELEGATE";
@@ -311,13 +535,13 @@ export default function SchoolRegistrationModal({
     ctx.textAlign = "left";
     ctx.fillStyle = "#34D399";
     ctx.font = "bold 16px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-    ctx.fillText("CONFIRMED SUMMIT DELEGATE", 70, 205);
+    ctx.fillText("CONFIRMED CONFERENCE DELEGATE", 70, 205);
 
     ctx.fillStyle = "#FFFFFF";
     ctx.font = "bold 36px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-    const headline = form.role === "Teacher" 
-      ? "Teachers Who Inspire. Ideas That Transform." 
-      : "Welcome to EduBeacon Summit";
+    const headline = form.role === "Teacher"
+      ? "Teachers Who Inspire. Ideas That Transform."
+      : "Welcome to EduBeacon";
     ctx.fillText(headline, 70, 252);
 
     // Profile Box
@@ -406,7 +630,7 @@ export default function SchoolRegistrationModal({
     // Footer Info
     ctx.fillStyle = "#34D399";
     ctx.font = "bold 20px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-    ctx.fillText("🗓️  15–16 November 2027", 70, 615);
+    ctx.fillText("🗓️  11 October 2026", 70, 615);
 
     ctx.fillStyle = "#CBD5E1";
     ctx.font = "bold 20px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
@@ -455,8 +679,8 @@ export default function SchoolRegistrationModal({
                   EB
                 </div>
                 <div>
-                  <h4 className="font-extrabold text-xs leading-none">EduBeacon 2027</h4>
-                  <span className="text-[8.5px] text-emerald-300 uppercase tracking-wider font-semibold">National Leadership Summit</span>
+                  <h4 className="font-extrabold text-xs leading-none">EduBeacon 2026</h4>
+                  <span className="text-[8.5px] text-emerald-300 uppercase tracking-wider font-semibold">AI, NEP & the Future of Learning</span>
                 </div>
               </div>
               <span className="text-[9px] font-extrabold uppercase tracking-widest bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-400/30">
@@ -497,10 +721,10 @@ export default function SchoolRegistrationModal({
 
             <div className="relative z-10 flex items-center justify-between text-[10px] text-slate-200 border-t border-white/15 pt-2.5">
               <span className="flex items-center gap-1 font-bold text-emerald-300">
-                <Calendar className="w-3 h-3" /> 15–16 Nov 2027
+                <Calendar className="w-3 h-3" /> 11 Oct 2026
               </span>
               <span className="flex items-center gap-1 text-slate-300">
-                <MapPin className="w-3 h-3 text-emerald-300" /> Dehradun, India
+                <MapPin className="w-3 h-3 text-emerald-300" /> Shivalik University, Dehradun
               </span>
             </div>
           </div>
@@ -528,34 +752,39 @@ export default function SchoolRegistrationModal({
 
   return (
     <ModalShell title="Conference Event Registration" onClose={onClose} size="lg">
-      {/* 2-Step Progress Stepper */}
+      {/* 3-Step Progress Stepper */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-              step === 1 ? "bg-[#0E733B] text-white" : "bg-emerald-100 text-[#0E733B]"
-            }`}>
-              1
-            </span>
-            <span className={`text-xs font-bold ${step === 1 ? "text-charcoal" : "text-slate-400"}`}>
-              Personal & School Details
-            </span>
-          </div>
-
-          <div className="h-0.5 flex-1 mx-4 bg-gray-200">
-            <div className={`h-full bg-[#0E733B] transition-all duration-300 ${step === 1 ? "w-0" : "w-full"}`} />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-              step === 2 ? "bg-[#0E733B] text-white" : "bg-gray-100 text-slate-400"
-            }`}>
-              2
-            </span>
-            <span className={`text-xs font-bold ${step === 2 ? "text-charcoal" : "text-slate-400"}`}>
-              Academic Profile & AI Tools
-            </span>
-          </div>
+          {(() => {
+            const stepItems = [
+              { n: 1 as const, label: "Personal & School Details" },
+              { n: 2 as const, label: "Academic Profile & AI Tools" },
+              { n: 3 as const, label: "Exploring Services" },
+            ];
+            return stepItems.map((item, i) => (
+              <div key={item.n} className={`flex items-center ${i < stepItems.length - 1 ? "flex-1" : ""}`}>
+                <div className="flex items-center gap-2">
+                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+                    step === item.n
+                      ? "bg-[#0E733B] text-white"
+                      : step > item.n
+                      ? "bg-emerald-100 text-[#0E733B]"
+                      : "bg-gray-100 text-slate-400"
+                  }`}>
+                    {item.n}
+                  </span>
+                  <span className={`text-xs font-bold hidden sm:inline ${step === item.n ? "text-charcoal" : "text-slate-400"}`}>
+                    {item.label}
+                  </span>
+                </div>
+                {i < stepItems.length - 1 && (
+                  <div className="h-0.5 flex-1 mx-3 bg-gray-200">
+                    <div className={`h-full bg-[#0E733B] transition-all duration-300 ${step > item.n ? "w-full" : "w-0"}`} />
+                  </div>
+                )}
+              </div>
+            ));
+          })()}
         </div>
       </div>
 
@@ -577,6 +806,77 @@ export default function SchoolRegistrationModal({
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
               />
+            </div>
+
+            {/* Email Address — verified inline via Clerk before the delegate can continue */}
+            <div>
+              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+                Email Address *
+              </label>
+              <div className="flex gap-2">
+                <input
+                  required
+                  type="email"
+                  placeholder="e.g. arvind.sharma@school.edu"
+                  disabled={emailVerified}
+                  className="flex-1 min-w-0 border border-line rounded-xl px-3.5 py-2 text-[13px] text-charcoal focus:outline-none focus:border-[#0E733B] focus:ring-1 focus:ring-[#0E733B]/20 disabled:bg-emerald-50/60 disabled:text-slate-500"
+                  value={form.email}
+                  onChange={(e) => handleEmailChange(e.target.value)}
+                />
+                {emailVerified ? (
+                  <span className="shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-[#0E733B] text-xs font-bold">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    Verified
+                  </span>
+                ) : (
+                  EMAIL_REGEX.test(form.email.trim()) && (
+                    <button
+                      type="button"
+                      onClick={sendVerificationCode}
+                      disabled={isSendingCode}
+                      className="shrink-0 px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-[#0E733B] text-xs font-bold hover:bg-emerald-100 disabled:opacity-50 transition-colors"
+                    >
+                      {isSendingCode ? "Sending..." : codeSent ? "Resend Code" : "Verify Email"}
+                    </button>
+                  )
+                )}
+              </div>
+
+              {!emailVerified && codeSent && (
+                <div className="mt-2 flex gap-2 items-center">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    placeholder="6-digit code"
+                    className="w-32 border border-line rounded-xl px-3 py-2 text-sm font-bold tracking-[0.3em] text-center text-charcoal focus:outline-none focus:border-[#0E733B]"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleVerifyInlineCode();
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleVerifyInlineCode}
+                    disabled={isVerifying || code.length < 6}
+                    className="px-4 py-2 rounded-xl bg-[#0E733B] hover:bg-[#0B5C2F] text-white text-xs font-bold disabled:opacity-50 transition-colors"
+                  >
+                    {isVerifying ? "Verifying..." : "Verify"}
+                  </button>
+                  <span className="text-[11px] text-slate-500">Code sent to your email</span>
+                </div>
+              )}
+
+              {verifyError && (
+                <p className="mt-1.5 text-[11px] font-semibold text-red-600">{verifyError}</p>
+              )}
+
+              {/* Required mount point for Clerk's bot-protection (Smart/Invisible CAPTCHA) challenge */}
+              <div id="clerk-captcha" className="mt-2" />
             </div>
 
             {/* Role */}
@@ -771,7 +1071,7 @@ export default function SchoolRegistrationModal({
           {/* Step 1 Next Button */}
           <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
             <span className="text-[11px] text-slate-400">
-              Page 1 of 2 • Basic Information
+              Page 1 of 3 • Basic Information
             </span>
             <button
               type="submit"
@@ -786,7 +1086,7 @@ export default function SchoolRegistrationModal({
 
       {/* ──────────────── PAGE 2: Academic Profile & Teaching & AI Integration ──────────────── */}
       {step === 2 && (
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleNextToExploring} className="space-y-5">
           
           {/* Total experience in teaching */}
           <div>
@@ -924,9 +1224,73 @@ export default function SchoolRegistrationModal({
 
             <button
               type="submit"
+              className="inline-flex items-center gap-2 bg-[#0E733B] hover:bg-[#0B5C2F] text-white px-7 py-3 rounded-full font-bold text-xs uppercase tracking-wider shadow-sm transition-all"
+            >
+              <span>Next: Exploring Services</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </form>
+      )}
+      {/* ──────────────── PAGE 3: Services / Products Being Explored ──────────────── */}
+      {step === 3 && (
+        <form onSubmit={handleCompleteRegistration} className="space-y-5">
+          <div>
+            <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              Are You Exploring Any New Services or Products?
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {exploringOptions.map((option) => {
+                const isSelected = form.exploringServices.includes(option);
+                return (
+                  <label
+                    key={option}
+                    className={`flex items-start gap-2.5 px-3 py-2 rounded-xl border text-xs font-semibold cursor-pointer transition-colors ${
+                      isSelected
+                        ? "bg-emerald-50 border-[#0E733B] text-charcoal"
+                        : "border-line bg-[#F8FAF8] text-slate-700 hover:border-emerald-300"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => toggleExploring(option)}
+                      className="w-4 h-4 mt-px accent-[#0E733B] shrink-0"
+                    />
+                    <span>{option}</span>
+                  </label>
+                );
+              })}
+            </div>
+
+            {form.exploringServices.includes("Other") && (
+              <div className="mt-2.5">
+                <input
+                  type="text"
+                  placeholder="Please specify the service or product you are exploring"
+                  className="w-full border border-line rounded-xl px-3.5 py-2 text-[13px] text-charcoal focus:outline-none focus:border-[#0E733B]"
+                  value={form.otherExploring}
+                  onChange={(e) => setForm({ ...form, otherExploring: e.target.value })}
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => setStep(2)}
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-charcoal transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back to Page 2</span>
+            </button>
+
+            <button
+              type="submit"
               disabled={isSubmitting}
               className={`inline-flex items-center gap-2 bg-[#0E733B] hover:bg-[#0B5C2F] text-white px-8 py-3 rounded-full font-bold text-xs uppercase tracking-wider shadow-md hover:scale-105 transition-all ${
-                isSubmitting ? "opacity-75 cursor-not-allowed" : ""
+                isSubmitting ? "opacity-75 cursor-not-allowed hover:scale-100" : ""
               }`}
             >
               {isSubmitting ? (
