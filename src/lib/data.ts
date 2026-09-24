@@ -36,7 +36,7 @@ export const siteConfig = {
   conferenceVenue: "Shivalik University",
   conferenceCity: "Dehradun, Uttarakhand, India",
   conferenceLocationMapUrl: "https://www.google.com/maps/search/?api=1&query=Shivalik+University+Dehradun",
-  conferenceEventName: "AI, NEP & the Future of Learning — An EduBeacon Conference",
+  conferenceEventName: "AI, NEP & the Future of Learning, An EduBeacon Conference",
   conferenceEventDate: "11 October 2026",
 };
 
@@ -311,7 +311,7 @@ export const speakers: Speaker[] = [
     organization: "Ministry of Education",
     expertise: ["Education Policy", "Future of Education"],
     image: img.speakerW1,
-    topic: "NEP 2020 — Two Years On",
+    topic: "NEP 2020, Two Years On",
   },
   {
     name: "Rajesh Kumar",
@@ -347,7 +347,7 @@ export const speakers: Speaker[] = [
   },
   {
     name: "Vikram Bhat",
-    title: "Managing Director — India",
+    title: "Managing Director, India",
     organization: "Pearson Education",
     expertise: ["Publishing", "Digital Learning", "Assessment"],
     image: img.speakerM3,
@@ -401,7 +401,7 @@ export const conferenceAgenda: AgendaDay[] = [
         time: "09:00",
         type: "KEYNOTE",
         title: "Opening Keynote",
-        description: "The Future of Education in India — Policy, Technology & Opportunity",
+        description: "The Future of Education in India, Policy, Technology & Opportunity",
         speaker: "Dr. Priya Sharma",
       },
       {
@@ -542,7 +542,7 @@ export const sponsorshipPackages: SponsorPackage[] = [
     name: "Gold Partner",
     tier: "gold",
     badge: "MOST POPULAR",
-    description: "Premium visibility, speaking slots and founder participation — ideal for growing EdTech companies.",
+    description: "Premium visibility, speaking slots and founder participation, ideal for growing EdTech companies.",
     exhibitionSpace: "10×10 ft",
     guaranteedMeetings: 15,
     speakingSlot: "20-minute conference presentation",
@@ -565,8 +565,8 @@ export const sponsorshipPackages: SponsorPackage[] = [
     name: "Diamond Partner",
     tier: "diamond",
     badge: "ELITE PARTNER",
-    description: "The highest level of partnership — unrivalled visibility across the entire Edubeacon ecosystem.",
-    exhibitionSpace: "Custom — premium location",
+    description: "The highest level of partnership, unrivalled visibility across the entire Edubeacon ecosystem.",
+    exhibitionSpace: "Custom, premium location",
     guaranteedMeetings: 20,
     speakingSlot: "Keynote slot available",
     features: [
@@ -680,7 +680,7 @@ export const magazineArticles = [
   },
   {
     category: "POLICY",
-    title: "NEP 2020 Implementation — Where Are We Now?",
+    title: "NEP 2020 Implementation, Where Are We Now?",
     date: "October 2026",
     featured: false,
   },

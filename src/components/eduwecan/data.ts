@@ -131,7 +131,7 @@ export const gridPanels: GridPanel[] = [
   },
   {
     title: "Mentors who show up",
-    description: "Real educators, real attention — guidance that adapts to how you actually learn.",
+    description: "Real educators, real attention, guidance that adapts to how you actually learn.",
     image: ewcImg.mentor,
     span: "tall",
     bg: "var(--color-ewc-peach)",
@@ -152,7 +152,7 @@ export const gridPanels: GridPanel[] = [
   },
   {
     title: "Collaboration over competition",
-    description: "Laptops out, ideas flowing — the best learning happens when people build together.",
+    description: "Laptops out, ideas flowing, the best learning happens when people build together.",
     image: ewcImg.collaborate,
     span: "wide",
     bg: "var(--color-ewc-lilac)",
@@ -331,7 +331,7 @@ export interface Testimonial {
 
 export const testimonials: Testimonial[] = [
   {
-    quote: "EduWeCan didn't just help me find a course — it helped me find a direction. My mentor still checks in on me a year later.",
+    quote: "EduWeCan didn't just help me find a course, it helped me find a direction. My mentor still checks in on me a year later.",
     name: "Maya Chen",
     role: "Finding Direction",
     image: ewcImg.portrait4,
@@ -349,13 +349,13 @@ export const testimonials: Testimonial[] = [
     image: ewcImg.portrait1,
   },
   {
-    quote: "The scholarship program covered what my family couldn't. It didn't just fund my education — it funded my confidence.",
+    quote: "The scholarship program covered what my family couldn't. It didn't just fund my education, it funded my confidence.",
     name: "Lucas Alvarez",
     role: "Academic Growth",
     image: ewcImg.portrait2,
   },
 ];
-export const testimonialsDisclaimer = "Sample stories — placeholder content for future replacement with real learner testimonials.";
+export const testimonialsDisclaimer = "Sample stories, placeholder content for future replacement with real learner testimonials.";
 
 /* ─────────────────────────────────────────
    Final CTA

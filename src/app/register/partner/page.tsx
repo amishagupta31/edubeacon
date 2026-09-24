@@ -4,7 +4,7 @@ import { Store, Mail, Phone, MapPin } from "lucide-react";
 import { siteConfig } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "List Your Solution — EduBeacon",
+  title: "List Your Solution, EduBeacon",
   description: "List your solution on EduBeacon and reach schools looking for innovation.",
 };
 

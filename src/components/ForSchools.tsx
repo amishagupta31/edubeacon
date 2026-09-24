@@ -9,7 +9,7 @@ const steps = [
   {
     num: "01",
     title: "Tell us what you need",
-    description: "Share your school's requirements — whether it's a STEM lab, an ERP system, or a digital learning platform.",
+    description: "Share your school's requirements, whether it's a STEM lab, an ERP system, or a digital learning platform.",
   },
   {
     num: "02",
@@ -19,7 +19,7 @@ const steps = [
   {
     num: "03",
     title: "Register your interest",
-    description: "Click 'I'm Interested' on any vendor — we'll notify them and arrange an introduction.",
+    description: "Click 'I'm Interested' on any vendor, we'll notify them and arrange an introduction.",
   },
   {
     num: "04",
@@ -57,7 +57,7 @@ export default function ForSchools() {
               <span className="text-[#0E733B]">Right Solutions</span>
             </h2>
             <p className="text-[16px] leading-relaxed text-slate-soft mb-8 font-normal">
-              Whether you&#39;re looking for a new STEM lab, a better school management system or the latest EdTech tools — Edubeacon helps you find, evaluate and connect with the right partners.
+              Whether you&#39;re looking for a new STEM lab, a better school management system or the latest EdTech tools, Edubeacon helps you find, evaluate and connect with the right partners.
             </p>
 
             {/* Benefits */}

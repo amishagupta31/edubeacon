@@ -50,7 +50,7 @@ const pillars = [
     eyebrow: "For Schools & Leaders",
     title: "Discover",
     description:
-      "Schools can browse and discover innovative products, technologies and services across 25+ solution categories — all in one place.",
+      "Schools can browse and discover innovative products, technologies and services across 25+ solution categories, all in one place.",
     cta: "Explore Solutions",
     ctaTarget: "solutions",
     accent: "#064E3B",

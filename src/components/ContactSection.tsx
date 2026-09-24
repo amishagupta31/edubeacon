@@ -46,7 +46,7 @@ export default function ContactSection() {
               <span className="text-[#0E733B]">Conversation</span>
             </h2>
             <p className="text-[16px] leading-relaxed text-slate-soft mb-10 font-normal">
-              Whether you&#39;re a school looking to connect with solution providers, a startup wanting to join Edubeacon, or an organization interested in partnership or sponsorship — we&#39;d love to hear from you.
+              Whether you&#39;re a school looking to connect with solution providers, a startup wanting to join Edubeacon, or an organization interested in partnership or sponsorship, we&#39;d love to hear from you.
             </p>
 
             <div className="flex flex-col gap-6">

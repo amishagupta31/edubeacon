@@ -4,7 +4,7 @@ import { School, Mail, Phone, MapPin } from "lucide-react";
 import { siteConfig } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Register Your School — EduBeacon",
+  title: "Register Your School, EduBeacon",
   description: "Register your school on EduBeacon and discover innovative solutions.",
 };
 

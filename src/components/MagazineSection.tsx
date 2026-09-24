@@ -18,7 +18,7 @@ export default function MagazineSection() {
               <span className="text-[#0E733B]">Education Trends</span>
             </h2>
             <p className="text-[15.5px] leading-relaxed text-slate-soft mb-8">
-              Edubeacon Magazine is India&#39;s education leadership publication — featuring school stories, startup spotlights, policy analysis and EdTech trends. Partners and sponsors receive premium editorial and advertising opportunities.
+              Edubeacon Magazine is India&#39;s education leadership publication, featuring school stories, startup spotlights, policy analysis and EdTech trends. Partners and sponsors receive premium editorial and advertising opportunities.
             </p>
 
             {/* Magazine cover mockup */}
@@ -38,7 +38,7 @@ export default function MagazineSection() {
                 <p className="font-display font-bold text-[18px] text-white leading-tight">
                   Education Leadership Magazine
                 </p>
-                <p className="text-[12px] text-white/70 mt-1">Vol. 1 — 2027</p>
+                <p className="text-[12px] text-white/70 mt-1">Vol. 1, 2027</p>
               </div>
             </div>
 
