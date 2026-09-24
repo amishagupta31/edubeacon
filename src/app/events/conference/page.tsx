@@ -404,7 +404,7 @@ export default function ConferencePage() {
       ════════════════════════════════════════════════════════════════ */}
       <section id="about" className="py-16 md:py-24 bg-white border-b border-line">
         <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
             <div className="lg:col-span-7 reveal">
               <h2 className="font-display font-bold text-[30px] sm:text-[40px] text-charcoal leading-[1.1] tracking-tight mb-5">
                 Education is changing
@@ -422,7 +422,7 @@ export default function ConferencePage() {
               </div>
             </div>
             <div className="lg:col-span-5 reveal reveal-delay-2">
-              <div className="relative rounded-2xl overflow-hidden shadow-sm aspect-[4/5]">
+              <div className="relative rounded-2xl overflow-hidden shadow-sm aspect-[4/3] max-w-md mx-auto lg:max-w-none">
                 <Image src={img.conferenceKeynote} alt="Education leadership conference" fill className="object-cover" />
               </div>
             </div>
