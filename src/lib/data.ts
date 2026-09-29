@@ -37,7 +37,7 @@ export const siteConfig = {
   conferenceCity: "Dehradun, Uttarakhand, India",
   conferenceLocationMapUrl: "https://www.google.com/maps/search/?api=1&query=Shivalik+University+Dehradun",
   conferenceEventName: "AI, NEP & the Future of Learning, An EduBeacon Conference",
-  conferenceEventDate: "11 October 2026",
+  conferenceEventDate: "25 October 2026",
 };
 
 /* ─────────────────────────────────────────

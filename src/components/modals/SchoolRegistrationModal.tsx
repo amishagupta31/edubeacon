@@ -630,7 +630,7 @@ export default function SchoolRegistrationModal({
     // Footer Info
     ctx.fillStyle = "#34D399";
     ctx.font = "bold 20px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-    ctx.fillText("🗓️  11 October 2026", 70, 615);
+    ctx.fillText("🗓️  25 October 2026", 70, 615);
 
     ctx.fillStyle = "#CBD5E1";
     ctx.font = "bold 20px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
@@ -764,13 +764,12 @@ export default function SchoolRegistrationModal({
             return stepItems.map((item, i) => (
               <div key={item.n} className={`flex items-center ${i < stepItems.length - 1 ? "flex-1" : ""}`}>
                 <div className="flex items-center gap-2">
-                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                    step === item.n
+                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${step === item.n
                       ? "bg-[#0E733B] text-white"
                       : step > item.n
-                      ? "bg-emerald-100 text-[#0E733B]"
-                      : "bg-gray-100 text-slate-400"
-                  }`}>
+                        ? "bg-emerald-100 text-[#0E733B]"
+                        : "bg-gray-100 text-slate-400"
+                    }`}>
                     {item.n}
                   </span>
                   <span className={`text-xs font-bold hidden sm:inline ${step === item.n ? "text-charcoal" : "text-slate-400"}`}>
@@ -792,7 +791,7 @@ export default function SchoolRegistrationModal({
       {step === 1 && (
         <form onSubmit={handleNext} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
+
             {/* Full Name */}
             <div>
               <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
@@ -1034,9 +1033,8 @@ export default function SchoolRegistrationModal({
                 maxLength={10}
                 placeholder="e.g. 9876543210"
                 disabled={form.sameAsPhone}
-                className={`w-full border border-line rounded-xl px-3.5 py-2 text-[13px] text-charcoal focus:outline-none focus:border-[#0E733B] ${
-                  form.sameAsPhone ? "bg-gray-50 text-slate-500 cursor-not-allowed" : ""
-                }`}
+                className={`w-full border border-line rounded-xl px-3.5 py-2 text-[13px] text-charcoal focus:outline-none focus:border-[#0E733B] ${form.sameAsPhone ? "bg-gray-50 text-slate-500 cursor-not-allowed" : ""
+                  }`}
                 value={form.whatsapp}
                 onChange={(e) => handleWhatsappChange(e.target.value)}
                 onKeyDown={(e) => {
@@ -1087,7 +1085,7 @@ export default function SchoolRegistrationModal({
       {/* ──────────────── PAGE 2: Academic Profile & Teaching & AI Integration ──────────────── */}
       {step === 2 && (
         <form onSubmit={handleNextToExploring} className="space-y-5">
-          
+
           {/* Total experience in teaching */}
           <div>
             <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">
@@ -1099,11 +1097,10 @@ export default function SchoolRegistrationModal({
                   key={exp}
                   type="button"
                   onClick={() => setForm({ ...form, teachingExperience: exp })}
-                  className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all text-center ${
-                    form.teachingExperience === exp
+                  className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all text-center ${form.teachingExperience === exp
                       ? "bg-[#0E733B] text-white border-[#0E733B] shadow-xs"
                       : "border-line bg-[#F8FAF8] text-slate-700 hover:border-emerald-300"
-                  }`}
+                    }`}
                 >
                   {exp}
                 </button>
@@ -1124,11 +1121,10 @@ export default function SchoolRegistrationModal({
                     key={lvl}
                     type="button"
                     onClick={() => toggleClassLevel(lvl)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
-                      isSelected
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-colors ${isSelected
                         ? "bg-[#0E733B] text-white border-[#0E733B]"
                         : "border-line bg-white text-slate-700 hover:border-emerald-300"
-                    }`}
+                      }`}
                   >
                     {lvl}
                   </button>
@@ -1184,11 +1180,10 @@ export default function SchoolRegistrationModal({
                         key={tool}
                         type="button"
                         onClick={() => toggleAiTool(tool)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
-                          isSelected
+                        className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${isSelected
                             ? "bg-[#0E733B] text-white border-[#0E733B]"
                             : "border-emerald-200 bg-white text-slate-700 hover:border-[#0E733B]"
-                        }`}
+                          }`}
                       >
                         {tool}
                       </button>
@@ -1245,11 +1240,10 @@ export default function SchoolRegistrationModal({
                 return (
                   <label
                     key={option}
-                    className={`flex items-start gap-2.5 px-3 py-2 rounded-xl border text-xs font-semibold cursor-pointer transition-colors ${
-                      isSelected
+                    className={`flex items-start gap-2.5 px-3 py-2 rounded-xl border text-xs font-semibold cursor-pointer transition-colors ${isSelected
                         ? "bg-emerald-50 border-[#0E733B] text-charcoal"
                         : "border-line bg-[#F8FAF8] text-slate-700 hover:border-emerald-300"
-                    }`}
+                      }`}
                   >
                     <input
                       type="checkbox"
@@ -1289,9 +1283,8 @@ export default function SchoolRegistrationModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`inline-flex items-center gap-2 bg-[#0E733B] hover:bg-[#0B5C2F] text-white px-8 py-3 rounded-full font-bold text-xs uppercase tracking-wider shadow-md hover:scale-105 transition-all ${
-                isSubmitting ? "opacity-75 cursor-not-allowed hover:scale-100" : ""
-              }`}
+              className={`inline-flex items-center gap-2 bg-[#0E733B] hover:bg-[#0B5C2F] text-white px-8 py-3 rounded-full font-bold text-xs uppercase tracking-wider shadow-md hover:scale-105 transition-all ${isSubmitting ? "opacity-75 cursor-not-allowed hover:scale-100" : ""
+                }`}
             >
               {isSubmitting ? (
                 <>
