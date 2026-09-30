@@ -13,11 +13,12 @@ import { useClerk, useSignIn, useSignUp } from "@clerk/nextjs";
 import ModalShell from "./ModalShell";
 
 const roleOptions = [
-  "Teacher",
-  "Principal",
+  "Chairman",
+  "Manager",
   "Director",
-  "Owner",
-  "Other",
+  "Principal",
+  "Vice Principal",
+  "PGT",
 ];
 
 const classLevelOptions = [
@@ -539,7 +540,7 @@ export default function SchoolRegistrationModal({
 
     ctx.fillStyle = "#FFFFFF";
     ctx.font = "bold 36px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-    const headline = form.role === "Teacher"
+    const headline = form.role === "PGT"
       ? "Teachers Who Inspire. Ideas That Transform."
       : "Welcome to EduBeacon";
     ctx.fillText(headline, 70, 252);
@@ -693,7 +694,7 @@ export default function SchoolRegistrationModal({
                 CONFIRMED DELEGATE
               </span>
               <h4 className="font-extrabold font-display text-[19px] leading-tight text-white">
-                {form.role === "Teacher" ? "Teachers Who Inspire. Ideas That Transform." : "Welcome to EduBeacon"}
+                {form.role === "PGT" ? "Teachers Who Inspire. Ideas That Transform." : "Welcome to EduBeacon"}
               </h4>
             </div>
 
