@@ -9,6 +9,7 @@ import vendorRouter from "./routes/vendor";
 import interestRouter from "./routes/interest";
 import awardRouter from "./routes/award";
 import adminRouter from "./routes/admin";
+import adminAuthRouter from "./routes/adminAuth";
 
 const app = express();
 const PORT = Number(process.env.PORT ?? 4000);
@@ -41,7 +42,10 @@ app.use("/api/registrations/vendor", vendorRouter);
 app.use("/api/registrations/interest", interestRouter);
 app.use("/api/registrations/award", awardRouter);
 
-// Admin (Clerk token + ADMIN_EMAILS check)
+// Admin email + password login (credentials live in MongoDB)
+app.use("/api/admin/auth", adminAuthRouter);
+
+// Admin data — accepts the admin JWT or a Clerk session token
 app.use("/api/admin/registrations", adminRouter);
 
 async function start() {

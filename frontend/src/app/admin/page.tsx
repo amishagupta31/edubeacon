@@ -15,6 +15,18 @@ type Row = Record<string, unknown>;
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
+// Admin session token from POST /api/admin/auth/login. Expires after 8h server-side.
+const TOKEN_KEY = "eb_admin_token";
+const readToken = () => {
+  try { return localStorage.getItem(TOKEN_KEY); } catch { return null; }
+};
+const writeToken = (t: string) => {
+  try { localStorage.setItem(TOKEN_KEY, t); } catch { /* storage blocked */ }
+};
+const clearToken = () => {
+  try { localStorage.removeItem(TOKEN_KEY); } catch { /* storage blocked */ }
+};
+
 /** Columns shown in the table. Everything else appears in the expanded detail panel. */
 const COLUMNS: Record<Tab, { key: string; label: string }[]> = {
   conference: [
@@ -166,9 +178,9 @@ function toCSV(rows: Row[], columns: { key: string; label: string }[]) {
 // Sign-In Gate — password (default) or email OTP, plus password reset
 // ════════════════════════════════════════════════════════════════════════════
 type Method = "password" | "otp";
-type Stage = "credentials" | "verify-otp" | "reset-code" | "reset-new-password";
+type Stage = "credentials" | "verify-otp";
 
-function AdminSignIn() {
+function AdminSignIn({ onSignedIn }: { onSignedIn: () => void }) {
   const clerk = useClerk();
   const { signIn } = useSignIn();
   const { signUp } = useSignUp();
@@ -198,28 +210,29 @@ function AdminSignIn() {
     if (clerk.session) { try { await clerk.signOut(); } catch { /* ignore */ } }
   };
 
-  // ── Password sign-in ──
+  // ── Password sign-in — validated against the `admins` collection in MongoDB ──
   const signInWithPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!signIn) return;
     setBusy(true); setErr("");
     try {
-      await clearSession();
-      const { error } = await signIn.password({ identifier: email, password });
-      if (error) {
-        setErr(
-          error.code === "form_password_incorrect" ? "Incorrect password."
-          : error.code === "form_identifier_not_found" ? "No admin account found for that email."
-          : error.message || "Sign-in failed."
-        );
+      const res = await fetch(`${API}/api/admin/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        setErr(body.error || "Invalid email or password");
         return;
       }
-      if (signIn.status === "complete") {
-        const { error: fe } = await signIn.finalize();
-        if (fe) { setErr(fe.message || "Sign-in failed."); return; }
-      }
-    } catch (e: unknown) {
-      setErr(e instanceof Error ? e.message : "Network error. Try again.");
+
+      const { token } = await res.json();
+      writeToken(token);
+      await clearSession();  // drop any stale Clerk session
+      onSignedIn();
+    } catch {
+      setErr(`Cannot reach the server at ${API}. Is the backend running?`);
     } finally {
       setBusy(false);
     }
@@ -295,63 +308,6 @@ function AdminSignIn() {
     }
   };
 
-  // ── Forgot password: send reset code ──
-  const sendResetCode = async () => {
-    if (!signIn) return;
-    if (!email) { setErr("Enter your email address first."); return; }
-    setBusy(true); setErr("");
-    try {
-      await clearSession();
-      const { error: ce } = await signIn.create({ identifier: email });
-      if (ce) { setErr(ce.message || "No account found for that email."); return; }
-      const { error } = await signIn.resetPasswordEmailCode.sendCode();
-      if (error) { setErr(error.message || "Could not send reset code."); return; }
-      setStage("reset-code");
-      setNotice(`Reset code sent to ${email}`);
-    } catch (e: unknown) {
-      setErr(e instanceof Error ? e.message : "Network error. Try again.");
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  // ── Forgot password: verify code ──
-  const verifyResetCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!signIn || code.length < 6) return;
-    setBusy(true); setErr("");
-    try {
-      const { error } = await signIn.resetPasswordEmailCode.verifyCode({ code });
-      if (error) { setErr(error.message || "That code didn't work."); return; }
-      setStage("reset-new-password");
-      setNotice("Code verified. Choose a new password.");
-    } catch (e: unknown) {
-      setErr(e instanceof Error ? e.message : "Verification failed.");
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  // ── Forgot password: submit new password ──
-  const submitNewPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!signIn) return;
-    if (newPassword.length < 8) { setErr("Password must be at least 8 characters."); return; }
-    setBusy(true); setErr("");
-    try {
-      const { error } = await signIn.resetPasswordEmailCode.submitPassword({ password: newPassword });
-      if (error) { setErr(error.message || "Could not set new password."); return; }
-      if (signIn.status === "complete") {
-        const { error: fe } = await signIn.finalize();
-        if (fe) { setErr(fe.message || "Sign-in failed."); return; }
-      }
-    } catch (e: unknown) {
-      setErr(e instanceof Error ? e.message : "Could not set new password.");
-    } finally {
-      setBusy(false);
-    }
-  };
-
   const inputCls =
     "w-full border border-slate-200 rounded-xl px-4 py-3 text-[14px] focus:outline-none focus:border-[#04312c] focus:ring-2 focus:ring-[#04312c]/10 transition-all";
   const btnCls =
@@ -418,19 +374,9 @@ function AdminSignIn() {
 
               {method === "password" && (
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                      Password
-                    </label>
-                    <button
-                      type="button"
-                      onClick={sendResetCode}
-                      disabled={busy}
-                      className="text-[11.5px] font-semibold text-[#04312c] hover:underline disabled:opacity-50"
-                    >
-                      Forgot?
-                    </button>
-                  </div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
+                    Password
+                  </label>
                   <div className="relative">
                     <input
                       type={showPw ? "text" : "password"}
@@ -494,64 +440,6 @@ function AdminSignIn() {
             </form>
           )}
 
-          {/* ── Stage: reset code ── */}
-          {stage === "reset-code" && (
-            <form onSubmit={verifyResetCode} className="flex flex-col gap-4">
-              <p className="text-[13px] text-slate-500 text-center">
-                Enter the reset code sent to<br /><strong className="text-slate-800">{email}</strong>
-              </p>
-              <input
-                type="text" inputMode="numeric" required autoFocus
-                placeholder="000000"
-                value={code}
-                onChange={(e) => { setCode(e.target.value.replace(/\D/g, "").slice(0, 6)); setErr(""); }}
-                maxLength={6}
-                className={codeInputCls}
-              />
-              {err && <p className="text-[12px] text-red-600 bg-red-50 border border-red-100 px-3 py-2 rounded-lg">{err}</p>}
-              <button type="submit" disabled={busy || code.length < 6} className={btnCls}>
-                {busy && <Loader2 className="w-4 h-4 animate-spin" />}
-                {busy ? "Verifying…" : "Verify Code"}
-              </button>
-              <button type="button" onClick={() => reset()} className="text-[12px] text-slate-400 hover:text-slate-600 transition-colors">
-                ← Back to sign in
-              </button>
-            </form>
-          )}
-
-          {/* ── Stage: new password ── */}
-          {stage === "reset-new-password" && (
-            <form onSubmit={submitNewPassword} className="flex flex-col gap-4">
-              <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
-                  New Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPw ? "text" : "password"}
-                    required autoFocus
-                    placeholder="At least 8 characters"
-                    value={newPassword}
-                    onChange={(e) => { setNewPassword(e.target.value); setErr(""); }}
-                    className={`${inputCls} pr-11`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPw((v) => !v)}
-                    aria-label={showPw ? "Hide password" : "Show password"}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                  >
-                    {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-              {err && <p className="text-[12px] text-red-600 bg-red-50 border border-red-100 px-3 py-2 rounded-lg">{err}</p>}
-              <button type="submit" disabled={busy || newPassword.length < 8} className={btnCls}>
-                {busy && <Loader2 className="w-4 h-4 animate-spin" />}
-                {busy ? "Saving…" : "Set Password & Sign In"}
-              </button>
-            </form>
-          )}
         </div>
       </div>
     </div>
@@ -563,25 +451,56 @@ function AdminSignIn() {
 // ════════════════════════════════════════════════════════════════════════════
 export default function AdminPage() {
   const { isLoaded, isSignedIn } = useAuth();
+  const [adminToken, setAdminToken] = useState<string | null>(null);
+  const [storageRead, setStorageRead] = useState(false);
 
-  if (!isLoaded) {
+  // localStorage is unavailable during SSR — read it after mount
+  useEffect(() => {
+    setAdminToken(readToken());
+    setStorageRead(true);
+  }, []);
+
+  if (!isLoaded || !storageRead) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F6F8F7]">
         <Loader2 className="w-6 h-6 animate-spin text-[#04312c]" />
       </div>
     );
   }
-  if (!isSignedIn) return <AdminSignIn />;
-  return <Dashboard />;
+
+  // Either auth path grants access: DB password token, or a Clerk OTP session
+  if (!adminToken && !isSignedIn) {
+    return <AdminSignIn onSignedIn={() => setAdminToken(readToken())} />;
+  }
+
+  return (
+    <Dashboard
+      adminToken={adminToken}
+      onSignOut={() => { clearToken(); setAdminToken(null); }}
+    />
+  );
 }
 
 // ════════════════════════════════════════════════════════════════════════════
 // Dashboard — sidebar + content
 // ════════════════════════════════════════════════════════════════════════════
-function Dashboard() {
+function Dashboard({ adminToken, onSignOut }: { adminToken: string | null; onSignOut: () => void }) {
   const { getToken } = useAuth();
   const { user } = useUser();
   const { signOut } = useClerk();
+
+  // Email shown in the sidebar: from the JWT for password login, from Clerk for OTP
+  const adminEmail = adminToken
+    ? (() => {
+        try { return JSON.parse(atob(adminToken.split(".")[1])).email as string; }
+        catch { return "Admin"; }
+      })()
+    : user?.primaryEmailAddress?.emailAddress ?? "";
+
+  const handleSignOut = async () => {
+    onSignOut();
+    try { await signOut(); } catch { /* no Clerk session to drop */ }
+  };
 
   const [tab, setTab] = useState<Tab>("conference");
   const [counts, setCounts] = useState<Counts | null>(null);
@@ -610,9 +529,10 @@ function Dashboard() {
   };
 
   const authHeader = useCallback(async () => {
-    const token = await getToken();
+    // Prefer the DB-issued admin token; fall back to the Clerk session (OTP path)
+    const token = adminToken ?? (await getToken());
     return { Authorization: `Bearer ${token ?? ""}`, "Content-Type": "application/json" };
-  }, [getToken]);
+  }, [adminToken, getToken]);
 
   const fetchCounts = useCallback(async () => {
     try {
@@ -733,12 +653,12 @@ function Dashboard() {
       <div className="px-3 py-4 border-t border-white/[0.08]">
         <div className="px-2 mb-2.5">
           <p className="text-[10px] font-bold uppercase tracking-wider text-white/30 mb-1">Signed in as</p>
-          <p className="text-[12px] text-emerald-200 truncate" title={user?.primaryEmailAddress?.emailAddress}>
-            {user?.primaryEmailAddress?.emailAddress}
+          <p className="text-[12px] text-emerald-200 truncate" title={adminEmail}>
+            {adminEmail}
           </p>
         </div>
         <button
-          onClick={() => signOut()}
+          onClick={handleSignOut}
           className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-[12.5px] font-semibold text-white/60 hover:text-white hover:bg-white/[0.06] transition-all"
         >
           <LogOut className="w-3.5 h-3.5" />
@@ -768,7 +688,7 @@ function Dashboard() {
               {offline ? (
                 <>Cannot reach the API at <code className="bg-slate-100 px-1.5 py-0.5 rounded text-[12px]">{API}</code>. Start it with <code className="bg-slate-100 px-1.5 py-0.5 rounded text-[12px]">npm run dev</code> in the backend folder.</>
               ) : (
-                <><strong className="text-slate-700">{user?.primaryEmailAddress?.emailAddress}</strong> is not an admin account. Sign in with an email listed in <code className="bg-slate-100 px-1.5 py-0.5 rounded text-[12px]">ADMIN_EMAILS</code>.</>
+                <><strong className="text-slate-700">{adminEmail}</strong> is not an active admin. Seed it with <code className="bg-slate-100 px-1.5 py-0.5 rounded text-[12px]">npm run seed:admin</code>.</>
               )}
             </p>
             {offline && (

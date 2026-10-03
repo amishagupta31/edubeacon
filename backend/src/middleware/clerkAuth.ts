@@ -1,6 +1,7 @@
 import { createClerkClient, verifyToken } from "@clerk/backend";
 import { Request, Response, NextFunction } from "express";
 import Admin from "../models/Admin";
+import { verifyAdminToken } from "../lib/adminToken";
 
 export const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY! });
 
@@ -27,38 +28,33 @@ export async function requireAuth(req: AuthedRequest, res: Response, next: NextF
   }
 }
 
-// Clerk token + email must be an active admin in the `admins` collection.
-// ADMIN_EMAILS stays as a bootstrap path so the first admin can get in before
-// the collection is seeded; a matching env email is upserted into the DB.
+// Accepts either auth path, in this order:
+//   1. An admin JWT issued by POST /api/admin/auth/login (email + password in MongoDB)
+//   2. A Clerk session token, for the email-OTP path
+// Either way the email must exist in `admins` with active: true.
 export async function requireAdmin(req: AuthedRequest, res: Response, next: NextFunction) {
   const token = extractBearer(req);
   if (!token) { res.status(403).json({ error: "Forbidden" }); return; }
+
+  // ── 1. Admin JWT (password login) ──
+  const adminPayload = verifyAdminToken(token);
+  if (adminPayload) {
+    const admin = await Admin.findOne({ email: adminPayload.email, active: true });
+    if (!admin) { res.status(403).json({ error: "Forbidden: not an admin" }); return; }
+    req.userId = adminPayload.sub;
+    req.userEmail = adminPayload.email;
+    next();
+    return;
+  }
+
+  // ── 2. Clerk session token (OTP login) ──
   try {
     const payload = await verifyToken(token, { secretKey: process.env.CLERK_SECRET_KEY! });
     const user = await clerk.users.getUser(payload.sub);
     const email = user.emailAddresses?.[0]?.emailAddress?.toLowerCase() ?? "";
 
-    let admin = await Admin.findOne({ email, active: true });
-
-    if (!admin) {
-      const envAdmins = (process.env.ADMIN_EMAILS ?? "")
-        .split(",").map((e) => e.trim().toLowerCase()).filter(Boolean);
-
-      if (!envAdmins.includes(email)) {
-        res.status(403).json({ error: "Forbidden: not an admin" });
-        return;
-      }
-
-      admin = await Admin.findOneAndUpdate(
-        { email },
-        {
-          email,
-          name: [user.firstName, user.lastName].filter(Boolean).join(" "),
-          active: true,
-        },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
-      );
-    }
+    const admin = await Admin.findOne({ email, active: true });
+    if (!admin) { res.status(403).json({ error: "Forbidden: not an admin" }); return; }
 
     await Admin.updateOne({ _id: admin._id }, { lastLoginAt: new Date() });
 

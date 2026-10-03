@@ -6,10 +6,14 @@
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "seed:admin": "ts-node --transpile-only src/scripts/seedAdmin.ts"
+    "seed:admin": "ts-node --transpile-only src/scripts/seedAdmin.ts",
+    "check:admin": "ts-node --transpile-only src/scripts/checkAdminUser.ts",
+    "set:password": "ts-node --transpile-only src/scripts/setAdminPassword.ts"
   },
   "dependencies": {
     "@clerk/backend": "^1.25.5",
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.2",
