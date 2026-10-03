@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { connectDB } from "./lib/mongodb";
+import { reportMailStatus } from "./lib/mailer";
 
 import webhookRouter from "./routes/webhooks";
 import conferenceRouter from "./routes/conference";
@@ -53,6 +54,7 @@ async function start() {
   app.listen(PORT, () => {
     console.log(`EduBeacon backend running on http://localhost:${PORT}`);
   });
+  await reportMailStatus();
 }
 
 start().catch((err) => {

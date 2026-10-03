@@ -406,6 +406,9 @@ function AdminSignIn({ onSignedIn }: { onSignedIn: () => void }) {
 
               {err && <p className="text-[12px] text-red-600 bg-red-50 border border-red-100 px-3 py-2 rounded-lg">{err}</p>}
 
+              {/* Clerk mounts its bot-protection widget here (OTP path uses signUp.create) */}
+              <div id="clerk-captcha" className="empty:hidden" />
+
               <button type="submit" disabled={busy} className={btnCls}>
                 {busy && <Loader2 className="w-4 h-4 animate-spin" />}
                 {busy

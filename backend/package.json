@@ -8,7 +8,12 @@
     "start": "node dist/index.js",
     "seed:admin": "ts-node --transpile-only src/scripts/seedAdmin.ts",
     "check:admin": "ts-node --transpile-only src/scripts/checkAdminUser.ts",
-    "set:password": "ts-node --transpile-only src/scripts/setAdminPassword.ts"
+    "set:password": "ts-node --transpile-only src/scripts/setAdminPassword.ts",
+    "test:email": "ts-node --transpile-only src/scripts/testEmail.ts",
+    "preview:email": "ts-node --transpile-only src/scripts/previewEmail.ts",
+    "try:smtp": "ts-node --transpile-only src/scripts/trySmtp.ts",
+    "try:brevo": "ts-node --transpile-only src/scripts/tryBrevo.ts",
+    "mail:log": "ts-node --transpile-only src/scripts/mailLog.ts"
   },
   "dependencies": {
     "@clerk/backend": "^1.25.5",

@@ -1,5 +1,7 @@
 import { Router, Request, Response } from "express";
 import VendorRegistration from "../models/VendorRegistration";
+import { sendMail } from "../lib/mailer";
+import { vendorEmail } from "../lib/emailTemplates";
 
 const router = Router();
 
@@ -12,6 +14,9 @@ router.post("/", async (req: Request, res: Response) => {
   try {
     const registration = await VendorRegistration.create(req.body);
     res.json({ success: true, id: registration._id });
+
+    const { subject, html, text } = vendorEmail(registration.toObject());
+    void sendMail({ to: registration.email, subject, html, text });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to save vendor registration" });

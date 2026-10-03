@@ -826,6 +826,10 @@ export default function SchoolRegistrationModal({
                 <p className="mt-1.5 text-[11px] font-semibold text-red-600">{verifyError}</p>
               )}
 
+              {/* Clerk mounts its bot-protection widget here. Without this node
+                  Clerk falls back to invisible CAPTCHA and logs a warning. */}
+              <div id="clerk-captcha" className="mt-2 empty:mt-0" />
+
             </div>
 
             {/* Role */}
