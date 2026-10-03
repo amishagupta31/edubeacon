@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
-import SiteHeader from "@/components/SiteHeader";
-import SiteFooter from "@/components/SiteFooter";
+import SiteChrome from "@/components/SiteChrome";
 
 import ModalProvider from "@/components/modals/ModalProvider";
 import ScrollReveal from "@/components/ScrollReveal";
@@ -63,9 +62,7 @@ export default function RootLayout({
         <ClerkProvider>
           <ModalProvider>
             <ScrollReveal />
-            <SiteHeader />
-            <main className="flex-1">{children}</main>
-            <SiteFooter />
+            <SiteChrome>{children}</SiteChrome>
           </ModalProvider>
         </ClerkProvider>
       </body>

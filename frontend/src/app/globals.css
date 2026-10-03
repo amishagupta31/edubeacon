@@ -128,6 +128,18 @@ body {
   }
 }
 
+/* ─── Event Ticker ─── */
+@keyframes ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-ticker {
+  animation: ticker-scroll 40s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-ticker { animation: none; }
+}
+
 @keyframes blob-drift {
   0%, 100% { transform: translate(0, 0) scale(1); }
   33% { transform: translate(3%, -4%) scale(1.08); }

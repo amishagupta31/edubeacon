@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+
+const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 import { Handshake } from "lucide-react";
 import ModalShell from "./ModalShell";
 
@@ -21,9 +23,23 @@ export default function InterestModal({
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    try {
+      await fetch(`${API}/api/registrations/interest`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, requirement: form.message, vendorName: vendorName ?? "" }),
+      });
+    } catch (err) {
+      console.error("Failed to save interest lead:", err);
+    } finally {
+      setIsSubmitting(false);
+      setSubmitted(true);
+    }
   };
 
   if (submitted) {
@@ -149,9 +165,10 @@ export default function InterestModal({
         </div>
         <button
           type="submit"
-          className="w-full bg-edu-blue text-white py-3.5 rounded-lg font-semibold text-[14px] hover:bg-edu-blue-mid transition-colors"
+          disabled={isSubmitting}
+          className="w-full bg-edu-blue text-white py-3.5 rounded-lg font-semibold text-[14px] hover:bg-edu-blue-mid transition-colors disabled:opacity-60"
         >
-          Send My Interest →
+          {isSubmitting ? "Sending..." : "Send My Interest →"}
         </button>
       </form>
     </ModalShell>

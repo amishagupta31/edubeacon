@@ -1,0 +1,30 @@
+{
+  "name": "edubeacon-backend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "seed:admin": "ts-node --transpile-only src/scripts/seedAdmin.ts"
+  },
+  "dependencies": {
+    "@clerk/backend": "^1.25.5",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^8.15.0",
+    "nodemailer": "^10.0.13",
+    "svix": "^1.99.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^20.17.57",
+    "@types/nodemailer": "^8.0.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
+  }
+}

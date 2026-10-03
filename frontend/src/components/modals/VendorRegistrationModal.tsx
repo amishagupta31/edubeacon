@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+
+const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 import { CheckCircle2 } from "lucide-react";
 import ModalShell from "./ModalShell";
 
@@ -29,9 +31,23 @@ export default function VendorRegistrationModal({
     productDescription: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    try {
+      await fetch(`${API}/api/registrations/vendor`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+    } catch (err) {
+      console.error("Failed to save vendor registration:", err);
+    } finally {
+      setIsSubmitting(false);
+      setSubmitted(true);
+    }
   };
 
   if (submitted) {
@@ -192,9 +208,10 @@ export default function VendorRegistrationModal({
 
         <button
           type="submit"
-          className="w-full bg-teal text-white py-3.5 rounded-lg font-semibold text-[14px] hover:bg-teal-light transition-colors mt-2"
+          disabled={isSubmitting}
+          className="w-full bg-teal text-white py-3.5 rounded-lg font-semibold text-[14px] hover:bg-teal-light transition-colors mt-2 disabled:opacity-60"
         >
-          Submit Application →
+          {isSubmitting ? "Submitting..." : "Submit Application →"}
         </button>
         <p className="text-center text-[11px] text-slate-soft">
           Our team will review your application and contact you within 2–3 business days.

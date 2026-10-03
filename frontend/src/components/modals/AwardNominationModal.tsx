@@ -1,6 +1,8 @@
 ﻿"use client";
 
 import { useState } from "react";
+
+const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 import { Trophy } from "lucide-react";
 import ModalShell from "./ModalShell";
 import { awardCategories } from "@/lib/data";
@@ -22,9 +24,30 @@ export default function AwardNominationModal({
     reason: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    try {
+      await fetch(`${API}/api/registrations/award`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          category: form.awardCategory,
+          nomineeName: form.nomineeName,
+          nomineeOrg: form.nomineeOrg,
+          reason: form.reason,
+          nominatorName: form.nominatorName,
+          nominatorEmail: form.nominatorEmail,
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to save award nomination:", err);
+    } finally {
+      setIsSubmitting(false);
+      setSubmitted(true);
+    }
   };
 
   if (submitted) {
@@ -145,9 +168,10 @@ export default function AwardNominationModal({
         </div>
         <button
           type="submit"
-          className="w-full bg-gold text-white py-3.5 rounded-lg font-semibold text-[14px] hover:opacity-90 transition-opacity"
+          disabled={isSubmitting}
+          className="w-full bg-gold text-white py-3.5 rounded-lg font-semibold text-[14px] hover:opacity-90 transition-opacity disabled:opacity-60"
         >
-          Submit Nomination →
+          {isSubmitting ? "Submitting..." : "Submit Nomination →"}
         </button>
       </form>
     </ModalShell>

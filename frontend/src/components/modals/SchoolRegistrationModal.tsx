@@ -9,8 +9,10 @@ import {
   Download,
   Calendar,
 } from "lucide-react";
-import { useClerk, useSignIn, useSignUp } from "@clerk/nextjs";
+import { useClerk, useSignIn, useSignUp, useAuth } from "@clerk/nextjs";
 import ModalShell from "./ModalShell";
+
+const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
 const roleOptions = [
   "Chairman",
@@ -194,8 +196,9 @@ export default function SchoolRegistrationModal({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // ── Clerk: email-code verification, scoped to this conference registration only ──
+  // ── Clerk email-code verification ──
   const clerk = useClerk();
+  const { getToken } = useAuth();
   const { signUp } = useSignUp();
   const { signIn } = useSignIn();
 
@@ -207,7 +210,6 @@ export default function SchoolRegistrationModal({
   const [isVerifying, setIsVerifying] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
 
-  // Editing the email after sending/verifying a code invalidates that attempt
   const handleEmailChange = (value: string) => {
     setForm((f) => ({ ...f, email: value }));
     if (emailVerified || codeSent) {
@@ -219,12 +221,9 @@ export default function SchoolRegistrationModal({
     }
   };
 
-  // ClerkJS surfaces a raw "TypeError: Failed to fetch" for connectivity blips — show
-  // something a visitor can actually act on instead of the technical message.
   const describeVerificationError = (err: unknown, fallback: string) => {
-    if (err instanceof Error && /failed to fetch|network ?error|load failed/i.test(err.message)) {
+    if (err instanceof Error && /failed to fetch|network ?error|load failed/i.test(err.message))
       return "Network error, please check your internet connection and try again.";
-    }
     return err instanceof Error ? err.message : fallback;
   };
 
@@ -234,134 +233,50 @@ export default function SchoolRegistrationModal({
     setVerifyError("");
     setIsSendingCode(true);
     try {
-      // Clerk allows only one active session per browser. If this browser is already
-      // signed in (e.g. from an earlier registration), "session_exists" would otherwise
-      // block a fresh sign-up here.
       if (clerk.session) {
-        const alreadySignedInAsThisEmail = clerk.user?.emailAddresses?.some(
+        const alreadySignedIn = clerk.user?.emailAddresses?.some(
           (e) => e.emailAddress.toLowerCase() === email.toLowerCase()
         );
-        if (alreadySignedInAsThisEmail) {
-          // Already verified as this exact person in this browser — no need to re-verify
-          setEmailVerified(true);
-          return;
-        }
-        // A different email on this device — clear the old session before starting fresh
-        try {
-          await clerk.signOut();
-        } catch {
-          // A network blip here shouldn't block the attempt below — signUp.create()
-          // will tell us plainly (via "session_exists") if the old session is still around.
-        }
+        if (alreadySignedIn) { setEmailVerified(true); return; }
+        try { await clerk.signOut(); } catch { /* ignore */ }
       }
 
       let { error: createError } = await signUp.create({ emailAddress: email });
 
-      // If a stale session is still around (e.g. the sign-out above didn't land because of a
-      // network blip), clear it and retry once instead of leaving the person stuck.
-      if (createError && createError.code === "session_exists") {
-        try {
-          await clerk.signOut();
-        } catch {
-          // ignore — the retry below will surface a clear error if this still fails
-        }
+      if (createError?.code === "session_exists") {
+        try { await clerk.signOut(); } catch { /* ignore */ }
         ({ error: createError } = await signUp.create({ emailAddress: email }));
       }
 
-      if (createError && createError.code === "form_identifier_exists") {
-        // Already registered with Clerk before — sign them back in with an email code instead
+      if (createError?.code === "form_identifier_exists") {
         const { error: signInError } = await signIn.create({ identifier: email });
-        if (signInError) {
-          setVerifyError(signInError.message || "Could not send a verification code. Please try again.");
-          return;
-        }
-        const supportsEmailCode = signIn.supportedFirstFactors?.some((f) => f.strategy === "email_code");
-        if (!supportsEmailCode) {
-          setVerifyError("This email can't be verified by code. Please use a different email address.");
-          return;
+        if (signInError) { setVerifyError(signInError.message || "Could not send code."); return; }
+        if (!signIn.supportedFirstFactors?.some((f) => f.strategy === "email_code")) {
+          setVerifyError("This email cannot be verified by code."); return;
         }
         const { error: sendError } = await signIn.emailCode.sendCode();
-        if (sendError) {
-          setVerifyError(sendError.message || "Could not send a verification code. Please try again.");
-          return;
-        }
+        if (sendError) { setVerifyError(sendError.message || "Could not send code."); return; }
         setVerifyMode("signin");
         setCodeSent(true);
         return;
       }
 
-      if (createError) {
-        setVerifyError(createError.message || "Could not send a verification code. Please try again.");
-        return;
-      }
+      if (createError) { setVerifyError(createError.message || "Could not send code."); return; }
 
-      // Some Clerk instances require a password to sign up — fill one in automatically
       if (signUp.missingFields.includes("password")) {
-        const generatedPassword = `Edb${Math.random().toString(36).slice(2)}${Date.now()}!Aa`;
-        const { error: passwordError } = await signUp.password({ password: generatedPassword });
-        if (passwordError) {
-          setVerifyError(passwordError.message || "Could not send a verification code. Please try again.");
-          return;
-        }
+        const pw = `Edb${Math.random().toString(36).slice(2)}${Date.now()}!Aa`;
+        const { error: pwErr } = await signUp.password({ password: pw });
+        if (pwErr) { setVerifyError(pwErr.message || "Could not send code."); return; }
       }
 
       const { error: codeError } = await signUp.verifications.sendEmailCode();
-      if (codeError) {
-        setVerifyError(codeError.message || "Could not send a verification code. Please try again.");
-        return;
-      }
+      if (codeError) { setVerifyError(codeError.message || "Could not send code."); return; }
       setVerifyMode("signup");
       setCodeSent(true);
     } catch (err) {
-      setVerifyError(describeVerificationError(err, "Could not send a verification code. Please try again."));
+      setVerifyError(describeVerificationError(err, "Could not send code. Please try again."));
     } finally {
       setIsSendingCode(false);
-    }
-  };
-
-  const finalizeRegistration = async () => {
-    setIsSubmitting(true);
-    const registration = {
-      name: form.name.trim(),
-      email: form.email.trim(),
-      role: form.role === "Other" ? form.otherRole.trim() : form.role,
-      school: form.school.trim(),
-      address: form.address.trim(),
-      city: form.city.trim(),
-      state: form.state,
-      phone: form.phone.trim(),
-      whatsapp: form.whatsapp.trim(),
-      associationName: form.associationName.trim(),
-      teachingExperience: form.teachingExperience,
-      classesTaught: form.classesTaught.join(", "),
-      subjectsTaught: form.subjectsTaught.trim(),
-      usesAiInWork: form.usesAiInWork ? "Yes" : "No",
-      aiTools: (
-        form.aiTools.includes("Other") && form.otherAiTool.trim()
-          ? [...form.aiTools.filter((t) => t !== "Other"), form.otherAiTool.trim()]
-          : form.aiTools
-      ).join(", "),
-      exploringServices: (
-        form.exploringServices.includes("Other") && form.otherExploring.trim()
-          ? [...form.exploringServices.filter((o) => o !== "Other"), form.otherExploring.trim()]
-          : form.exploringServices
-      ).join(", "),
-      registeredAt: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
-    };
-
-    try {
-      // Store the registration on the now-verified Clerk user (visible in the Clerk Dashboard)
-      await clerk.user?.update({
-        unsafeMetadata: {
-          ...(clerk.user.unsafeMetadata || {}),
-          conferenceRegistration: registration,
-        },
-      });
-    } catch (err) {
-      console.error("Failed to save conference registration to Clerk:", err);
-    } finally {
-      setIsSubmitting(false);
-      setSubmitted(true);
     }
   };
 
@@ -372,41 +287,77 @@ export default function SchoolRegistrationModal({
     try {
       if (verifyMode === "signup") {
         const { error } = await signUp.verifications.verifyEmailCode({ code });
-        if (error) {
-          setVerifyError(error.message || "That code didn't work. Please try again.");
-          return;
-        }
+        if (error) { setVerifyError(error.message || "That code didn't work."); return; }
         if (signUp.status === "complete") {
-          const { error: finalizeError } = await signUp.finalize();
-          if (finalizeError) {
-            setVerifyError(finalizeError.message || "Could not verify your email. Please try again.");
-            return;
-          }
+          const { error: fe } = await signUp.finalize();
+          if (fe) { setVerifyError(fe.message || "Could not verify email."); return; }
           setEmailVerified(true);
         } else {
-          setVerifyError("That code didn't complete verification. Please check it and try again.");
+          setVerifyError("Verification incomplete. Please try again.");
         }
       } else if (verifyMode === "signin") {
         const { error } = await signIn.emailCode.verifyCode({ code });
-        if (error) {
-          setVerifyError(error.message || "That code didn't work. Please try again.");
-          return;
-        }
+        if (error) { setVerifyError(error.message || "That code didn't work."); return; }
         if (signIn.status === "complete") {
-          const { error: finalizeError } = await signIn.finalize();
-          if (finalizeError) {
-            setVerifyError(finalizeError.message || "Could not verify your email. Please try again.");
-            return;
-          }
+          const { error: fe } = await signIn.finalize();
+          if (fe) { setVerifyError(fe.message || "Could not verify email."); return; }
           setEmailVerified(true);
         } else {
-          setVerifyError("That code didn't complete verification. Please check it and try again.");
+          setVerifyError("Verification incomplete. Please try again.");
         }
       }
     } catch (err) {
       setVerifyError(describeVerificationError(err, "That code didn't work. Please try again."));
     } finally {
       setIsVerifying(false);
+    }
+  };
+
+  const finalizeRegistration = async () => {
+    setIsSubmitting(true);
+    const aiToolsFinal =
+      form.aiTools.includes("Other") && form.otherAiTool.trim()
+        ? [...form.aiTools.filter((t) => t !== "Other"), form.otherAiTool.trim()]
+        : form.aiTools;
+    const servicesFinal =
+      form.exploringServices.includes("Other") && form.otherExploring.trim()
+        ? [...form.exploringServices.filter((o) => o !== "Other"), form.otherExploring.trim()]
+        : form.exploringServices;
+
+    const registration = {
+      name: form.name.trim(),
+      email: form.email.trim(),
+      role: form.role === "Other" ? form.otherRole.trim() : form.role,
+      school: form.school.trim(),
+      address: form.address.trim(),
+      city: form.city.trim(),
+      state: form.state,
+      phone: form.phone.trim(),
+      whatsapp: form.whatsapp.trim(),
+      association: form.associationName.trim(),
+      experience: form.teachingExperience,
+      classes: form.classesTaught.join(", "),
+      subjects: form.subjectsTaught.trim(),
+      aiTools: aiToolsFinal,
+      servicesExplored: servicesFinal,
+    };
+
+    try {
+      // Get the Clerk session token to authenticate with our backend
+      const token = await getToken();
+      await fetch(`${API}/api/registrations/conference`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(registration),
+      });
+    } catch (err) {
+      console.error("Failed to save conference registration:", err);
+    } finally {
+      setIsSubmitting(false);
+      setSubmitted(true);
     }
   };
 
@@ -875,8 +826,6 @@ export default function SchoolRegistrationModal({
                 <p className="mt-1.5 text-[11px] font-semibold text-red-600">{verifyError}</p>
               )}
 
-              {/* Required mount point for Clerk's bot-protection (Smart/Invisible CAPTCHA) challenge */}
-              <div id="clerk-captcha" className="mt-2" />
             </div>
 
             {/* Role */}

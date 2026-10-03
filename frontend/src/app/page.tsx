@@ -1,4 +1,5 @@
-import Hero from "@/components/eduwecan/Hero";
+import HeroCarousel from "@/components/HeroCarousel";
+import EventTicker from "@/components/EventTicker";
 import HeroStats from "@/components/HeroStats";
 import AboutSection from "@/components/AboutSection";
 import SolutionsGrid from "@/components/SolutionsGrid";
@@ -9,8 +10,11 @@ import AwardsSection from "@/components/AwardsSection";
 export default function Home() {
   return (
     <>
-      {/* 1. Introduction of the organisation */}
-      <Hero />
+      {/* Running ticker strip — latest event */}
+      <EventTicker />
+
+      {/* 1. Introduction of the organisation — carousel with home + conference hero */}
+      <HeroCarousel />
 
       {/* 2. Key Metrics */}
       <HeroStats />
