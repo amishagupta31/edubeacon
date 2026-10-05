@@ -329,7 +329,17 @@ export default function ConferencePage() {
               </div>
 
               <div className="reveal reveal-delay-3 flex flex-wrap justify-center items-center gap-x-6 gap-y-2 mb-8 text-[11.5px] text-slate-400">
-                <span><span className="font-bold uppercase tracking-wider text-slate-400">Title Sponsor</span> <span className="font-bold text-white ml-1.5">{EVENT.titleSponsor}</span></span>
+                <div className="flex items-center gap-3">
+                  <span className="font-bold uppercase tracking-wider text-slate-400">Title Sponsor</span>
+                  {/* Logo artwork is on white, so it needs a light chip to sit on the dark hero */}
+                  <Image
+                    src="/images/sponsors/shivalik-university.png"
+                    alt={EVENT.titleSponsor}
+                    width={2000}
+                    height={1000}
+                    className="h-9 w-auto rounded-md bg-white px-2 py-1"
+                  />
+                </div>
                 <span className="text-slate-600 hidden sm:inline">|</span>
                 <div className="flex items-center gap-3">
                   <span className="font-bold uppercase tracking-wider text-slate-400">Gold Partners</span>
@@ -914,8 +924,17 @@ export default function ConferencePage() {
               <h3 className="font-display font-bold text-[24px] sm:text-[28px] text-white leading-tight mb-3">
                 Join Our Confirmed Partners
               </h3>
-              <div className="mb-5 space-y-1.5 text-[13px] text-slate-300">
-                <p><span className="font-bold text-white">Title Sponsor,</span> {EVENT.titleSponsor}</p>
+              <div className="mb-5 space-y-3 text-[13px] text-slate-300">
+                <div className="flex items-center gap-3 flex-wrap">
+                  <span className="font-bold text-white">Title Sponsor</span>
+                  <Image
+                    src="/images/sponsors/shivalik-university.png"
+                    alt={EVENT.titleSponsor}
+                    width={2000}
+                    height={1000}
+                    className="h-10 w-auto rounded-md bg-white px-2 py-1"
+                  />
+                </div>
                 <p><span className="font-bold text-white">Gold Partners,</span> {EVENT.goldPartners.join(" · ")}</p>
               </div>
               <p className="text-slate-300 text-[15px] leading-relaxed mb-7">
