@@ -8,15 +8,15 @@ on:
 env:
   PROJECT_ID: edubeacon
   REGION: asia-southeast1
-  SERVICE: edubeacon
   REPO: edubeacon-repo
 
 jobs:
-  deploy:
+  deploy-frontend:
+    needs: deploy-backend
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write   # needed for Workload Identity Federation
+      id-token: write
 
     steps:
       - name: Checkout code
@@ -34,18 +34,22 @@ jobs:
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
-      - name: Build Docker image
+      - name: Build Frontend Docker image
         run: |
-          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{ github.sha }}"
-          docker build --build-arg NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}" -t "$IMAGE" .
+          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/edubeacon:${{ github.sha }}"
+          docker build \
+            --build-arg NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}" \
+            --build-arg NEXT_PUBLIC_API_URL="${{ secrets.NEXT_PUBLIC_API_URL }}" \
+            -t "$IMAGE" \
+            ./frontend
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
-          
-      - name: Push image to Artifact Registry
+
+      - name: Push Frontend image
         run: docker push "$IMAGE"
 
-      - name: Deploy to Cloud Run
+      - name: Deploy Frontend to Cloud Run
         run: |
-          gcloud run deploy ${{ env.SERVICE }} \
+          gcloud run deploy edubeacon \
             --image "$IMAGE" \
             --region ${{ env.REGION }} \
             --platform managed \
@@ -56,8 +60,70 @@ jobs:
             --min-instances 0 \
             --max-instances 3
 
-      - name: Show deployed URL
+      - name: Show Frontend URL
         run: |
-          gcloud run services describe ${{ env.SERVICE }} \
+          gcloud run services describe edubeacon \
+            --region ${{ env.REGION }} \
+            --format="value(status.url)"
+
+  deploy-backend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      - name: Build Backend Docker image
+        run: |
+          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/edubeacon-backend:${{ github.sha }}"
+          docker build -t "$IMAGE" ./backend
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+
+      - name: Push Backend image
+        run: docker push "$IMAGE"
+
+      - name: Deploy Backend to Cloud Run
+        run: |
+          gcloud run deploy edubeacon-backend \
+            --image "$IMAGE" \
+            --region ${{ env.REGION }} \
+            --platform managed \
+            --allow-unauthenticated \
+            --port 4000 \
+            --memory 512Mi \
+            --cpu 1 \
+            --min-instances 0 \
+            --max-instances 3 \
+            --set-env-vars "PORT=4000" \
+            --set-env-vars "MONGODB_URI=${{ secrets.MONGODB_URI }}" \
+            --set-env-vars "ADMIN_EMAILS=${{ secrets.ADMIN_EMAILS }}" \
+            --set-env-vars "ADMIN_JWT_SECRET=${{ secrets.ADMIN_JWT_SECRET }}" \
+            --set-env-vars "SMTP_HOST=${{ secrets.SMTP_HOST }}" \
+            --set-env-vars "SMTP_PORT=${{ secrets.SMTP_PORT }}" \
+            --set-env-vars "SMTP_USER=${{ secrets.SMTP_USER }}" \
+            --set-env-vars "SMTP_PASS=${{ secrets.SMTP_PASS }}" \
+            --set-env-vars "MAIL_FROM=${{ secrets.MAIL_FROM }}" \
+            --set-env-vars "MAIL_REPLY_TO=${{ secrets.MAIL_REPLY_TO }}" \
+            --set-env-vars "FRONTEND_URL=https://edubeacon.co.in,https://www.edubeacon.co.in" \
+            --set-env-vars "CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }}"
+
+      - name: Show Backend URL
+        run: |
+          gcloud run services describe edubeacon-backend \
             --region ${{ env.REGION }} \
             --format="value(status.url)"
