@@ -11,6 +11,7 @@ import interestRouter from "./routes/interest";
 import awardRouter from "./routes/award";
 import adminRouter from "./routes/admin";
 import adminAuthRouter from "./routes/adminAuth";
+import settingsRouter from "./routes/settings";
 
 const app = express();
 const PORT = Number(process.env.PORT ?? 4000);
@@ -42,6 +43,9 @@ app.use("/api/registrations/conference", conferenceRouter);
 app.use("/api/registrations/vendor", vendorRouter);
 app.use("/api/registrations/interest", interestRouter);
 app.use("/api/registrations/award", awardRouter);
+
+// Site settings — public reads, admin-only writes
+app.use("/api/settings", settingsRouter);
 
 // Admin email + password login (credentials live in MongoDB)
 app.use("/api/admin/auth", adminAuthRouter);

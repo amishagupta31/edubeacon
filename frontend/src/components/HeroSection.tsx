@@ -85,7 +85,7 @@ export default function HeroSection() {
             {/* Trust badges */}
             <div className="flex flex-wrap items-center gap-5 pt-4 border-t border-line">
               {[
-                { value: "500+", label: "Schools" },
+                { value: "5000+", label: "Schools" },
                 { value: "300+", label: "Vendors" },
                 { value: "25+", label: "Categories" },
               ].map((stat) => (
@@ -138,7 +138,7 @@ export default function HeroSection() {
                 Trusted by
               </p>
               <p className="text-[28px] font-display font-bold text-teal leading-none">
-                500+
+                5000+
               </p>
               <p className="text-[12px] text-slate-soft mt-0.5">Schools</p>
             </div>

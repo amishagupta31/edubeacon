@@ -6,7 +6,7 @@ import {
   Users, Building2, Handshake, Trophy, RefreshCw, ChevronDown, ChevronUp,
   Lock, AlertTriangle, Loader2, LogOut, Search, Download, X, LayoutGrid,
   ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown,
-  KeyRound, Mail, Eye, EyeOff,
+  KeyRound, Mail, Eye, EyeOff, Megaphone, Plus, Trash2, Save,
 } from "lucide-react";
 
 type Tab = "conference" | "vendor" | "interest" | "award";
@@ -485,6 +485,245 @@ export default function AdminPage() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
+// Ticker editor — the orange strip across the top of the site
+// ════════════════════════════════════════════════════════════════════════════
+interface Ticker { enabled: boolean; label: string; items: string[] }
+
+function TickerEditor({ authHeader }: { authHeader: () => Promise<Record<string, string>> }) {
+  const [ticker, setTicker] = useState<Ticker | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+
+  useEffect(() => {
+    fetch(`${API}/api/settings/ticker`)
+      .then((r) => r.json())
+      .then((d) => setTicker(d))
+      .catch(() => setMsg({ kind: "err", text: "Could not load the current ticker." }))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const update = (patch: Partial<Ticker>) => {
+    setTicker((t) => (t ? { ...t, ...patch } : t));
+    setMsg(null);
+  };
+
+  const setItem = (i: number, text: string) =>
+    setTicker((t) => {
+      if (!t) return t;
+      const items = [...t.items];
+      items[i] = text;
+      return { ...t, items };
+    });
+
+  const addItem = () =>
+    setTicker((t) => (t && t.items.length < 12 ? { ...t, items: [...t.items, ""] } : t));
+
+  const removeItem = (i: number) =>
+    setTicker((t) => (t ? { ...t, items: t.items.filter((_, n) => n !== i) } : t));
+
+  const move = (i: number, dir: -1 | 1) =>
+    setTicker((t) => {
+      if (!t) return t;
+      const j = i + dir;
+      if (j < 0 || j >= t.items.length) return t;
+      const items = [...t.items];
+      [items[i], items[j]] = [items[j], items[i]];
+      return { ...t, items };
+    });
+
+  const save = async () => {
+    if (!ticker) return;
+    const items = ticker.items.map((i) => i.trim()).filter(Boolean);
+    if (!items.length) {
+      setMsg({ kind: "err", text: "Add at least one line before saving." });
+      return;
+    }
+    setSaving(true); setMsg(null);
+    try {
+      const res = await fetch(`${API}/api/settings/ticker`, {
+        method: "PUT",
+        headers: await authHeader(),
+        body: JSON.stringify({ ...ticker, items }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setMsg({ kind: "err", text: body.error || "Could not save." });
+        return;
+      }
+      setTicker(body.value);
+      setMsg({ kind: "ok", text: "Saved. Reload the public site to see it." });
+    } catch {
+      setMsg({ kind: "err", text: "Could not reach the server." });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const reset = async () => {
+    setSaving(true); setMsg(null);
+    try {
+      const res = await fetch(`${API}/api/settings/ticker/reset`, {
+        method: "POST",
+        headers: await authHeader(),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setTicker(body.value);
+        setMsg({ kind: "ok", text: "Restored the default text." });
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading || !ticker) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <Loader2 className="w-6 h-6 animate-spin text-[#04312c]" />
+      </div>
+    );
+  }
+
+  const preview = ticker.items.filter(Boolean).join("   ");
+
+  return (
+    <div className="max-w-3xl">
+      {/* Live preview */}
+      <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Preview</p>
+      <div className="rounded-xl overflow-hidden border border-slate-200 mb-7">
+        {ticker.enabled ? (
+          <div className="relative bg-[#FF9933] overflow-hidden flex items-stretch">
+            <div className="shrink-0 flex items-center gap-2 px-5 py-2.5 bg-[#0A0E17]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF9933] animate-pulse" />
+              <span className="text-[10.5px] font-extrabold uppercase tracking-[0.18em] text-white whitespace-nowrap">
+                {ticker.label || "Live"}
+              </span>
+            </div>
+            <div className="w-px bg-black/15 shrink-0" />
+            <div className="flex-1 overflow-hidden py-2.5">
+              <div className="flex animate-ticker whitespace-nowrap">
+                <span className="text-[12px] text-[#0A0E17] font-semibold tracking-wide px-10">{preview}</span>
+                <span className="text-[12px] text-[#0A0E17] font-semibold tracking-wide px-10" aria-hidden="true">{preview}</span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-slate-50 py-4 text-center text-[13px] text-slate-400">
+            Strip is hidden on the site
+          </div>
+        )}
+      </div>
+
+      {/* Visibility + label */}
+      <div className="flex flex-wrap items-end gap-5 mb-6">
+        <label className="flex items-center gap-2.5 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={ticker.enabled}
+            onChange={(e) => update({ enabled: e.target.checked })}
+            className="w-4 h-4 accent-[#04312c] cursor-pointer"
+          />
+          <span className="text-[13.5px] font-semibold text-slate-700">Show the strip on the site</span>
+        </label>
+
+        <div>
+          <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+            Badge text
+          </label>
+          <input
+            type="text"
+            value={ticker.label}
+            maxLength={24}
+            onChange={(e) => update({ label: e.target.value })}
+            className="w-40 bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-[13px] focus:outline-none focus:border-[#04312c] focus:ring-2 focus:ring-[#04312c]/10"
+          />
+        </div>
+      </div>
+
+      {/* Items */}
+      <div className="flex items-center justify-between mb-2.5">
+        <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+          Scrolling lines ({ticker.items.length}/12)
+        </p>
+        <button
+          onClick={addItem}
+          disabled={ticker.items.length >= 12}
+          className="flex items-center gap-1.5 text-[12.5px] font-bold text-[#04312c] hover:underline disabled:opacity-40 disabled:no-underline"
+        >
+          <Plus className="w-3.5 h-3.5" /> Add line
+        </button>
+      </div>
+
+      <div className="flex flex-col gap-2 mb-6">
+        {ticker.items.map((item, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <span className="w-5 text-[11px] font-bold text-slate-300 tabular-nums text-right">{i + 1}</span>
+            <input
+              type="text"
+              value={item}
+              maxLength={160}
+              placeholder="Enter text for this line…"
+              onChange={(e) => setItem(i, e.target.value)}
+              className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-[13.5px] focus:outline-none focus:border-[#04312c] focus:ring-2 focus:ring-[#04312c]/10"
+            />
+            <div className="flex items-center gap-0.5">
+              <button
+                onClick={() => move(i, -1)} disabled={i === 0}
+                aria-label="Move up"
+                className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 disabled:opacity-25 disabled:hover:bg-transparent transition-all"
+              >
+                <ChevronUp className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => move(i, 1)} disabled={i === ticker.items.length - 1}
+                aria-label="Move down"
+                className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 disabled:opacity-25 disabled:hover:bg-transparent transition-all"
+              >
+                <ChevronDown className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => removeItem(i)} disabled={ticker.items.length <= 1}
+                aria-label="Remove line"
+                className="p-1.5 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-25 disabled:hover:bg-transparent transition-all"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {msg && (
+        <p className={`text-[13px] px-4 py-2.5 rounded-xl mb-4 ${
+          msg.kind === "ok"
+            ? "text-emerald-700 bg-emerald-50 border border-emerald-100"
+            : "text-red-600 bg-red-50 border border-red-100"
+        }`}>
+          {msg.text}
+        </p>
+      )}
+
+      <div className="flex items-center gap-3">
+        <button
+          onClick={save} disabled={saving}
+          className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#04312c] text-white text-[13.5px] font-bold hover:bg-[#062013] transition-colors disabled:opacity-50"
+        >
+          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          {saving ? "Saving…" : "Save Changes"}
+        </button>
+        <button
+          onClick={reset} disabled={saving}
+          className="px-5 py-2.5 rounded-xl border border-slate-200 text-[13px] font-semibold text-slate-600 hover:border-slate-300 hover:bg-slate-50 transition-all disabled:opacity-50"
+        >
+          Restore Default
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
 // Dashboard — sidebar + content
 // ════════════════════════════════════════════════════════════════════════════
 function Dashboard({ adminToken, onSignOut }: { adminToken: string | null; onSignOut: () => void }) {
@@ -506,6 +745,7 @@ function Dashboard({ adminToken, onSignOut }: { adminToken: string | null; onSig
   };
 
   const [tab, setTab] = useState<Tab>("conference");
+  const [view, setView] = useState<"records" | "settings">("records");
   const [counts, setCounts] = useState<Counts | null>(null);
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
@@ -626,11 +866,11 @@ function Dashboard({ adminToken, onSignOut }: { adminToken: string | null; onSig
         </p>
         <div className="flex flex-col gap-0.5">
           {TABS.map(({ id, label, icon: Icon }) => {
-            const active = tab === id;
+            const active = view === "records" && tab === id;
             return (
               <button
                 key={id}
-                onClick={() => setTab(id)}
+                onClick={() => { setTab(id); setView("records"); }}
                 className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
                   active
                     ? "bg-emerald-500 text-white shadow-lg shadow-emerald-900/30"
@@ -650,6 +890,21 @@ function Dashboard({ adminToken, onSignOut }: { adminToken: string | null; onSig
             );
           })}
         </div>
+
+        <p className="px-3 mt-6 mb-2 text-[10px] font-bold uppercase tracking-[0.15em] text-white/30">
+          Site Content
+        </p>
+        <button
+          onClick={() => setView("settings")}
+          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
+            view === "settings"
+              ? "bg-emerald-500 text-white shadow-lg shadow-emerald-900/30"
+              : "text-white/60 hover:text-white hover:bg-white/[0.06]"
+          }`}
+        >
+          <Megaphone className="w-4 h-4 shrink-0" strokeWidth={2} />
+          <span className="flex-1 text-left truncate">Ticker Strip</span>
+        </button>
       </nav>
 
       {/* User */}
@@ -717,27 +972,40 @@ function Dashboard({ adminToken, onSignOut }: { adminToken: string | null; onSig
         <header className="bg-white border-b border-slate-200/80 px-7 py-5 sticky top-0 z-20">
           <div className="flex items-start justify-between gap-6 flex-wrap">
             <div className="min-w-0">
-              <h1 className="font-display font-bold text-[21px] text-slate-900 leading-tight">{meta.title}</h1>
-              <p className="text-[13px] text-slate-500 mt-0.5">{meta.subtitle}</p>
+              <h1 className="font-display font-bold text-[21px] text-slate-900 leading-tight">
+                {view === "settings" ? "Ticker Strip" : meta.title}
+              </h1>
+              <p className="text-[13px] text-slate-500 mt-0.5">
+                {view === "settings"
+                  ? "The scrolling announcement bar at the top of the public site"
+                  : meta.subtitle}
+              </p>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={exportCSV}
-                disabled={!filtered.length}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 text-[12.5px] font-semibold text-slate-600 hover:border-slate-300 hover:bg-slate-50 transition-all disabled:opacity-40"
-              >
-                <Download className="w-3.5 h-3.5" /> Export CSV
-              </button>
-              <button
-                onClick={() => { fetchRows(tab); fetchCounts(); }}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#04312c] text-white text-[12.5px] font-semibold hover:bg-[#062013] transition-colors"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /> Refresh
-              </button>
-            </div>
+            {view === "records" && (
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={exportCSV}
+                  disabled={!filtered.length}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 text-[12.5px] font-semibold text-slate-600 hover:border-slate-300 hover:bg-slate-50 transition-all disabled:opacity-40"
+                >
+                  <Download className="w-3.5 h-3.5" /> Export CSV
+                </button>
+                <button
+                  onClick={() => { fetchRows(tab); fetchCounts(); }}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#04312c] text-white text-[12.5px] font-semibold hover:bg-[#062013] transition-colors"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /> Refresh
+                </button>
+              </div>
+            )}
           </div>
         </header>
 
+        {view === "settings" ? (
+          <div className="p-7">
+            <TickerEditor authHeader={authHeader} />
+          </div>
+        ) : (
         <div className="p-7">
           {/* Stat cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -1033,6 +1301,7 @@ function Dashboard({ adminToken, onSignOut }: { adminToken: string | null; onSig
             )}
           </div>
         </div>
+        )}
       </div>
     </div>
   );

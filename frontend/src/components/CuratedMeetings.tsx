@@ -131,7 +131,7 @@ export default function CuratedMeetings() {
           <div className="pt-6 border-t border-stone-100 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
             <div className="sm:border-r sm:border-stone-100 sm:pr-4">
               <p className="font-bold text-[28px] md:text-[34px] text-[#0E733B] leading-none">
-                500+
+                5000+
               </p>
               <p className="text-[12.5px] text-slate-soft font-semibold mt-1">
                 Verified Schools in Network

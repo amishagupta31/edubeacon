@@ -44,7 +44,7 @@ export const siteConfig = {
    Community Stats
 ───────────────────────────────────────── */
 export const communityStats = [
-  { value: "500+", label: "Schools" },
+  { value: "5000+", label: "Schools" },
   { value: "1,200+", label: "Education Leaders" },
   { value: "300+", label: "Startups & Vendors" },
   { value: "25+", label: "Solution Categories" },
