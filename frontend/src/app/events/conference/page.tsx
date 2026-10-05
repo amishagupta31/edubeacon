@@ -42,7 +42,8 @@ const EVENT = {
   mapLink: "https://www.google.com/maps/search/?api=1&query=Shivalik+University+Dehradun",
 };
 
-const CONFERENCE_DATE = new Date("2026-10-11T10:00:00+05:30");
+// Must stay in sync with EVENT.date / EVENT.time above. IST (+05:30).
+const CONFERENCE_DATE = new Date("2026-10-25T09:00:00+05:30");
 
 // ── Three Conference Conversations (Focus Pillars, part of "About the Conference") ──
 const focusPillars = [
