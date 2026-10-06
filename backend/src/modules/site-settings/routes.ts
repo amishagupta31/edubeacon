@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
-import SiteSetting, { DEFAULT_TICKER } from "../models/SiteSetting";
-import { requireAdmin, AuthedRequest } from "../middleware/clerkAuth";
+import SiteSetting, { DEFAULT_TICKER } from "./model";
+import { requireAdmin, AuthedRequest } from "../../middleware/clerkAuth";
 
 const router = Router();
 const TICKER_KEY = "ticker";

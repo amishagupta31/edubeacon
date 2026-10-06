@@ -8,10 +8,10 @@ import webhookRouter from "./routes/webhooks";
 import conferenceRouter from "./routes/conference";
 import vendorRouter from "./routes/vendor";
 import interestRouter from "./routes/interest";
-import awardRouter from "./routes/award";
+import awardRouter from "./modules/award-nominations/routes";
 import adminRouter from "./routes/admin";
 import adminAuthRouter from "./routes/adminAuth";
-import settingsRouter from "./routes/settings";
+import settingsRouter from "./modules/site-settings/routes";
 
 const app = express();
 const PORT = Number(process.env.PORT ?? 4000);

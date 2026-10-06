@@ -3,7 +3,7 @@ import { requireAdmin, AuthedRequest } from "../middleware/clerkAuth";
 import ConferenceRegistration from "../models/ConferenceRegistration";
 import VendorRegistration from "../models/VendorRegistration";
 import InterestLead from "../models/InterestLead";
-import AwardNomination from "../models/AwardNomination";
+import AwardNomination from "../modules/award-nominations/model";
 import { Model, Document } from "mongoose";
 
 const router = Router();

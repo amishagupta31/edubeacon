@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
-import AwardNomination from "../models/AwardNomination";
-import { sendMail } from "../lib/mailer";
-import { awardEmail } from "../lib/emailTemplates";
+import AwardNomination from "./model";
+import { sendMail } from "../../lib/mailer";
+import { awardEmail } from "../../lib/emailTemplates";
 
 const router = Router();
 
