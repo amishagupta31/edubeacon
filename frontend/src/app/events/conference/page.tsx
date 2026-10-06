@@ -328,26 +328,36 @@ export default function ConferencePage() {
                 </a>
               </div>
 
-              <div className="reveal reveal-delay-3 flex flex-wrap justify-center items-center gap-x-6 gap-y-2 mb-8 text-[11.5px] text-slate-400">
-                <div className="flex items-center gap-3">
+              <div className="reveal reveal-delay-3 flex flex-col sm:flex-row flex-wrap justify-center items-center gap-x-10 gap-y-6 mb-9 text-[11.5px] text-slate-400">
+                <div className="flex flex-col items-center gap-2.5">
                   <span className="font-bold uppercase tracking-wider text-slate-400">Title Sponsor</span>
-                  {/* Logo artwork is on white, so it needs a light chip to sit on the dark hero */}
-                  <Image
-                    src="/images/sponsors/shivalik-university.png"
-                    alt={EVENT.titleSponsor}
-                    width={2000}
-                    height={1000}
-                    className="h-9 w-auto rounded-md bg-white px-2 py-1"
-                  />
+                  {/* Fixed-size chip + object-contain keeps every logo box identical,
+                      whatever the artwork's own aspect ratio happens to be. */}
+                  <div className="relative w-[152px] h-[84px] rounded-xl bg-white shadow-lg p-3">
+                    <Image
+                      src="/images/sponsors/shivalik-university.png"
+                      alt={EVENT.titleSponsor}
+                      fill
+                      sizes="152px"
+                      className="object-contain p-1"
+                    />
+                  </div>
                 </div>
-                <span className="text-slate-600 hidden sm:inline">|</span>
-                <div className="flex items-center gap-3">
+
+                <span className="hidden sm:block w-px h-20 bg-white/15" />
+
+                <div className="flex flex-col items-center gap-2.5">
                   <span className="font-bold uppercase tracking-wider text-slate-400">Gold Partners</span>
-                  <div className="flex items-center gap-2.5">
-                    <Image src="/images/sponsors/deep-connection.png" alt="Deep Connection" width={334} height={158} className="h-7 w-auto rounded-md" />
-                    <span className="text-slate-500">/</span>
-                    <Image src="/images/sponsors/kiddicove.png" alt="KiddiCove Therapy Center by Deep Connection" width={239} height={77} className="h-6 w-auto rounded-md bg-white px-1 py-0.5" />
-                    <Image src="/images/sponsors/india-genius-foundation.png" alt="India Genius Foundation" width={233} height={225} className="h-8 w-auto rounded-full" />
+                  <div className="flex items-center gap-3">
+                    {[
+                      { src: "/images/sponsors/deep-connection.png", alt: "Deep Connection" },
+                      { src: "/images/sponsors/kiddicove.png", alt: "KiddiCove Therapy Center by Deep Connection" },
+                      { src: "/images/sponsors/india-genius-foundation.png", alt: "India Genius Foundation" },
+                    ].map((logo) => (
+                      <div key={logo.src} className="relative w-[152px] h-[84px] rounded-xl bg-white shadow-lg p-3">
+                        <Image src={logo.src} alt={logo.alt} fill sizes="152px" className="object-contain p-1" />
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
