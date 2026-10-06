@@ -5,7 +5,7 @@ import { connectDB } from "./lib/mongodb";
 import { reportMailStatus } from "./lib/mailer";
 
 import webhookRouter from "./routes/webhooks";
-import conferenceRouter from "./routes/conference";
+import conferenceRouter from "./modules/conference-registrations/routes";
 import vendorRouter from "./modules/vendor-registrations/routes";
 import interestRouter from "./modules/interest-leads/routes";
 import awardRouter from "./modules/award-nominations/routes";
