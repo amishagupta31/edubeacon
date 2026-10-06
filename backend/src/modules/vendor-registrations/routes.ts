@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
-import VendorRegistration from "../models/VendorRegistration";
-import { sendMail } from "../lib/mailer";
-import { vendorEmail } from "../lib/emailTemplates";
+import VendorRegistration from "./model";
+import { sendMail } from "../../lib/mailer";
+import { vendorEmail } from "../../lib/emailTemplates";
 
 const router = Router();
 

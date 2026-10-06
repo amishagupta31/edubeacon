@@ -6,8 +6,8 @@ import { reportMailStatus } from "./lib/mailer";
 
 import webhookRouter from "./routes/webhooks";
 import conferenceRouter from "./routes/conference";
-import vendorRouter from "./routes/vendor";
-import interestRouter from "./routes/interest";
+import vendorRouter from "./modules/vendor-registrations/routes";
+import interestRouter from "./modules/interest-leads/routes";
 import awardRouter from "./modules/award-nominations/routes";
 import adminRouter from "./routes/admin";
 import adminAuthRouter from "./routes/adminAuth";
