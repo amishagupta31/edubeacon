@@ -4,13 +4,13 @@ import cors from "cors";
 import { connectDB } from "./lib/mongodb";
 import { reportMailStatus } from "./lib/mailer";
 
-import webhookRouter from "./routes/webhooks";
+import webhookRouter from "./modules/users/routes";
 import conferenceRouter from "./modules/conference-registrations/routes";
 import vendorRouter from "./modules/vendor-registrations/routes";
 import interestRouter from "./modules/interest-leads/routes";
 import awardRouter from "./modules/award-nominations/routes";
 import adminRouter from "./routes/admin";
-import adminAuthRouter from "./routes/adminAuth";
+import adminAuthRouter from "./modules/admins/routes";
 import settingsRouter from "./modules/site-settings/routes";
 
 const app = express();

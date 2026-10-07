@@ -2,7 +2,7 @@ import "dotenv/config";
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import { connectDB } from "../lib/mongodb";
-import Admin from "../models/Admin";
+import Admin from "../modules/admins/model";
 
 const BCRYPT_ROUNDS = 12;
 

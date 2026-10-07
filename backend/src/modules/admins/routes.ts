@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import Admin from "../models/Admin";
-import { signAdminToken } from "../lib/adminToken";
+import Admin from "./model";
+import { signAdminToken } from "../../lib/adminToken";
 
 const router = Router();
 
