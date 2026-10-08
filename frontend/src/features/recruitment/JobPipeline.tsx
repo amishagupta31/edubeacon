@@ -1,334 +1,309 @@
 "use client";
 
-import { useState } from "react";
-import { Search, Share2, UserPlus, ChevronLeft } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import {
+  ChevronLeft, Loader2, ChevronRight, ChevronDown,
+  UserCheck, XCircle, ClipboardList,
+} from "lucide-react";
+import { API } from "./useRecruitmentProfile";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
-type TagVariant = "green" | "dark" | "amber" | "red" | "gray";
-
-interface CandidateCard {
-  id: string;
-  name: string;
-  initials: string;
-  subtitle: string;
-  score: number | null;
-  notes: string;
-  tags: { label: string; variant: TagVariant }[];
+interface Applicant {
+  _id: string;
+  teacherName: string;
+  teacherEmail: string;
+  teacherPhone: string;
+  coverNote: string;
+  currentStage: string;
+  stageIndex: number;
+  stages: string[];
+  status: "active" | "rejected" | "withdrawn" | "offered";
+  aiScore: number | null;
+  schoolNotes: string;
+  appliedAt: string;
 }
 
-interface PipelineStage {
-  id: string;
-  label: string;
-  count: number | null;
-  candidates: CandidateCard[];
+interface PipelineData {
+  job: { title: string; stages: string[] };
+  applications: Applicant[];
 }
 
-// ── Demo data — matches the design mockup exactly ──────────────────────────
+// ── Score circle ───────────────────────────────────────────────────────────
 
-const DEMO_JOB = {
-  title: "PGT Physics — Senior Secondary",
-  tags: ["CBSE", "Full-time", "Classes XI–XII", "Budget ₹[MIN]–₹[MAX] / month"],
-};
-
-const DEMO_FILTERS = [
-  { id: "ai-fit", label: "AI fit ≥ 70", active: true },
-  { id: "bed", label: "B.Ed verified", active: false },
-  { id: "ctet", label: "CTET / STET", active: false },
-  { id: "exp", label: "Experience 3+ yrs", active: false },
-];
-
-const DEMO_STAGES: PipelineStage[] = [
-  {
-    id: "applied",
-    label: "Applied",
-    count: 18,
-    candidates: [
-      {
-        id: "c-ritika",
-        name: "Ritika Sharma",
-        initials: "RS",
-        subtitle: "TGT Physics · 4 yrs",
-        score: 82,
-        notes: "Strong board-exam result history; teaches XI–XII mechanics already.",
-        tags: [
-          { label: "B.Ed verified", variant: "green" },
-          { label: "CBSE", variant: "gray" },
-        ],
-      },
-      {
-        id: "c-arjun",
-        name: "Arjun Mehta",
-        initials: "AM",
-        subtitle: "M.Sc fresher",
-        score: 61,
-        notes: "Subject depth good, no classroom experience yet.",
-        tags: [{ label: "B.Ed pending", variant: "amber" }],
-      },
-    ],
-  },
-  {
-    id: "ai-screened",
-    label: "AI screened",
-    count: 11,
-    candidates: [
-      {
-        id: "c-kavya",
-        name: "Kavya Nair",
-        initials: "KN",
-        subtitle: "PGT Physics · 6 yrs",
-        score: 88,
-        notes: "Matches board, level and lab-practical requirement.",
-        tags: [
-          { label: "CTET", variant: "dark" },
-          { label: "B.Ed verified", variant: "green" },
-        ],
-      },
-      {
-        id: "c-imran",
-        name: "Imran Qureshi",
-        initials: "IQ",
-        subtitle: "PGT Physics · 3 yrs",
-        score: 74,
-        notes: "On hold: STET certificate not uploaded.",
-        tags: [{ label: "Needs review", variant: "red" }],
-      },
-    ],
-  },
-  {
-    id: "assessment",
-    label: "Assessment",
-    count: 7,
-    candidates: [
-      {
-        id: "c-sneha",
-        name: "Sneha Pillai",
-        initials: "SP",
-        subtitle: "PGT Physics · 5 yrs",
-        score: 79,
-        notes: "Subject test 41/50 · pedagogy scenarios rated strong.",
-        tags: [{ label: "Test done", variant: "green" }],
-      },
-    ],
-  },
-  {
-    id: "panel-interview",
-    label: "Panel interview",
-    count: 5,
-    candidates: [
-      {
-        id: "c-rahul",
-        name: "Rahul Verma",
-        initials: "RV",
-        subtitle: "PGT Physics · 8 yrs",
-        score: 85,
-        notes: "Panel slot Thu 11:00 · 3 of 3 scorecards pending.",
-        tags: [{ label: "Scheduled", variant: "gray" }],
-      },
-    ],
-  },
-  {
-    id: "demo-lesson",
-    label: "Demo lesson",
-    count: null,
-    candidates: [
-      {
-        id: "c-ananya",
-        name: "Ananya Iyer",
-        initials: "AN",
-        subtitle: "PGT Physics · 7 yrs",
-        score: null,
-        notes: "Demo on Ohm's law, Class XI-B · rubric 4.4 / 5.",
-        tags: [{ label: "Rubric done", variant: "green" }],
-      },
-    ],
-  },
-];
-
-// ── Helpers ─────────────────────────────────────────────────────────────────
-
-function scoreColor(score: number) {
-  if (score >= 80) return { border: "border-emerald-400", text: "text-emerald-700", bg: "bg-emerald-50" };
-  if (score >= 70) return { border: "border-amber-300", text: "text-amber-700", bg: "bg-amber-50" };
-  return { border: "border-slate-300", text: "text-slate-500", bg: "bg-slate-50" };
+function ScoreCircle({ score }: { score: number | null }) {
+  if (score === null) return (
+    <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center">
+      <span className="text-[10px] font-bold text-slate-400">—</span>
+    </div>
+  );
+  const color = score >= 80 ? "bg-emerald-500" : score >= 70 ? "bg-amber-400" : "bg-slate-300";
+  return (
+    <div className={`w-9 h-9 rounded-full ${color} flex items-center justify-center`}>
+      <span className="text-[11px] font-bold text-white tabular-nums">{score}</span>
+    </div>
+  );
 }
 
-const TAG_STYLES: Record<TagVariant, string> = {
-  green: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  dark: "bg-[#0C2A1B] text-white border-transparent",
-  amber: "bg-amber-50 text-amber-700 border-amber-200",
-  red: "bg-red-50 text-red-600 border-red-200",
-  gray: "bg-slate-100 text-slate-600 border-slate-200",
-};
+// ── Stage Action Menu ──────────────────────────────────────────────────────
 
-// ── Component ──────────────────────────────────────────────────────────────
+function StageActions({
+  app,
+  stages,
+  authHeader,
+  onUpdated,
+}: {
+  app: Applicant;
+  stages: string[];
+  authHeader: () => Promise<Record<string, string>>;
+  onUpdated: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [working, setWorking] = useState(false);
+
+  const moveStage = async (idx: number) => {
+    setWorking(true);
+    setOpen(false);
+    try {
+      const headers = await authHeader();
+      await fetch(`${API}/api/recruitment/applications/${app._id}/stage`, {
+        method: "PUT",
+        headers: { ...headers, "Content-Type": "application/json" },
+        body: JSON.stringify({ stageIndex: idx }),
+      });
+      onUpdated();
+    } finally { setWorking(false); }
+  };
+
+  const reject = async () => {
+    setWorking(true);
+    setOpen(false);
+    try {
+      const headers = await authHeader();
+      await fetch(`${API}/api/recruitment/applications/${app._id}/status`, {
+        method: "PUT",
+        headers: { ...headers, "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "rejected" }),
+      });
+      onUpdated();
+    } finally { setWorking(false); }
+  };
+
+  if (app.status !== "active") {
+    return <span className="text-[11px] text-slate-400 font-semibold italic">{app.status}</span>;
+  }
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        disabled={working}
+        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-line bg-white text-[11.5px] font-semibold text-charcoal hover:bg-slate-50 transition-all disabled:opacity-40"
+      >
+        {working ? <Loader2 className="w-3 h-3 animate-spin" /> : "Actions"}
+        <ChevronDown className="w-3 h-3" />
+      </button>
+
+      {open && (
+        <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl border border-line shadow-lg z-20 overflow-hidden">
+          <div className="px-3 py-2 border-b border-line">
+            <p className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wide">Move to stage</p>
+          </div>
+          {stages.map((stage, idx) => (
+            <button
+              key={idx}
+              onClick={() => moveStage(idx)}
+              className={`w-full text-left px-3 py-2 text-[12.5px] font-semibold transition-colors flex items-center gap-2 ${
+                idx === app.stageIndex ? "bg-emerald-50 text-emerald-700" : "text-charcoal hover:bg-slate-50"
+              }`}
+            >
+              <ChevronRight className="w-3 h-3 opacity-40" />
+              {stage}
+              {idx === app.stageIndex && <span className="ml-auto text-[10px] font-bold text-emerald-600">Current</span>}
+            </button>
+          ))}
+          <div className="border-t border-line">
+            <button
+              onClick={reject}
+              className="w-full text-left px-3 py-2.5 text-[12.5px] font-semibold text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors"
+            >
+              <XCircle className="w-3.5 h-3.5" /> Do not proceed
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Main Component ─────────────────────────────────────────────────────────
 
 export default function JobPipeline({
+  jobId,
+  authHeader,
   onBack,
   onViewCandidate,
 }: {
+  jobId: string;
+  authHeader: () => Promise<Record<string, string>>;
   onBack: () => void;
-  onViewCandidate?: (candidateId: string) => void;
+  onViewCandidate: (candidateId: string) => void;
 }) {
-  const [search, setSearch] = useState("");
-  const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set(["ai-fit"]));
+  const [data, setData] = useState<PipelineData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeStage, setActiveStage] = useState(0);
 
-  const toggleFilter = (id: string) => {
-    setActiveFilters((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const headers = await authHeader();
+      const res = await fetch(`${API}/api/recruitment/jobs/${jobId}/applications`, { headers });
+      if (!res.ok) throw new Error("Could not load pipeline");
+      const d = await res.json() as PipelineData;
+      setData(d);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  }, [jobId, authHeader]);
+
+  useEffect(() => { load(); }, [load]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <Loader2 className="w-6 h-6 text-[#0E733B] animate-spin" />
+        <span className="ml-3 text-[14px] text-slate-500">Loading pipeline…</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-2xl px-5 py-4 text-[13.5px] text-red-800">
+        {error} <button onClick={load} className="ml-3 font-bold underline underline-offset-2">Retry</button>
+      </div>
+    );
+  }
+
+  if (!data) return null;
+
+  const { job, applications } = data;
+  const stages = job.stages.length
+    ? job.stages
+    : ["Applied", "AI screened", "Assessment", "Panel interview", "Demo lesson"];
+
+  // Group applicants by stage
+  const byStage: Applicant[][] = stages.map((_, idx) =>
+    applications.filter((a) => a.stageIndex === idx && a.status === "active")
+  );
+  const rejected = applications.filter((a) => a.status === "rejected");
+  const offered = applications.filter((a) => a.status === "offered");
+
+  const stageApps = byStage[activeStage] || [];
 
   return (
     <div className="max-w-full">
-      {/* ── Breadcrumb ── */}
-      <p className="text-[13px] text-slate-500 mb-1">
-        <button
-          onClick={onBack}
-          className="text-[#0E733B] font-semibold hover:underline underline-offset-2 inline-flex items-center gap-1"
-        >
-          <ChevronLeft className="w-3.5 h-3.5" />
-          Jobs
-        </button>
-        <span className="mx-1.5">/</span>
-        <span>PGT Physics</span>
-      </p>
-
-      {/* ── Header ── */}
-      <div className="flex items-start justify-between gap-4 flex-wrap mb-5">
-        <div className="min-w-0">
-          <h1 className="font-display font-bold text-[28px] sm:text-[32px] text-charcoal leading-tight tracking-tight">
-            {DEMO_JOB.title}
-          </h1>
-          <div className="flex flex-wrap gap-2 mt-2.5">
-            {DEMO_JOB.tags.map((t) => (
-              <span
-                key={t}
-                className="text-[12px] font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full"
-              >
-                {t}
-              </span>
-            ))}
-          </div>
+      {/* Header */}
+      <div className="flex items-center justify-between gap-4 flex-wrap mb-6">
+        <div>
+          <button onClick={onBack} className="flex items-center gap-1.5 text-[13px] font-semibold text-[#0E733B] hover:underline underline-offset-2 mb-1">
+            <ChevronLeft className="w-4 h-4" /> Back to jobs
+          </button>
+          <h1 className="font-display font-bold text-[26px] text-charcoal leading-tight tracking-tight">{job.title}</h1>
+          <p className="text-[13px] text-slate-500 mt-0.5">{applications.length} total applications · {applications.filter(a => a.status === "active").length} active</p>
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0">
-          <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-line bg-white text-[13px] font-semibold text-charcoal hover:bg-slate-50 hover:border-slate-300 shadow-sm transition-all">
-            <Share2 className="w-3.5 h-3.5" /> Share job
-          </button>
-          <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0E733B] text-white text-[13px] font-bold hover:bg-[#0B5C2F] shadow-sm hover:shadow-md transition-all">
-            <UserPlus className="w-3.5 h-3.5" /> Invite to assessment
-          </button>
+        {/* Summary pills */}
+        <div className="flex gap-2 shrink-0 flex-wrap">
+          {offered.length > 0 && (
+            <span className="px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-200 text-[12px] font-bold text-blue-700">
+              {offered.length} offered
+            </span>
+          )}
+          {rejected.length > 0 && (
+            <span className="px-3 py-1.5 rounded-xl bg-red-50 border border-red-200 text-[12px] font-bold text-red-600">
+              {rejected.length} rejected
+            </span>
+          )}
         </div>
       </div>
 
-      {/* ── Search + Filters ── */}
-      <div className="flex items-center gap-3 flex-wrap mb-2">
-        <div className="relative flex-1 min-w-[200px] max-w-[340px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search name, subject, college…"
-            className="w-full pl-9 pr-3.5 py-2 rounded-xl border border-line bg-white text-[13px] text-charcoal placeholder:text-slate-400 focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/10 transition-all"
-          />
-        </div>
-
-        {DEMO_FILTERS.map((f) => {
-          const isActive = activeFilters.has(f.id);
+      {/* Stage tabs */}
+      <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
+        {stages.map((stage, idx) => {
+          const count = (byStage[idx] || []).length;
           return (
             <button
-              key={f.id}
-              onClick={() => toggleFilter(f.id)}
-              className={`px-3.5 py-2 rounded-xl text-[12.5px] font-semibold border transition-all ${
-                isActive
-                  ? "bg-[#0E733B] text-white border-[#0E733B]"
+              key={idx}
+              onClick={() => setActiveStage(idx)}
+              className={`shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-semibold border transition-all ${
+                activeStage === idx
+                  ? "bg-[#0C2A1B] text-white border-transparent shadow-sm"
                   : "bg-white text-slate-600 border-line hover:border-slate-300"
               }`}
             >
-              {f.label}
+              {stage}
+              <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                activeStage === idx ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
+              }`}>
+                {count}
+              </span>
             </button>
           );
         })}
       </div>
 
-      <p className="text-[12px] text-slate-400 italic mb-5">
-        AI ranks and explains. Your team decides.
-      </p>
+      {/* Applicant cards */}
+      {stageApps.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-line p-10 text-center">
+          <ClipboardList className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+          <p className="font-display font-bold text-[15px] text-charcoal mb-1">No applicants in this stage</p>
+          <p className="text-[13px] text-slate-500">Move candidates here using the Actions button on their card.</p>
+        </div>
+      ) : (
+        <div className="grid gap-3">
+          {stageApps.map((app) => (
+            <div key={app._id} className="bg-white rounded-2xl border border-line shadow-sm p-5">
+              <div className="flex items-start gap-4">
+                <ScoreCircle score={app.aiScore} />
 
-      {/* ── Kanban Board ── */}
-      <div className="overflow-x-auto pb-4 -mx-6 px-6">
-        <div className="flex gap-3 min-w-max">
-          {DEMO_STAGES.map((stage) => (
-            <div key={stage.id} className="w-[230px] shrink-0">
-              {/* Column header */}
-              <div className="flex items-center justify-between px-1 mb-3">
-                <h3 className="text-[13px] font-bold text-charcoal">{stage.label}</h3>
-                {stage.count !== null && (
-                  <span className="text-[11.5px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full tabular-nums">
-                    {stage.count}
-                  </span>
-                )}
-              </div>
-
-              {/* Cards */}
-              <div className="flex flex-col gap-2.5">
-                {stage.candidates.map((c) => (
-                  <button
-                    key={c.id}
-                    onClick={() => onViewCandidate?.(c.id)}
-                    className="w-full text-left bg-white rounded-xl border border-line shadow-sm hover:shadow-md hover:border-slate-200 transition-all p-3.5 group"
-                  >
-                    {/* Name row + score */}
-                    <div className="flex items-start justify-between gap-2 mb-1">
-                      <div className="min-w-0">
-                        <p className="text-[13px] font-bold text-charcoal leading-tight group-hover:text-[#0E733B] transition-colors truncate">
-                          {c.name}
-                        </p>
-                        <p className="text-[11.5px] text-slate-500 mt-0.5 truncate">
-                          {c.subtitle}
-                        </p>
-                      </div>
-                      {c.score !== null && (
-                        <div
-                          className={`shrink-0 w-[36px] h-[36px] rounded-full border-2 flex items-center justify-center ${scoreColor(c.score).border} ${scoreColor(c.score).bg}`}
-                        >
-                          <span className={`text-[13px] font-bold tabular-nums ${scoreColor(c.score).text}`}>
-                            {c.score}
-                          </span>
-                        </div>
-                      )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-3 flex-wrap">
+                    <div className="min-w-0">
+                      <h3 className="font-display font-bold text-[16px] text-charcoal leading-tight">{app.teacherName}</h3>
+                      <p className="text-[12.5px] text-slate-500 mt-0.5">{app.teacherEmail} {app.teacherPhone && `· ${app.teacherPhone}`}</p>
                     </div>
 
-                    {/* Notes */}
-                    <p className="text-[11.5px] text-slate-500 leading-relaxed mt-1.5 line-clamp-3">
-                      {c.notes}
-                    </p>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={() => onViewCandidate(app._id)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-[11.5px] font-bold text-emerald-700 hover:bg-emerald-100 transition-all"
+                      >
+                        <UserCheck className="w-3.5 h-3.5" /> View profile
+                      </button>
+                      <StageActions app={app} stages={stages} authHeader={authHeader} onUpdated={load} />
+                    </div>
+                  </div>
 
-                    {/* Tags */}
-                    {c.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mt-2.5">
-                        {c.tags.map((tag) => (
-                          <span
-                            key={tag.label}
-                            className={`text-[10px] font-bold px-2 py-0.5 rounded border ${TAG_STYLES[tag.variant]}`}
-                          >
-                            {tag.label}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </button>
-                ))}
+                  {app.coverNote && (
+                    <p className="mt-2.5 text-[13px] text-slate-600 bg-slate-50 rounded-xl px-3.5 py-2.5 leading-relaxed line-clamp-3 border border-slate-100">
+                      {app.coverNote}
+                    </p>
+                  )}
+
+                  <p className="text-[11.5px] text-slate-400 mt-2">
+                    Applied {new Date(app.appliedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                  </p>
+                </div>
               </div>
             </div>
           ))}
         </div>
-      </div>
+      )}
     </div>
   );
 }

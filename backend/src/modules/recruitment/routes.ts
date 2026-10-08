@@ -4,6 +4,10 @@ import { requireRole, RoleRequest } from "../../middleware/requireRole";
 import RecruitmentProfile, { ACCOUNT_TYPES, AccountType } from "./model";
 import Institution from "./institution.model";
 import Job, { JOB_STATUSES, JobStatus } from "./job.model";
+import Application, { IApplication } from "./application.model";
+import Offer, { OFFER_STATUSES, OfferStatus, IOffer } from "./offer.model";
+import NegotiationMessage from "./negotiation.model";
+import { IJob } from "./job.model";
 
 const router = Router();
 
@@ -139,6 +143,69 @@ router.get("/me", requireAuth, async (req: AuthedRequest, res: Response) => {
   } catch (err) {
     console.error("Recruitment me error:", err);
     res.status(500).json({ error: "Could not load profile" });
+  }
+});
+
+// ════════════════════════════════════════════════════════════════════════════
+// Teacher CV profile
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * PUT /api/recruitment/profile/teacher
+ * Teacher updates their CV fields. Identity from token — never from body.
+ */
+router.put("/profile/teacher", requireAuth, requireRole("TEACHER"), async (req: RoleRequest, res: Response) => {
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const update: Record<string, unknown> = {};
+
+  if (body.fullName !== undefined)    update.fullName   = str(body.fullName, 120);
+  if (body.phone !== undefined)       update.phone      = str(body.phone, 20);
+  if (body.bio !== undefined)         update.bio        = str(body.bio, 1000);
+  if (body.stetStatus !== undefined)  update.stetStatus = str(body.stetStatus, 100);
+  if (body.currentCTC !== undefined)  update.currentCTC = Number(body.currentCTC) || null;
+  if (body.expectedCTC !== undefined) update.expectedCTC = Number(body.expectedCTC) || null;
+  if (body.availableFrom !== undefined) {
+    const d = new Date(str(body.availableFrom, 30));
+    update.availableFrom = isNaN(d.getTime()) ? null : d;
+  }
+
+  const validCtet = ["cleared", "not_cleared", "not_applicable", ""];
+  if (body.ctetStatus !== undefined && validCtet.includes(body.ctetStatus as string)) {
+    update.ctetStatus = body.ctetStatus;
+  }
+
+  if (Array.isArray(body.subjectSpecialisations)) {
+    update.subjectSpecialisations = (body.subjectSpecialisations as unknown[])
+      .map((s) => str(s, 60)).filter(Boolean).slice(0, 10);
+  }
+  if (Array.isArray(body.preferredCities)) {
+    update.preferredCities = (body.preferredCities as unknown[])
+      .map((c) => str(c, 60)).filter(Boolean).slice(0, 5);
+  }
+  if (Array.isArray(body.qualifications)) {
+    update.qualifications = (body.qualifications as { degree?: string; institution?: string; year?: string }[])
+      .filter((q) => q?.degree)
+      .map((q) => ({ degree: str(q.degree, 100), institution: str(q.institution, 160), year: str(q.year, 4) }))
+      .slice(0, 10);
+  }
+  if (Array.isArray(body.experience)) {
+    update.experience = (body.experience as { school?: string; role?: string; from?: string; to?: string }[])
+      .filter((e) => e?.school)
+      .map((e) => ({ school: str(e.school, 160), role: str(e.role, 100), from: str(e.from, 20), to: str(e.to, 20) }))
+      .slice(0, 15);
+  }
+
+  try {
+    const profile = await RecruitmentProfile.findOneAndUpdate(
+      { clerkUserId: req.userId },
+      update,
+      { new: true }
+    ).select("-__v");
+    if (!profile) { res.status(404).json({ error: "Profile not found" }); return; }
+    res.json(profile);
+  } catch (err) {
+    console.error("Teacher profile update error:", err);
+    res.status(500).json({ error: "Could not update profile" });
   }
 });
 
@@ -530,6 +597,427 @@ router.get("/jobs/:id", requireAuth, async (req: Request, res: Response) => {
   } catch (err) {
     console.error("Job detail error:", err);
     res.status(500).json({ error: "Could not load job" });
+  }
+});
+
+// ════════════════════════════════════════════════════════════════════════════
+// Applications — teachers apply; schools manage the pipeline
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * POST /api/recruitment/jobs/:id/apply
+ * Teacher applies for a published job. One application per teacher per job.
+ */
+router.post("/jobs/:id/apply", requireAuth, requireRole("TEACHER"), async (req: RoleRequest, res: Response) => {
+  try {
+    const job = await Job.findOne({ _id: req.params.id, status: "PUBLISHED" });
+    if (!job) { res.status(404).json({ error: "Job not found or no longer accepting applications" }); return; }
+
+    const profile = await RecruitmentProfile.findOne({ clerkUserId: req.userId });
+    if (!profile) { res.status(403).json({ error: "Complete your recruitment profile first" }); return; }
+
+    const existing = await Application.findOne({ jobId: job._id, teacherClerkUserId: req.userId });
+    if (existing) { res.status(409).json({ error: "You have already applied for this job" }); return; }
+
+    const coverNote = str(req.body?.coverNote, 1000);
+
+    const app = await Application.create({
+      jobId: job._id,
+      jobTitle: job.title,
+      institutionName: job.institutionName,
+      city: job.city,
+      state: job.state,
+      board: job.board,
+      ownerClerkUserId: job.ownerClerkUserId,
+      teacherClerkUserId: req.userId!,
+      teacherName: profile.fullName || profile.email,
+      teacherEmail: profile.email,
+      teacherPhone: profile.phone || "",
+      coverNote,
+      stages: job.stages.length ? job.stages : ["Applied", "Screening", "Interview", "Offer"],
+      stageIndex: 0,
+      currentStage: job.stages[0] || "Applied",
+    });
+
+    // Increment applicant count on job
+    await Job.updateOne({ _id: job._id }, { $inc: { applicantCount: 1 } });
+
+    res.status(201).json({ applied: true, applicationId: app._id, stage: app.currentStage });
+  } catch (err: unknown) {
+    if ((err as { code?: number })?.code === 11000) {
+      res.status(409).json({ error: "You have already applied for this job" });
+      return;
+    }
+    console.error("Apply error:", err);
+    res.status(500).json({ error: "Could not submit application" });
+  }
+});
+
+/**
+ * GET /api/recruitment/applications/mine
+ * Teacher sees all their own applications with current stage.
+ */
+router.get("/applications/mine", requireAuth, requireRole("TEACHER"), async (req: RoleRequest, res: Response) => {
+  try {
+    const apps = await Application.find({ teacherClerkUserId: req.userId })
+      .select("jobId jobTitle institutionName city state board currentStage stageIndex stages status appliedAt")
+      .sort({ appliedAt: -1 })
+      .limit(100)
+      .lean();
+    res.json(apps);
+  } catch (err) {
+    console.error("My applications error:", err);
+    res.status(500).json({ error: "Could not load applications" });
+  }
+});
+
+/**
+ * GET /api/recruitment/jobs/:id/applications
+ * School fetches all applicants for one of its jobs, grouped by stage.
+ */
+router.get("/jobs/:id/applications", requireAuth, requireRole("SCHOOL_ADMIN"), async (req: RoleRequest, res: Response) => {
+  try {
+    const job = await Job.findOne({ _id: req.params.id, ownerClerkUserId: req.userId }).lean() as IJob | null;
+    if (!job) { res.status(404).json({ error: "Job not found" }); return; }
+
+    const apps = await Application.find({ jobId: req.params.id })
+      .select("_id teacherName teacherEmail teacherPhone coverNote currentStage stageIndex stages status aiScore schoolNotes appliedAt")
+      .sort({ stageIndex: -1, appliedAt: -1 })
+      .lean();
+
+    res.json({ job: { title: job.title, stages: job.stages }, applications: apps });
+  } catch (err) {
+    console.error("Job applications error:", err);
+    res.status(500).json({ error: "Could not load applications" });
+  }
+});
+
+/**
+ * PUT /api/recruitment/applications/:id/stage
+ * School moves a candidate to a different stage.
+ */
+router.put("/applications/:id/stage", requireAuth, requireRole("SCHOOL_ADMIN"), async (req: RoleRequest, res: Response) => {
+  const stageIndex = Number(req.body?.stageIndex);
+  if (isNaN(stageIndex) || stageIndex < 0) {
+    res.status(400).json({ error: "Valid stageIndex is required" });
+    return;
+  }
+  try {
+    const app = await Application.findOne({ _id: req.params.id, ownerClerkUserId: req.userId });
+    if (!app) { res.status(404).json({ error: "Application not found" }); return; }
+    if (app.status !== "active") {
+      res.status(400).json({ error: "Cannot move a rejected or withdrawn application" });
+      return;
+    }
+
+    const maxIdx = Math.max(0, app.stages.length - 1);
+    app.stageIndex = Math.min(stageIndex, maxIdx);
+    app.currentStage = app.stages[app.stageIndex] || "";
+    if (req.body?.notes) app.schoolNotes = str(req.body.notes, 1000);
+    await app.save();
+    res.json({ stageIndex: app.stageIndex, currentStage: app.currentStage });
+  } catch (err) {
+    console.error("Stage move error:", err);
+    res.status(500).json({ error: "Could not update stage" });
+  }
+});
+
+/**
+ * PUT /api/recruitment/applications/:id/status
+ * School rejects, withdraws or marks offered. Teachers can withdraw their own.
+ */
+router.put("/applications/:id/status", requireAuth, async (req: AuthedRequest, res: Response) => {
+  const next = str(req.body?.status, 20);
+  if (!["rejected", "withdrawn", "offered", "active"].includes(next)) {
+    res.status(400).json({ error: "Invalid status" });
+    return;
+  }
+  try {
+    const app = await Application.findById(req.params.id);
+    if (!app) { res.status(404).json({ error: "Application not found" }); return; }
+
+    // Schools can reject/offer; teachers can only withdraw their own
+    const isSchool = app.ownerClerkUserId === req.userId;
+    const isOwner  = app.teacherClerkUserId === req.userId;
+    if (!isSchool && !isOwner) { res.status(403).json({ error: "Forbidden" }); return; }
+    if (next === "withdrawn" && !isOwner) { res.status(403).json({ error: "Only the applicant can withdraw" }); return; }
+    if ((next === "rejected" || next === "offered") && !isSchool) { res.status(403).json({ error: "Only the school can reject or offer" }); return; }
+
+    app.status = next as IApplication["status"];
+    await app.save();
+    res.json({ status: app.status });
+  } catch (err) {
+    console.error("Status update error:", err);
+    res.status(500).json({ error: "Could not update status" });
+  }
+});
+
+// ════════════════════════════════════════════════════════════════════════════
+// Offers — school creates; teacher views/responds
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * POST /api/recruitment/offers
+ * School creates a draft offer for a candidate.
+ */
+router.post("/offers", requireAuth, requireRole("SCHOOL_ADMIN"), async (req: RoleRequest, res: Response) => {
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const applicationId = str(body.applicationId, 30);
+  if (!applicationId) { res.status(400).json({ error: "applicationId is required" }); return; }
+
+  try {
+    const app = await Application.findOne({ _id: applicationId, ownerClerkUserId: req.userId });
+    if (!app) { res.status(404).json({ error: "Application not found" }); return; }
+
+    const ctc = Number(body.ctc);
+    if (!ctc || ctc < 1000) { res.status(400).json({ error: "Valid CTC is required" }); return; }
+
+    // One offer per application
+    const existing = await Offer.findOne({ applicationId });
+    if (existing) { res.json(existing); return; }
+
+    const joiningRaw = str(body.joiningDate, 30);
+    const joiningDate = joiningRaw ? new Date(joiningRaw) : null;
+
+    const salaryRows = Array.isArray(body.salaryRows)
+      ? (body.salaryRows as { label?: string; amount?: number }[])
+          .filter((r) => r?.label)
+          .map((r) => ({ label: str(r.label, 100), amount: Number(r.amount) || 0 }))
+      : [];
+
+    const offer = await Offer.create({
+      applicationId: app._id,
+      jobId: app.jobId,
+      candidateName: app.teacherName,
+      candidateEmail: app.teacherEmail,
+      role: app.jobTitle,
+      institutionName: app.institutionName,
+      ownerClerkUserId: req.userId,
+      teacherClerkUserId: app.teacherClerkUserId,
+      ctc,
+      joiningDate,
+      template: str(body.template, 80) || "Teaching — permanent",
+      probation: str(body.probation, 60) || "6 months",
+      noticePeriod: str(body.noticePeriod, 60) || "60 days",
+      offerExpires: str(body.offerExpires, 60) || "7 days after sending",
+      language: str(body.language, 40) || "English",
+      clauses: Array.isArray(body.clauses) ? (body.clauses as unknown[]).map((c) => str(c, 100)) : [],
+      sendVia: {
+        email: (body.sendVia as Record<string, unknown>)?.email !== false,
+        whatsapp: (body.sendVia as Record<string, unknown>)?.whatsapp === true,
+        inApp: (body.sendVia as Record<string, unknown>)?.inApp !== false,
+      },
+      salaryRows,
+    });
+
+    // Mark application as offered
+    await Application.updateOne({ _id: app._id }, { status: "offered" });
+
+    res.status(201).json(offer);
+  } catch (err) {
+    console.error("Offer create error:", err);
+    res.status(500).json({ error: "Could not create offer" });
+  }
+});
+
+/**
+ * GET /api/recruitment/offers/mine  (SCHOOL_ADMIN)
+ * School lists all its offers.
+ */
+router.get("/offers/mine", requireAuth, requireRole("SCHOOL_ADMIN"), async (req: RoleRequest, res: Response) => {
+  try {
+    const offers = await Offer.find({ ownerClerkUserId: req.userId })
+      .select("_id candidateName role ctc status sentAt acceptedAt declinedAt createdAt")
+      .sort({ createdAt: -1 })
+      .limit(100)
+      .lean();
+    res.json(offers);
+  } catch (err) {
+    console.error("Offers mine error:", err);
+    res.status(500).json({ error: "Could not load offers" });
+  }
+});
+
+/**
+ * GET /api/recruitment/offers/received  (TEACHER)
+ * Teacher sees offers sent to them.
+ */
+router.get("/offers/received", requireAuth, requireRole("TEACHER"), async (req: RoleRequest, res: Response) => {
+  try {
+    const offers = await Offer.find({ teacherClerkUserId: req.userId, status: { $in: ["sent", "viewed", "accepted", "declined"] } })
+      .select("_id candidateName role institutionName ctc joiningDate status sentAt acceptedAt declinedAt")
+      .sort({ sentAt: -1 })
+      .lean();
+    res.json(offers);
+  } catch (err) {
+    console.error("Offers received error:", err);
+    res.status(500).json({ error: "Could not load offers" });
+  }
+});
+
+/**
+ * GET /api/recruitment/offers/:id
+ * School or the candidate can read their own offer.
+ */
+router.get("/offers/:id", requireAuth, async (req: AuthedRequest, res: Response) => {
+  try {
+    const offer = await Offer.findById(req.params.id).lean() as IOffer | null;
+    if (!offer) { res.status(404).json({ error: "Offer not found" }); return; }
+    if (offer.ownerClerkUserId !== req.userId && offer.teacherClerkUserId !== req.userId) {
+      res.status(403).json({ error: "Forbidden" }); return;
+    }
+    // Mark as viewed when teacher reads
+    if (offer.teacherClerkUserId === req.userId && offer.status === "sent") {
+      await Offer.updateOne({ _id: offer._id }, { status: "viewed", viewedAt: new Date() });
+    }
+    res.json(offer);
+  } catch (err) {
+    console.error("Offer read error:", err);
+    res.status(500).json({ error: "Could not load offer" });
+  }
+});
+
+/**
+ * PUT /api/recruitment/offers/:id
+ * School updates a draft offer's fields.
+ */
+router.put("/offers/:id", requireAuth, requireRole("SCHOOL_ADMIN"), async (req: RoleRequest, res: Response) => {
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  try {
+    const offer = await Offer.findOne({ _id: req.params.id, ownerClerkUserId: req.userId });
+    if (!offer) { res.status(404).json({ error: "Offer not found" }); return; }
+    if (!["draft", "pending_approval"].includes(offer.status)) {
+      res.status(400).json({ error: "Cannot edit an offer that has already been sent" });
+      return;
+    }
+
+    if (body.ctc) offer.ctc = Number(body.ctc) || offer.ctc;
+    if (body.template) offer.template = str(body.template, 80);
+    if (body.joiningDate) offer.joiningDate = new Date(str(body.joiningDate, 30));
+    if (body.probation) offer.probation = str(body.probation, 60);
+    if (body.noticePeriod) offer.noticePeriod = str(body.noticePeriod, 60);
+    if (body.offerExpires) offer.offerExpires = str(body.offerExpires, 60);
+    if (body.language) offer.language = str(body.language, 40);
+    if (Array.isArray(body.clauses)) offer.clauses = (body.clauses as unknown[]).map((c) => str(c, 100));
+    if (Array.isArray(body.salaryRows)) {
+      offer.salaryRows = (body.salaryRows as { label?: string; amount?: number }[])
+        .filter((r) => r?.label)
+        .map((r) => ({ label: str(r.label, 100), amount: Number(r.amount) || 0 }));
+    }
+
+    offer.version += 1;
+    await offer.save();
+    res.json(offer);
+  } catch (err) {
+    console.error("Offer update error:", err);
+    res.status(500).json({ error: "Could not update offer" });
+  }
+});
+
+/**
+ * PUT /api/recruitment/offers/:id/status
+ * Status transitions:
+ *   School: draft → pending_approval → approved → sent
+ *   Teacher: sent/viewed → accepted | declined
+ */
+router.put("/offers/:id/status", requireAuth, async (req: AuthedRequest, res: Response) => {
+  const next = str(req.body?.status, 30) as OfferStatus;
+  if (!OFFER_STATUSES.includes(next)) { res.status(400).json({ error: "Invalid status" }); return; }
+
+  try {
+    const offer = await Offer.findById(req.params.id);
+    if (!offer) { res.status(404).json({ error: "Offer not found" }); return; }
+
+    const isSchool = offer.ownerClerkUserId === req.userId;
+    const isTeacher = offer.teacherClerkUserId === req.userId;
+    if (!isSchool && !isTeacher) { res.status(403).json({ error: "Forbidden" }); return; }
+
+    // Guard allowed transitions
+    if (isSchool && !["pending_approval", "approved", "sent"].includes(next)) {
+      res.status(400).json({ error: "Schools can only move to pending_approval, approved, or sent" }); return;
+    }
+    if (isTeacher && !["accepted", "declined"].includes(next)) {
+      res.status(400).json({ error: "Candidates can only accept or decline" }); return;
+    }
+    if (isTeacher && !["sent", "viewed"].includes(offer.status)) {
+      res.status(400).json({ error: "Offer has not been sent yet" }); return;
+    }
+
+    offer.status = next;
+    if (next === "sent") offer.sentAt = new Date();
+    if (next === "accepted") offer.acceptedAt = new Date();
+    if (next === "declined") {
+      offer.declinedAt = new Date();
+      offer.declineReason = str(req.body?.reason, 500);
+    }
+    await offer.save();
+    res.json({ status: offer.status });
+  } catch (err) {
+    console.error("Offer status error:", err);
+    res.status(500).json({ error: "Could not update offer status" });
+  }
+});
+
+// ════════════════════════════════════════════════════════════════════════════
+// Salary negotiation messages — persistent thread per offer
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * GET /api/recruitment/offers/:id/messages
+ * School or candidate reads the negotiation thread.
+ */
+router.get("/offers/:id/messages", requireAuth, async (req: AuthedRequest, res: Response) => {
+  try {
+    const offer = await Offer.findById(req.params.id).lean() as IOffer | null;
+    if (!offer) { res.status(404).json({ error: "Offer not found" }); return; }
+    if (offer.ownerClerkUserId !== req.userId && offer.teacherClerkUserId !== req.userId) {
+      res.status(403).json({ error: "Forbidden" }); return;
+    }
+    const messages = await NegotiationMessage.find({ offerId: req.params.id })
+      .select("senderName isSchool body createdAt")
+      .sort({ createdAt: 1 })
+      .lean();
+    res.json(messages);
+  } catch (err) {
+    console.error("Messages read error:", err);
+    res.status(500).json({ error: "Could not load messages" });
+  }
+});
+
+/**
+ * POST /api/recruitment/offers/:id/messages
+ * School or candidate posts to the negotiation thread.
+ */
+router.post("/offers/:id/messages", requireAuth, async (req: AuthedRequest, res: Response) => {
+  const body = str(req.body?.body, 2000);
+  if (!body) { res.status(400).json({ error: "Message body is required" }); return; }
+
+  try {
+    const offer = await Offer.findById(req.params.id).lean() as IOffer | null;
+    if (!offer) { res.status(404).json({ error: "Offer not found" }); return; }
+    if (offer.ownerClerkUserId !== req.userId && offer.teacherClerkUserId !== req.userId) {
+      res.status(403).json({ error: "Forbidden" }); return;
+    }
+
+    const isSchool = offer.ownerClerkUserId === req.userId;
+    const profile = await RecruitmentProfile.findOne({ clerkUserId: req.userId });
+    const senderName = isSchool
+      ? (profile?.institutionName || profile?.contactPerson || "HR")
+      : (profile?.fullName || profile?.email || "Candidate");
+
+    const msg = await NegotiationMessage.create({
+      offerId: offer._id,
+      applicationId: offer.applicationId,
+      senderClerkUserId: req.userId,
+      senderName,
+      isSchool,
+      body,
+    });
+
+    res.status(201).json({ _id: msg._id, senderName, isSchool, body: msg.body, createdAt: msg.createdAt });
+  } catch (err) {
+    console.error("Message post error:", err);
+    res.status(500).json({ error: "Could not send message" });
   }
 });
 

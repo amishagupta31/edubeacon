@@ -81,6 +81,8 @@ export default function SchoolDashboardPage() {
 
           ) : sub.kind === "pipeline" ? (
             <JobPipeline
+              jobId={sub.jobId}
+              authHeader={authHeader}
               onBack={() => { setSub({ kind: "none" }); setActive("jobs"); }}
               onViewCandidate={(cId) => setSub({ kind: "candidate", candidateId: cId })}
             />
@@ -130,6 +132,7 @@ export default function SchoolDashboardPage() {
 
           ) : active === "negotiations" ? (
             <SalaryNegotiation
+              authHeader={authHeader}
               onBack={() => navigate("offers")}
             />
 
