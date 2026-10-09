@@ -110,6 +110,7 @@ export default function SchoolDashboardPage() {
               authHeader={authHeader}
               onCancel={() => setActive("jobs")}
               onSaved={() => setActive("jobs")}
+              onGoToProfile={() => navigate("profile")}
             />
 
           ) : active === "jobs" ? (
@@ -117,6 +118,7 @@ export default function SchoolDashboardPage() {
               authHeader={authHeader}
               onPostJob={() => setActive("post-job")}
               onViewPipeline={(jobId) => setSub({ kind: "pipeline", jobId })}
+              onGoToProfile={() => navigate("profile")}
             />
 
           ) : active === "candidates" ? (
@@ -209,7 +211,7 @@ function OffersSection({
   ];
 
   return (
-    <div className="max-w-[1400px]">
+    <div className="w-full">
       <div className="flex items-start justify-between gap-4 flex-wrap mb-6">
         <div>
           <h1 className="font-display font-bold text-[28px] text-charcoal leading-tight tracking-tight">

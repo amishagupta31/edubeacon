@@ -136,7 +136,11 @@ router.get("/me", requireAuth, async (req: AuthedRequest, res: Response) => {
     const profile = await RecruitmentProfile.findOne({
       clerkUserId: req.userId,
       active: true,
-    }).select("accountType email fullName phone institutionName contactPerson createdAt");
+    }).select(
+      "accountType email fullName phone institutionName contactPerson " +
+      "bio ctetStatus stetStatus subjectSpecialisations preferredCities " +
+      "qualifications experience currentCTC expectedCTC availableFrom resumeUrl createdAt"
+    );
 
     if (!profile) { res.json(null); return; }   // not registered yet — not an error
     res.json(profile);
@@ -160,6 +164,7 @@ router.put("/profile/teacher", requireAuth, requireRole("TEACHER"), async (req: 
 
   if (body.fullName !== undefined)    update.fullName   = str(body.fullName, 120);
   if (body.phone !== undefined)       update.phone      = str(body.phone, 20);
+  if (body.resumeUrl !== undefined)   update.resumeUrl  = str(body.resumeUrl, 500);
   if (body.bio !== undefined)         update.bio        = str(body.bio, 1000);
   if (body.stetStatus !== undefined)  update.stetStatus = str(body.stetStatus, 100);
   if (body.currentCTC !== undefined)  update.currentCTC = Number(body.currentCTC) || null;
@@ -187,6 +192,12 @@ router.put("/profile/teacher", requireAuth, requireRole("TEACHER"), async (req: 
       .filter((q) => q?.degree)
       .map((q) => ({ degree: str(q.degree, 100), institution: str(q.institution, 160), year: str(q.year, 4) }))
       .slice(0, 10);
+  }
+  if (Array.isArray(body.achievements)) {
+    update.achievements = (body.achievements as { title?: string; issuer?: string; year?: string; description?: string }[])
+      .filter((a) => a?.title)
+      .map((a) => ({ title: str(a.title, 160), issuer: str(a.issuer, 160), year: str(a.year, 4), description: str(a.description, 500) }))
+      .slice(0, 20);
   }
   if (Array.isArray(body.experience)) {
     update.experience = (body.experience as { school?: string; role?: string; from?: string; to?: string }[])
@@ -246,7 +257,7 @@ const EDITABLE: { key: string; max: number }[] = [
 
 const PUBLIC_FIELDS =
   "name institutionType board establishedYear officialEmail contactPerson " +
-  "contactPhone website addressLine city state pincode description " +
+  "contactPhone website addressLine city state pincode description achievements " +
   "verificationStatus verifiedAt updatedAt";
 
 /** GET /api/recruitment/institution — the caller's own institution. */
@@ -299,10 +310,22 @@ router.put("/institution", requireAuth, requireRole("SCHOOL_ADMIN"), async (req:
     return;
   }
 
+  // Achievements array
+  const achievementsUpdate: { title: string; year: string; description: string }[] | undefined =
+    Array.isArray(body.achievements)
+      ? (body.achievements as { title?: string; year?: string; description?: string }[])
+          .filter((a) => a?.title)
+          .map((a) => ({ title: str(a.title, 160), year: str(a.year, 4), description: str(a.description, 500) }))
+          .slice(0, 20)
+      : undefined;
+
   try {
+    const instUpdate: Record<string, unknown> = { ...update, ownerClerkUserId: req.userId };
+    if (achievementsUpdate !== undefined) instUpdate.achievements = achievementsUpdate;
+
     const inst = await Institution.findOneAndUpdate(
       { ownerClerkUserId: req.userId },   // scoping clause — not a client id
-      { ...update, ownerClerkUserId: req.userId },
+      instUpdate,
       { upsert: true, new: true, setDefaultsOnInsert: true }
     ).select(PUBLIC_FIELDS);
 
@@ -313,13 +336,36 @@ router.put("/institution", requireAuth, requireRole("SCHOOL_ADMIN"), async (req:
   }
 });
 
+/**
+ * GET /api/recruitment/institutions/:id
+ * Public profile of a school — readable by anyone (teachers, guests).
+ */
+router.get("/institutions/:id", async (req: Request, res: Response) => {
+  try {
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      res.status(400).json({ error: "Invalid institution id" });
+      return;
+    }
+    const inst = await Institution.findById(req.params.id).select(
+      "name institutionType board establishedYear officialEmail contactPerson " +
+      "contactPhone website addressLine city state pincode description achievements " +
+      "verificationStatus verifiedAt updatedAt"
+    );
+    if (!inst) { res.status(404).json({ error: "Institution not found" }); return; }
+    res.json(inst);
+  } catch (err) {
+    console.error("Public institution read error:", err);
+    res.status(500).json({ error: "Could not load institution profile" });
+  }
+});
+
 // ════════════════════════════════════════════════════════════════════════════
 // Jobs — SCHOOL_ADMIN creates / manages; teachers browse PUBLISHED listings
 // ════════════════════════════════════════════════════════════════════════════
 
 const JOB_LIST_FIELDS =
   "_id title roleType board classes employment openings description " +
-  "institutionName city state status deadline publishedAt applicantCount createdAt";
+  "institutionId institutionName city state status deadline publishedAt applicantCount createdAt";
 
 /** Whitelist for job body fields. */
 const JOB_EDITABLE: { key: string; max: number }[] = [
@@ -349,6 +395,18 @@ router.post("/jobs", requireAuth, requireRole("SCHOOL_ADMIN"), async (req: RoleR
   try {
     // Pull current institution snapshot so the listing has location info.
     const inst = await Institution.findOne({ ownerClerkUserId: req.userId });
+
+    // Require a complete institution profile before posting any job.
+    const REQUIRED_INST: (keyof typeof inst & string)[] = ["name", "city", "state", "description", "officialEmail"];
+    const missingInst = REQUIRED_INST.filter((k) => !String((inst as Record<string, unknown>)?.[k] ?? "").trim());
+    if (missingInst.length > 0) {
+      res.status(403).json({
+        error: "Complete your institution profile before posting jobs. Missing: " + missingInst.join(", "),
+        code: "PROFILE_INCOMPLETE",
+        missingFields: missingInst,
+      });
+      return;
+    }
 
     const openings = Math.max(1, Math.min(999, Number(body.openings) || 1));
     const deadlineRaw = str(body.deadline, 30);
@@ -522,13 +580,70 @@ router.delete("/jobs/:id", requireAuth, requireRole("SCHOOL_ADMIN"), async (req:
 });
 
 // ════════════════════════════════════════════════════════════════════════════
-// Public job board — any authenticated teacher (or any signed-in user) can
-// browse PUBLISHED jobs. No write access.
+// Public teacher directory — no auth required
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * GET /api/recruitment/teachers
+ * Public directory of teachers who have filled their profile.
+ * Returns only teachers who have at least a bio or subjects set.
+ */
+router.get("/teachers", async (_req: Request, res: Response) => {
+  try {
+    const teachers = await RecruitmentProfile.find({
+      accountType: "TEACHER",
+      active: true,
+      $or: [
+        { bio: { $exists: true, $ne: "" } },
+        { subjectSpecialisations: { $exists: true, $not: { $size: 0 } } },
+      ],
+    })
+      .select("_id fullName bio subjectSpecialisations ctetStatus preferredCities availableFrom currentCTC expectedCTC achievements")
+      .sort({ updatedAt: -1 })
+      .limit(60)
+      .lean();
+    res.json(teachers);
+  } catch (err) {
+    console.error("Teachers directory error:", err);
+    res.status(500).json({ error: "Could not load teachers" });
+  }
+});
+
+/**
+ * GET /api/recruitment/teachers/:id
+ * Full public profile of one teacher (no auth required).
+ * Deliberately excludes contact details (phone, email, resumeUrl) — schools
+ * must be logged in to see those; this is the public showcase view.
+ */
+router.get("/teachers/:id", async (req: Request, res: Response) => {
+  try {
+    const tid = String(req.params.id);
+    if (!tid.match(/^[0-9a-fA-F]{24}$/)) {
+      res.status(400).json({ error: "Invalid teacher id" });
+      return;
+    }
+    const teacher = await RecruitmentProfile.findOne({
+      _id: tid, accountType: "TEACHER", active: true,
+    }).select(
+      "_id fullName bio subjectSpecialisations ctetStatus stetStatus " +
+      "preferredCities availableFrom currentCTC expectedCTC " +
+      "qualifications experience achievements updatedAt"
+    ).lean();
+    if (!teacher) { res.status(404).json({ error: "Teacher not found" }); return; }
+    res.json(teacher);
+  } catch (err) {
+    console.error("Teacher profile read error:", err);
+    res.status(500).json({ error: "Could not load teacher profile" });
+  }
+});
+
+// ════════════════════════════════════════════════════════════════════════════
+// Public job board — no auth required, only PUBLISHED jobs exposed
 // ════════════════════════════════════════════════════════════════════════════
 
 const PUBLIC_JOB_FIELDS =
   "_id title roleType board classes employment openings description " +
-  "institutionName city state deadline publishedAt";
+  "institutionId institutionName city state deadline publishedAt applicantCount";
 
 /**
  * GET /api/recruitment/jobs
@@ -540,7 +655,7 @@ const PUBLIC_JOB_FIELDS =
  *   ?city=Delhi
  *   ?page=1&limit=20
  */
-router.get("/jobs", requireAuth, async (req: Request, res: Response) => {
+router.get("/jobs", async (req: Request, res: Response) => {
   try {
     const q = req.query;
     const page = Math.max(1, Number(q.page) || 1);
@@ -587,7 +702,7 @@ router.get("/jobs", requireAuth, async (req: Request, res: Response) => {
  * GET /api/recruitment/jobs/:id
  * View a single PUBLISHED job — full detail for the teacher.
  */
-router.get("/jobs/:id", requireAuth, async (req: Request, res: Response) => {
+router.get("/jobs/:id", async (req: Request, res: Response) => {
   try {
     const job = await Job.findOne({ _id: req.params.id, status: "PUBLISHED" })
       .select(PUBLIC_JOB_FIELDS + " requirements stages")
@@ -614,7 +729,23 @@ router.post("/jobs/:id/apply", requireAuth, requireRole("TEACHER"), async (req: 
     if (!job) { res.status(404).json({ error: "Job not found or no longer accepting applications" }); return; }
 
     const profile = await RecruitmentProfile.findOne({ clerkUserId: req.userId });
-    if (!profile) { res.status(403).json({ error: "Complete your recruitment profile first" }); return; }
+    if (!profile) { res.status(403).json({ error: "Complete your recruitment profile first", code: "PROFILE_INCOMPLETE" }); return; }
+
+    // Require minimum profile: full name, phone, and at least bio or a qualification.
+    const missingTeacher: string[] = [];
+    if (!String(profile.fullName || "").trim()) missingTeacher.push("fullName");
+    if (!String(profile.phone || "").trim()) missingTeacher.push("phone");
+    const hasBio = String(profile.bio || "").trim().length > 0;
+    const hasQual = Array.isArray(profile.qualifications) && profile.qualifications.length > 0;
+    if (!hasBio && !hasQual) missingTeacher.push("bio or qualifications");
+    if (missingTeacher.length > 0) {
+      res.status(403).json({
+        error: "Complete your profile before applying. Missing: " + missingTeacher.join(", "),
+        code: "PROFILE_INCOMPLETE",
+        missingFields: missingTeacher,
+      });
+      return;
+    }
 
     const existing = await Application.findOne({ jobId: job._id, teacherClerkUserId: req.userId });
     if (existing) { res.status(409).json({ error: "You have already applied for this job" }); return; }

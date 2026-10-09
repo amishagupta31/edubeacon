@@ -12,6 +12,12 @@ export const BOARDS = [
 
 export type VerificationStatus = "PENDING" | "IN_REVIEW" | "VERIFIED" | "REJECTED";
 
+export interface IInstitutionAchievement {
+  title: string;
+  year: string;
+  description: string;
+}
+
 export interface IInstitution extends Document {
   ownerClerkUserId: string;
 
@@ -31,7 +37,7 @@ export interface IInstitution extends Document {
   pincode: string;
 
   description: string;
-
+  achievements: IInstitutionAchievement[];
 
   verificationStatus: VerificationStatus;
   verifiedAt: Date | null;
@@ -62,6 +68,10 @@ const schema = new Schema<IInstitution>(
     pincode: { type: String, default: "", trim: true },
 
     description: { type: String, default: "", trim: true },
+    achievements: {
+      type: [new Schema({ title: String, year: String, description: String }, { _id: false })],
+      default: [],
+    },
 
     verificationStatus: {
       type: String,

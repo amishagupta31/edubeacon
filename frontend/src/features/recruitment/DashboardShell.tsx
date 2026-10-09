@@ -11,6 +11,7 @@ export interface NavItem {
   label: string;
   icon: React.ElementType;
   available: boolean;   // false → placeholder, clearly marked "coming soon"
+  href?: string;        // if set, clicking navigates to this URL instead of calling onNavigate
 }
 
 /**
@@ -60,21 +61,17 @@ export default function DashboardShell({
 
         <nav className="flex-1 px-3 py-5 overflow-y-auto">
           <div className="flex flex-col gap-0.5">
-            {nav.map(({ id, label, icon: Icon, available }) => {
+            {nav.map(({ id, label, icon: Icon, available, href }) => {
               const isActive = active === id;
-              return (
-                <button
-                  key={id}
-                  onClick={() => available && onNavigate(id)}
-                  disabled={!available}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all text-left ${
-                    isActive
-                      ? "bg-emerald-500 text-white shadow-lg shadow-emerald-900/30"
-                      : available
-                        ? "text-white/60 hover:text-white hover:bg-white/[0.06]"
-                        : "text-white/25 cursor-not-allowed"
-                  }`}
-                >
+              const cls = `flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all text-left w-full ${
+                isActive
+                  ? "bg-emerald-500 text-white shadow-lg shadow-emerald-900/30"
+                  : available
+                    ? "text-white/60 hover:text-white hover:bg-white/[0.06]"
+                    : "text-white/25 cursor-not-allowed"
+              }`;
+              const inner = (
+                <>
                   <Icon className="w-4 h-4 shrink-0" strokeWidth={2} />
                   <span className="flex-1 truncate">{label}</span>
                   {!available && (
@@ -82,6 +79,18 @@ export default function DashboardShell({
                       Soon
                     </span>
                   )}
+                </>
+              );
+              return href && available ? (
+                <Link key={id} href={href} className={cls}>{inner}</Link>
+              ) : (
+                <button
+                  key={id}
+                  onClick={() => available && onNavigate(id)}
+                  disabled={!available}
+                  className={cls}
+                >
+                  {inner}
                 </button>
               );
             })}

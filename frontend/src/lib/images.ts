@@ -39,6 +39,8 @@ export const img = {
   videoThumb: unsplash("photo-1550305080-4e029753abcf", "auto=format&fit=crop&q=80&w=800"),
   // Conference audience
   audience: unsplash("photo-1505373877841-8d25f7d46678", "auto=format&fit=crop&q=80&w=1400"),
+  // Recruitment hero — custom composite portrait (local asset, RGBA 1536×1024).
+  recruitmentHero: "/images/recruitment-hero.png",
 
   // Speaker Portraits — diverse education professionals
   speakerW1: unsplash("photo-1573496359142-b8d87734a5a2", "auto=format&fit=crop&q=80&w=600"),

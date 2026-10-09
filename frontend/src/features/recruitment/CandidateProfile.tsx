@@ -109,7 +109,7 @@ export default function CandidateProfile({
   const currentIdx = d.stages.indexOf(d.currentStage);
 
   return (
-    <div className="max-w-[1100px]">
+    <div className="w-full">
       {/* ── Breadcrumb ── */}
       <p className="text-[13px] text-slate-500 mb-1">
         <button

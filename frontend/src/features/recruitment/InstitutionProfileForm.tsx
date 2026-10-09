@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Loader2, Save, ShieldCheck, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { Loader2, Save, ShieldCheck, ShieldAlert, CheckCircle2, Plus, Trash2 } from "lucide-react";
 import { API } from "./useRecruitmentProfile";
 
 const INSTITUTION_TYPES = [
@@ -13,6 +13,8 @@ const INSTITUTION_TYPES = [
 const BOARDS = ["CBSE", "ICSE / CISCE", "State Board", "IB", "IGCSE / Cambridge", "NIOS", "Other"];
 
 type Verification = "PENDING" | "IN_REVIEW" | "VERIFIED" | "REJECTED";
+
+interface SchoolAchievement { title: string; year: string; description: string; }
 
 interface Institution {
   name: string;
@@ -28,6 +30,7 @@ interface Institution {
   state: string;
   pincode: string;
   description: string;
+  achievements: SchoolAchievement[];
   verificationStatus: Verification;
   updatedAt?: string;
 }
@@ -36,6 +39,7 @@ const EMPTY: Institution = {
   name: "", institutionType: "", board: "", establishedYear: "",
   officialEmail: "", contactPerson: "", contactPhone: "", website: "",
   addressLine: "", city: "", state: "", pincode: "", description: "",
+  achievements: [],
   verificationStatus: "PENDING",
 };
 
@@ -85,6 +89,11 @@ export default function InstitutionProfileForm({
     setMsg(null);
   };
 
+  const addAchievement = () => setData((d) => ({ ...d, achievements: [...d.achievements, { title: "", year: "", description: "" }] }));
+  const removeAchievement = (i: number) => setData((d) => ({ ...d, achievements: d.achievements.filter((_, idx) => idx !== i) }));
+  const updateAchievement = (i: number, key: keyof SchoolAchievement, val: string) =>
+    setData((d) => ({ ...d, achievements: d.achievements.map((a, idx) => idx === i ? { ...a, [key]: val } : a) }));
+
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!data.name.trim()) { setMsg({ kind: "err", text: "Institution name is required." }); return; }
@@ -125,7 +134,7 @@ export default function InstitutionProfileForm({
   const label = "block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5";
 
   return (
-    <div className="max-w-3xl">
+    <div className="w-full">
       {/* Verification — read only, set by review */}
       <div className={`rounded-2xl border px-5 py-4 mb-5 flex items-start gap-3 ${v.cls}`}>
         <VIcon className="w-5 h-5 shrink-0 mt-0.5" strokeWidth={1.8} />
@@ -227,6 +236,47 @@ export default function InstitutionProfileForm({
             placeholder="Tell candidates about your institution, culture and what makes it a good place to teach."
             onChange={(e) => set("description", e.target.value)} />
           <p className="text-[11.5px] text-slate-400 mt-1 text-right">{data.description.length} / 2000</p>
+        </div>
+
+        <Section title="Achievements & Awards" />
+        <div>
+          <div className="flex items-center justify-between gap-4 mb-3">
+            <p className="text-[12.5px] text-slate-500">Add awards, rankings, accreditations or notable recognitions.</p>
+            <button type="button" onClick={addAchievement}
+              className="inline-flex items-center gap-1.5 text-[12.5px] font-bold text-[#0E733B] hover:underline underline-offset-2 shrink-0">
+              <Plus className="w-3.5 h-3.5" /> Add
+            </button>
+          </div>
+          {data.achievements.length === 0 ? (
+            <p className="text-[13px] text-slate-400 italic py-2">No achievements added yet.</p>
+          ) : (
+            <div className="space-y-4">
+              {data.achievements.map((a, i) => (
+                <div key={i} className="border border-line rounded-xl p-4 relative">
+                  <button type="button" onClick={() => removeAchievement(i)}
+                    className="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors">
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                  <div className="grid sm:grid-cols-[1fr_80px] gap-3 mb-3">
+                    <div>
+                      <label className={label}>Title / award name</label>
+                      <input className={input} value={a.title} onChange={(e) => updateAchievement(i, "title", e.target.value)} placeholder="e.g. Best School Award" />
+                    </div>
+                    <div>
+                      <label className={label}>Year</label>
+                      <input className={input} value={a.year} maxLength={4} onChange={(e) => updateAchievement(i, "year", e.target.value)} placeholder="2023" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className={label}>Description <span className="font-normal normal-case text-slate-400">(optional)</span></label>
+                    <textarea rows={2} className={`${input} resize-none`} value={a.description}
+                      onChange={(e) => updateAchievement(i, "description", e.target.value)}
+                      placeholder="Brief description of the achievement…" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {msg && (

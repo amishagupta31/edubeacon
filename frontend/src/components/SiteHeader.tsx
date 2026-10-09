@@ -17,6 +17,8 @@ import {
   Mic,
   Handshake,
   Newspaper,
+  UserSearch,
+  LayoutGrid,
 } from "lucide-react";
 import Container from "./ui/Container";
 import { useModal } from "./modals/ModalProvider";
@@ -116,6 +118,25 @@ const aboutDropdownItems: DropdownItem[] = [
   },
 ];
 
+const solutionsDropdownItems: DropdownItem[] = [
+  {
+    name: "Recruitment",
+    label: "Teacher Recruitment",
+    desc: "Hire qualified teachers, or build a profile and apply to schools",
+    href: "/solutions/recruitment",
+    icon: UserSearch,
+    accent: "text-[#0E733B] bg-emerald-50",
+  },
+  {
+    name: "All Solutions",
+    label: "All Solution Categories",
+    desc: "STEM labs, AI labs, smart classrooms, ERP and more",
+    href: "/solutions",
+    icon: LayoutGrid,
+    accent: "text-[#0E733B] bg-emerald-50",
+  },
+];
+
 function NavDropdown({
   label,
   heading,
@@ -127,6 +148,7 @@ function NavDropdown({
   dropdownId,
   openDropdown,
   setOpenDropdown,
+  dark,
 }: {
   label: string;
   heading: string;
@@ -138,6 +160,7 @@ function NavDropdown({
   dropdownId: string;
   openDropdown: string | null;
   setOpenDropdown: (id: string | null) => void;
+  dark?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const isOpen = openDropdown === dropdownId;
@@ -217,9 +240,13 @@ function NavDropdown({
         onClick={() => setOpenDropdown(isOpen ? null : dropdownId)}
         onMouseEnter={() => setOpenDropdown(dropdownId)}
         className={`flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1.5 font-bold transition-all ${
-          active || isOpen
-            ? "bg-emerald-50 text-[#0E733B]"
-            : "text-slate-700 hover:bg-emerald-50 hover:text-[#0E733B]"
+          dark
+            ? isOpen
+              ? "bg-white/15 text-white"
+              : "text-white/85 hover:bg-white/10 hover:text-white"
+            : active || isOpen
+              ? "bg-emerald-50 text-[#0E733B]"
+              : "text-slate-700 hover:bg-emerald-50 hover:text-[#0E733B]"
         }`}
       >
         <span>{label}</span>
@@ -282,6 +309,7 @@ export default function SiteHeader() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [registerModalOpen, setRegisterModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"partner" | "educator">("educator");
+  const [modalSuccess, setModalSuccess] = useState<"educator" | "partner" | null>(null);
 
   // Educator form state
   const [educatorForm, setEducatorForm] = useState({
@@ -303,6 +331,11 @@ export default function SiteHeader() {
     category: "",
     description: "",
   });
+
+  const closeModal = () => {
+    setRegisterModalOpen(false);
+    setModalSuccess(null);
+  };
 
   const { openModal } = useModal();
   const router = useRouter();
@@ -339,6 +372,9 @@ export default function SiteHeader() {
 
   const isEventsActive = pathname.startsWith("/events");
   const isAboutActive = pathname.startsWith("/about");
+  // On the recruitment landing page the hero is dark green — use a dark header
+  // so the nav feels part of the page rather than floating above it.
+  const isDarkHeader = pathname === "/solutions/recruitment";
 
   return (
     <>
@@ -346,7 +382,7 @@ export default function SiteHeader() {
       {registerModalOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-          onClick={() => setRegisterModalOpen(false)}
+          onClick={closeModal}
         >
           <div
             className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in slide-in-from-bottom-4 duration-300"
@@ -355,7 +391,7 @@ export default function SiteHeader() {
             {/* Close Button */}
             <div className="sticky top-0 bg-white flex justify-end p-4 border-b border-gray-100">
               <button
-                onClick={() => setRegisterModalOpen(false)}
+                onClick={closeModal}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
                 aria-label="Close modal"
               >
@@ -389,8 +425,62 @@ export default function SiteHeader() {
               </button>
             </div>
 
+            {/* Success screen — educator */}
+            {modalSuccess === "educator" && (
+              <div className="p-8 text-center">
+                <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-[#0E733B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                  </svg>
+                </div>
+                <h3 className="font-bold text-[18px] text-charcoal mb-2">
+                  Welcome to EduBeacon, {educatorForm.schoolName || "your school"}!
+                </h3>
+                <p className="text-[13.5px] text-slate-600 leading-relaxed mb-6">
+                  Thank you for registering <strong>{educatorForm.schoolName}</strong>.
+                  Our team will reach out to <strong>{educatorForm.principalName}</strong> at{" "}
+                  <strong>{educatorForm.email}</strong> to help you discover the best solutions for your school.
+                </p>
+                <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 mb-6 text-left space-y-1.5">
+                  <p className="text-[12px] text-[#0E733B] font-semibold">✓ Registration received for {educatorForm.schoolName}</p>
+                  <p className="text-[12px] text-[#0E733B] font-semibold">✓ Confirmation email will be sent to {educatorForm.email}</p>
+                  <p className="text-[12px] text-[#0E733B] font-semibold">✓ Our team will connect with you within 2 business days</p>
+                </div>
+                <button onClick={closeModal} className="w-full bg-[#0E733B] hover:bg-[#0B5C2F] text-white py-3 rounded-lg font-bold text-sm transition-colors">
+                  Done
+                </button>
+              </div>
+            )}
+
+            {/* Success screen — partner */}
+            {modalSuccess === "partner" && (
+              <div className="p-8 text-center">
+                <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-[#0E733B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                  </svg>
+                </div>
+                <h3 className="font-bold text-[18px] text-charcoal mb-2">
+                  Thanks for partnering with us, {partnerForm.companyName || "your company"}!
+                </h3>
+                <p className="text-[13.5px] text-slate-600 leading-relaxed mb-6">
+                  We&apos;ve received your solution listing from <strong>{partnerForm.companyName}</strong>.{" "}
+                  <strong>{partnerForm.contactPerson}</strong> will hear back at{" "}
+                  <strong>{partnerForm.email}</strong> within 2–3 business days once our team reviews your submission.
+                </p>
+                <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 mb-6 text-left space-y-1.5">
+                  <p className="text-[12px] text-[#0E733B] font-semibold">✓ Solution listing received for {partnerForm.companyName}</p>
+                  <p className="text-[12px] text-[#0E733B] font-semibold">✓ Review response sent to {partnerForm.email} in 2–3 business days</p>
+                  <p className="text-[12px] text-[#0E733B] font-semibold">✓ Our partnerships team will be in touch</p>
+                </div>
+                <button onClick={closeModal} className="w-full bg-[#0E733B] hover:bg-[#0B5C2F] text-white py-3 rounded-lg font-bold text-sm transition-colors">
+                  Done
+                </button>
+              </div>
+            )}
+
             {/* Tab Content - Educator Form */}
-            {activeTab === "educator" && (
+            {!modalSuccess && activeTab === "educator" && (
               <div className="p-6 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <input
@@ -439,7 +529,7 @@ export default function SiteHeader() {
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/20"
                 />
                 <button
-                  onClick={() => setRegisterModalOpen(false)}
+                  onClick={() => setModalSuccess("educator")}
                   className="w-full bg-[#0E733B] hover:bg-[#0B5C2F] text-white py-3 rounded-lg font-bold text-sm transition-colors"
                 >
                   Register Your School
@@ -448,7 +538,7 @@ export default function SiteHeader() {
             )}
 
             {/* Tab Content - Partner Form */}
-            {activeTab === "partner" && (
+            {!modalSuccess && activeTab === "partner" && (
               <div className="p-6 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <input
@@ -511,7 +601,7 @@ export default function SiteHeader() {
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/20"
                 />
                 <button
-                  onClick={() => setRegisterModalOpen(false)}
+                  onClick={() => setModalSuccess("partner")}
                   className="w-full bg-[#0E733B] hover:bg-[#0B5C2F] text-white py-3 rounded-lg font-bold text-sm transition-colors"
                 >
                   Submit Your Solution
@@ -528,7 +618,9 @@ export default function SiteHeader() {
         className={`sticky top-0 z-50 transition-all duration-500 border-none ${
           scrolled
             ? "pt-3 px-3 sm:px-6 md:px-8 pointer-events-none"
-            : "bg-[#F8FAF8]"
+            : isDarkHeader
+              ? "bg-[#0C2A1B]"
+              : "bg-[#F8FAF8]"
         }`}
       >
       <div
@@ -567,21 +659,24 @@ export default function SiteHeader() {
           <Link
             href="/"
             onClick={() => setOpen(false)}
-            className={`whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold transition-all hover:text-[#0E733B] hover:bg-emerald-50 ${
-              pathname === "/" ? "text-[#0E733B]" : "text-slate-700"
+            className={`whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold transition-all ${
+              isDarkHeader
+                ? "text-white/85 hover:text-white hover:bg-white/10"
+                : `hover:text-[#0E733B] hover:bg-emerald-50 ${pathname === "/" ? "text-[#0E733B]" : "text-slate-700"}`
             }`}
           >
             Home
           </Link>
-          <Link
-            href="/solutions"
-            onClick={() => setOpen(false)}
-            className={`whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold transition-all hover:text-[#0E733B] hover:bg-emerald-50 ${
-              pathname === "/solutions" ? "text-[#0E733B]" : "text-slate-700"
-            }`}
-          >
-            Our Solutions
-          </Link>
+          <NavDropdown
+            label="Our Solutions"
+            heading="Our Solutions"
+            items={solutionsDropdownItems}
+            active={pathname.startsWith("/solutions")}
+            dropdownId="solutions"
+            openDropdown={openDropdown}
+            setOpenDropdown={setOpenDropdown}
+            dark={isDarkHeader}
+          />
 
           <NavDropdown
             label="About"
@@ -591,6 +686,7 @@ export default function SiteHeader() {
             dropdownId="about"
             openDropdown={openDropdown}
             setOpenDropdown={setOpenDropdown}
+            dark={isDarkHeader}
           />
 
           <NavDropdown
@@ -602,6 +698,7 @@ export default function SiteHeader() {
             dropdownId="events"
             openDropdown={openDropdown}
             setOpenDropdown={setOpenDropdown}
+            dark={isDarkHeader}
           />
         </nav>
 
@@ -610,16 +707,18 @@ export default function SiteHeader() {
           <Link
             href="/contact"
             onClick={() => setOpen(false)}
-            className={`whitespace-nowrap font-semibold transition-colors px-3 rounded-full hover:bg-emerald-50 ${
-              scrolled
-                ? "text-[12.5px] font-bold text-[#0E733B] hover:text-[#0B5C2F] py-1.5"
-                : "text-[13px] text-[#0E733B] hover:text-[#0B5C2F] py-2"
+            className={`whitespace-nowrap font-semibold transition-colors px-3 rounded-full ${
+              isDarkHeader
+                ? "text-[13px] text-white/80 hover:text-white hover:bg-white/10 py-2"
+                : scrolled
+                  ? "text-[12.5px] font-bold text-[#0E733B] hover:text-[#0B5C2F] hover:bg-emerald-50 py-1.5"
+                  : "text-[13px] text-[#0E733B] hover:text-[#0B5C2F] hover:bg-emerald-50 py-2"
             }`}
           >
             Contact Us
           </Link>
           <button
-            onClick={() => setRegisterModalOpen(true)}
+            onClick={() => { setModalSuccess(null); setRegisterModalOpen(true); }}
             className={`flex items-center gap-2 whitespace-nowrap rounded-full font-bold transition-all bg-[#0E733B] hover:bg-[#0B5C2F] text-white shadow-md shadow-emerald-900/20 hover:scale-105 active:scale-95 transition-all duration-300 ${
               scrolled ? "px-5 py-2 text-[12px] uppercase tracking-wider" : "px-5 py-2.5 text-[13px]"
             }`}
@@ -636,19 +735,13 @@ export default function SiteHeader() {
           onClick={() => setOpen((v) => !v)}
         >
           <span
-            className={`h-[1.5px] w-6 bg-charcoal transition-transform duration-300 ${
-              open ? "translate-y-[6.5px] rotate-45" : ""
-            }`}
+            className={`h-[1.5px] w-6 transition-transform duration-300 ${isDarkHeader ? "bg-white" : "bg-charcoal"} ${open ? "translate-y-[6.5px] rotate-45" : ""}`}
           />
           <span
-            className={`h-[1.5px] w-6 bg-charcoal transition-opacity duration-300 ${
-              open ? "opacity-0" : "opacity-100"
-            }`}
+            className={`h-[1.5px] w-6 transition-opacity duration-300 ${isDarkHeader ? "bg-white" : "bg-charcoal"} ${open ? "opacity-0" : "opacity-100"}`}
           />
           <span
-            className={`h-[1.5px] w-6 bg-charcoal transition-transform duration-300 ${
-              open ? "-translate-y-[6.5px] -rotate-45" : ""
-            }`}
+            className={`h-[1.5px] w-6 transition-transform duration-300 ${isDarkHeader ? "bg-white" : "bg-charcoal"} ${open ? "-translate-y-[6.5px] -rotate-45" : ""}`}
           />
         </button>
       </div>
@@ -670,6 +763,13 @@ export default function SiteHeader() {
               className="rounded-lg px-3 py-2 text-[14px] font-medium text-slate text-left hover:bg-emerald-50 hover:text-[#0E733B]"
             >
               Our Solutions
+            </Link>
+            <Link
+              href="/solutions/recruitment"
+              onClick={() => setOpen(false)}
+              className="rounded-lg pl-7 pr-3 py-2 text-[13.5px] font-medium text-slate-600 text-left hover:bg-emerald-50 hover:text-[#0E733B]"
+            >
+              Teacher Recruitment
             </Link>
 
             {/* Mobile About Accordion */}
@@ -760,6 +860,7 @@ export default function SiteHeader() {
               <button
                 onClick={() => {
                   setOpen(false);
+                  setModalSuccess(null);
                   setRegisterModalOpen(true);
                 }}
                 className="w-full bg-[#0E733B] hover:bg-[#0B5C2F] text-white py-3 rounded-full font-bold text-[14px] shadow-md transition-colors"

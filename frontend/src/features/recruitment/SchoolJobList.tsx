@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   Briefcase, Clock, MapPin, Users, Eye, Pencil, Trash2, Loader2,
-  Plus, CheckCircle2, FileText, XCircle,
+  Plus, CheckCircle2, FileText, XCircle, AlertTriangle,
 } from "lucide-react";
 import { API } from "./useRecruitmentProfile";
 
@@ -58,15 +58,30 @@ export default function SchoolJobList({
   authHeader,
   onPostJob,
   onViewPipeline,
+  onGoToProfile,
 }: {
   authHeader: () => Promise<Record<string, string>>;
   onPostJob: () => void;
   onViewPipeline?: (jobId: string) => void;
+  onGoToProfile?: () => void;
 }) {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [profileComplete, setProfileComplete] = useState<boolean | null>(null);
+
+  const checkProfile = useCallback(async () => {
+    try {
+      const headers = await authHeader();
+      const res = await fetch(`${API}/api/recruitment/institution`, { headers });
+      if (!res.ok) { setProfileComplete(false); return; }
+      const data = await res.json();
+      const required = ["name", "city", "state", "description", "officialEmail"] as const;
+      const complete = required.every((k) => String(data[k] ?? "").trim().length > 0);
+      setProfileComplete(complete);
+    } catch { setProfileComplete(false); }
+  }, [authHeader]);
 
   const fetchJobs = useCallback(async () => {
     setLoading(true);
@@ -83,7 +98,7 @@ export default function SchoolJobList({
     }
   }, [authHeader]);
 
-  useEffect(() => { fetchJobs(); }, [fetchJobs]);
+  useEffect(() => { fetchJobs(); checkProfile(); }, [fetchJobs, checkProfile]);
 
   // ── Actions ──
 
@@ -156,9 +171,9 @@ export default function SchoolJobList({
   };
 
   return (
-    <div className="max-w-[1400px]">
+    <div className="w-full">
       {/* Header */}
-      <div className="flex items-start justify-between gap-6 flex-wrap mb-6">
+      <div className="flex items-start justify-between gap-6 flex-wrap mb-4">
         <div>
           <h1 className="font-display font-bold text-[28px] text-charcoal leading-tight tracking-tight">
             Jobs &amp; pipeline
@@ -168,12 +183,28 @@ export default function SchoolJobList({
           </p>
         </div>
         <button
-          onClick={onPostJob}
+          onClick={profileComplete ? onPostJob : onGoToProfile}
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0E733B] text-white text-[13.5px] font-bold hover:bg-[#0B5C2F] shadow-sm hover:shadow-md transition-all shrink-0"
         >
           <Plus className="w-4 h-4" /> Post a job
         </button>
       </div>
+
+      {/* Profile incomplete warning */}
+      {profileComplete === false && (
+        <div className="mb-5 bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" strokeWidth={1.8} />
+          <div>
+            <p className="font-bold text-[13.5px] text-amber-900">Complete your institution profile to post jobs</p>
+            <p className="text-[12.5px] text-amber-800/80 mt-0.5 leading-relaxed">
+              Teachers can only apply to schools that have provided their name, city, state, description and official email.{" "}
+              <button onClick={onGoToProfile} className="font-bold underline underline-offset-2 hover:text-amber-900 transition-colors">
+                Complete profile →
+              </button>
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Stats row */}
       {!loading && jobs.length > 0 && (
@@ -219,13 +250,15 @@ export default function SchoolJobList({
           <Briefcase className="w-10 h-10 text-slate-300 mx-auto mb-3" />
           <p className="font-display font-bold text-[16px] text-charcoal mb-1.5">No jobs posted yet</p>
           <p className="text-[13.5px] text-slate-500 max-w-sm mx-auto leading-relaxed mb-4">
-            Post your first role to start receiving applications from qualified teachers.
+            {profileComplete === false
+              ? "Complete your institution profile first, then post roles to start receiving applications."
+              : "Post your first role to start receiving applications from qualified teachers."}
           </p>
           <button
-            onClick={onPostJob}
+            onClick={profileComplete ? onPostJob : onGoToProfile}
             className="px-5 py-2.5 rounded-xl bg-[#0E733B] text-white text-[13.5px] font-bold hover:bg-[#0B5C2F] shadow-sm hover:shadow-md transition-all"
           >
-            Post a job
+            {profileComplete === false ? "Complete institution profile" : "Post a job"}
           </button>
         </div>
       )}

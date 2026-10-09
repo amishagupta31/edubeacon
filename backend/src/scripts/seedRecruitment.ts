@@ -67,6 +67,10 @@ const SCHOOLS = [
       pincode: "122015",
       description:
         "Greenfield Public School is a CBSE-affiliated institution serving Classes I–XII. Known for board-exam results and STEM focus.",
+      achievements: [
+        { title: "CBSE Best School Award — NCR", year: "2023", description: "Recognised among top 10 CBSE schools in the NCR region for academic outcomes." },
+        { title: "STEM Excellence Certification", year: "2022", description: "" },
+      ],
       verificationStatus: "VERIFIED" as const,
     },
   },
@@ -91,6 +95,11 @@ const SCHOOLS = [
       pincode: "201301",
       description:
         "One of the premier CBSE schools in NCR with a legacy of academic excellence since 1989.",
+      achievements: [
+        { title: "National Science Olympiad Top Scorers — 3 consecutive years", year: "2023", description: "" },
+        { title: "DPS Society Gold Shield — Academics", year: "2022", description: "Awarded by the DPS Society for consistent board-exam performance above national average." },
+        { title: "ISO 9001:2015 Certified Institution", year: "2021", description: "" },
+      ],
       verificationStatus: "VERIFIED" as const,
     },
   },
@@ -115,6 +124,10 @@ const SCHOOLS = [
       pincode: "400050",
       description:
         "Cambridge-affiliated international school offering IGCSE and A-Levels. Strong performing arts and inquiry-based learning programme.",
+      achievements: [
+        { title: "Cambridge International School of the Year — South Asia", year: "2022", description: "Runner-up recognition from Cambridge Assessment International Education." },
+        { title: "QS I-GAUGE Accreditation", year: "2021", description: "" },
+      ],
       verificationStatus: "VERIFIED" as const,
     },
   },
@@ -139,6 +152,10 @@ const SCHOOLS = [
       pincode: "700029",
       description:
         "Heritage School has been a pillar of ICSE education in Kolkata since 1977. Strong emphasis on humanities, arts and community service.",
+      achievements: [
+        { title: "ISC Top 10 — Humanities Stream", year: "2023", description: "" },
+        { title: "West Bengal Heritage School of the Decade", year: "2020", description: "Awarded by the West Bengal Department of Education for sustained academic and cultural contribution since 1977." },
+      ],
       verificationStatus: "IN_REVIEW" as const,
     },
   },
@@ -163,6 +180,10 @@ const SCHOOLS = [
       pincode: "201303",
       description:
         "A progressive CBSE school with a focus on holistic education, sports and technology integration.",
+      achievements: [
+        { title: "National Sports School of the Year — UP", year: "2023", description: "Recognised by the UP state sports authority for outstanding inter-school sports performance." },
+        { title: "CBSE Innovation in Teaching Award", year: "2022", description: "" },
+      ],
       verificationStatus: "VERIFIED" as const,
     },
   },

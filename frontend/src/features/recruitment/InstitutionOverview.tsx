@@ -96,7 +96,7 @@ export default function InstitutionOverview({
   const today   = demo ? DEMO_TODAY   : [];
 
   return (
-    <div className="max-w-[1400px]">
+    <div className="w-full">
       {/* ── Greeting row ── */}
       <div className="flex items-start justify-between gap-6 flex-wrap mb-7">
         <div className="min-w-0">

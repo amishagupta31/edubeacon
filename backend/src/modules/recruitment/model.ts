@@ -16,6 +16,13 @@ export interface IExperience {
   to: string;
 }
 
+export interface IAchievement {
+  title: string;
+  issuer: string;
+  year: string;
+  description: string;
+}
+
 export interface IRecruitmentProfile extends Document {
   clerkUserId: string;
   email: string;
@@ -30,6 +37,7 @@ export interface IRecruitmentProfile extends Document {
   subjectSpecialisations: string[];
   qualifications: IQualification[];
   experience: IExperience[];
+  achievements: IAchievement[];
   ctetStatus: "cleared" | "not_cleared" | "not_applicable" | "";
   stetStatus: string;
   currentCTC: number | null;
@@ -58,6 +66,11 @@ const expSchema = new Schema<IExperience>(
   { _id: false }
 );
 
+const achievementSchema = new Schema<IAchievement>(
+  { title: String, issuer: String, year: String, description: String },
+  { _id: false }
+);
+
 const schema = new Schema<IRecruitmentProfile>(
   {
     clerkUserId:           { type: String, required: true, unique: true, index: true },
@@ -72,6 +85,7 @@ const schema = new Schema<IRecruitmentProfile>(
     subjectSpecialisations:{ type: [String], default: [] },
     qualifications:        { type: [qualSchema], default: [] },
     experience:            { type: [expSchema], default: [] },
+    achievements:          { type: [achievementSchema], default: [] },
     ctetStatus:            { type: String, enum: ["cleared", "not_cleared", "not_applicable", ""], default: "" },
     stetStatus:            { type: String, default: "" },
     currentCTC:            { type: Number, default: null },

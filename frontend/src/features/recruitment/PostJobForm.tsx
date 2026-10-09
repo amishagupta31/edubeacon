@@ -49,12 +49,14 @@ export default function PostJobForm({
   authHeader,
   onCancel,
   onSaved,
+  onGoToProfile,
 }: {
   institutionName: string;
   city?: string;
   authHeader?: () => Promise<Record<string, string>>;
   onCancel?: () => void;
   onSaved?: () => void;
+  onGoToProfile?: () => void;
 }) {
   const [title, setTitle] = useState("");
   const [roleType, setRoleType] = useState<string>(ROLE_TYPES[0]);
@@ -142,6 +144,10 @@ export default function PostJobForm({
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
+        if (data.code === "PROFILE_INCOMPLETE" && onGoToProfile) {
+          onGoToProfile();
+          return;
+        }
         throw new Error(data.error || "Could not save job");
       }
 
@@ -162,7 +168,7 @@ export default function PostJobForm({
     "focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/10 transition-all";
 
   return (
-    <div className="max-w-[1400px]">
+    <div className="w-full">
       {/* ── Header ── */}
       <div className="flex items-start justify-between gap-6 flex-wrap mb-6">
         <div className="min-w-0">

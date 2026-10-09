@@ -1,6 +1,6 @@
 import { createClerkClient, verifyToken } from "@clerk/backend";
 import { Request, Response, NextFunction } from "express";
-import Admin from "../modules/admins/model";
+import Admin from "../models/Admin";
 import { verifyAdminToken } from "../lib/adminToken";
 
 export const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY! });

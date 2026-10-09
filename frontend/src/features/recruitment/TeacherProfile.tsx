@@ -1,16 +1,18 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Trash2, Loader2, CheckCircle2 } from "lucide-react";
+import { Plus, Trash2, Loader2, CheckCircle2, AlertTriangle, Link as LinkIcon } from "lucide-react";
 import { API } from "./useRecruitmentProfile";
 
 interface Qualification { degree: string; institution: string; year: string; }
 interface Experience { school: string; role: string; from: string; to: string; }
+interface Achievement { title: string; issuer: string; year: string; description: string; }
 
 interface ProfileData {
   fullName: string;
   phone: string;
   bio: string;
+  resumeUrl: string;
   ctetStatus: string;
   stetStatus: string;
   currentCTC: number | null;
@@ -20,6 +22,7 @@ interface ProfileData {
   preferredCities: string[];
   qualifications: Qualification[];
   experience: Experience[];
+  achievements: Achievement[];
 }
 
 const CTET_OPTIONS = [
@@ -40,11 +43,11 @@ export default function TeacherProfile({
   authHeader: () => Promise<Record<string, string>>;
 }) {
   const [form, setForm] = useState<ProfileData>({
-    fullName: "", phone: "", bio: "",
+    fullName: "", phone: "", bio: "", resumeUrl: "",
     ctetStatus: "", stetStatus: "",
     currentCTC: null, expectedCTC: null, availableFrom: "",
     subjectSpecialisations: [], preferredCities: [],
-    qualifications: [], experience: [],
+    qualifications: [], experience: [], achievements: [],
   });
 
   const [loading, setLoading] = useState(true);
@@ -67,6 +70,7 @@ export default function TeacherProfile({
           fullName: data.fullName || "",
           phone: data.phone || "",
           bio: data.bio || "",
+          resumeUrl: data.resumeUrl || "",
           ctetStatus: data.ctetStatus || "",
           stetStatus: data.stetStatus || "",
           currentCTC: data.currentCTC ?? null,
@@ -76,6 +80,7 @@ export default function TeacherProfile({
           preferredCities: data.preferredCities || [],
           qualifications: data.qualifications || [],
           experience: data.experience || [],
+          achievements: data.achievements || [],
         });
       }
     } catch { /* silent */ }
@@ -120,6 +125,11 @@ export default function TeacherProfile({
   const updateExp = (i: number, field: keyof Experience, val: string) =>
     setForm((p) => ({ ...p, experience: p.experience.map((e, idx) => idx === i ? { ...e, [field]: val } : e) }));
 
+  const addAchievement = () => setForm((p) => ({ ...p, achievements: [...p.achievements, { title: "", issuer: "", year: "", description: "" }] }));
+  const removeAchievement = (i: number) => setForm((p) => ({ ...p, achievements: p.achievements.filter((_, idx) => idx !== i) }));
+  const updateAchievement = (i: number, key: keyof Achievement, val: string) =>
+    setForm((p) => ({ ...p, achievements: p.achievements.map((a, idx) => idx === i ? { ...a, [key]: val } : a) }));
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-24">
@@ -130,7 +140,7 @@ export default function TeacherProfile({
   }
 
   return (
-    <div className="max-w-[820px]">
+    <div className="w-full">
       <div className="flex items-start justify-between gap-4 flex-wrap mb-6">
         <div>
           <h1 className="font-display font-bold text-[28px] text-charcoal leading-tight tracking-tight">My Profile</h1>
@@ -157,6 +167,34 @@ export default function TeacherProfile({
         <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-[13px] text-red-800">{error}</div>
       )}
 
+      {/* Profile completeness hint */}
+      {(() => {
+        const missing: string[] = [];
+        if (!form.fullName.trim()) missing.push("Full name");
+        if (!form.phone.trim()) missing.push("Phone number");
+        if (!form.bio.trim() && form.qualifications.length === 0) missing.push("Bio or at least one qualification");
+        if (missing.length === 0) return (
+          <div className="mb-4 flex items-center gap-2.5 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl text-[13px] font-semibold text-emerald-800">
+            <CheckCircle2 className="w-4 h-4 shrink-0" /> Profile complete — you can apply for jobs.
+          </div>
+        );
+        return (
+          <div className="mb-4 px-4 py-3.5 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
+            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" strokeWidth={1.8} />
+            <div>
+              <p className="text-[13px] font-bold text-amber-900 mb-1">Complete your profile to apply for jobs</p>
+              <ul className="flex flex-wrap gap-x-4 gap-y-0.5">
+                {missing.map((m) => (
+                  <li key={m} className="text-[12px] text-amber-800 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block shrink-0" /> {m}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        );
+      })()}
+
       <div className="space-y-5">
 
         {/* ── Basic info ── */}
@@ -173,7 +211,7 @@ export default function TeacherProfile({
             </div>
           </div>
           <div className="mt-4">
-            <label className={label}>Bio / professional summary</label>
+            <label className={label}>Bio / professional summary <span className="font-normal text-slate-400">(required to apply)</span></label>
             <textarea
               rows={3}
               className={`${field} resize-none`}
@@ -181,6 +219,19 @@ export default function TeacherProfile({
               onChange={f("bio")}
               placeholder="Brief summary of your teaching philosophy, strengths and goals…"
             />
+          </div>
+          <div className="mt-4">
+            <label className={label}>Resume / Portfolio link</label>
+            <div className="relative">
+              <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+              <input
+                className={`${field} pl-9`}
+                value={form.resumeUrl}
+                onChange={f("resumeUrl")}
+                placeholder="Google Drive, Notion, LinkedIn, or any public link…"
+              />
+            </div>
+            <p className="text-[11px] text-slate-400 mt-1">Shared with schools when you apply.</p>
           </div>
         </section>
 
@@ -372,6 +423,47 @@ export default function TeacherProfile({
             </div>
           )}
         </section>
+        {/* ── Achievements ── */}
+        <section className="bg-white rounded-2xl border border-line shadow-sm p-5">
+          <div className="flex items-center justify-between gap-4 mb-4">
+            <h2 className="font-display font-bold text-[15px] text-charcoal">Achievements & Honours</h2>
+            <button onClick={addAchievement} className="inline-flex items-center gap-1.5 text-[12.5px] font-bold text-[#0E733B] hover:underline underline-offset-2">
+              <Plus className="w-3.5 h-3.5" /> Add
+            </button>
+          </div>
+          {form.achievements.length === 0 ? (
+            <p className="text-[13px] text-slate-400 italic">No achievements added yet. Add awards, recognitions or certifications to stand out.</p>
+          ) : (
+            <div className="space-y-4">
+              {form.achievements.map((a, i) => (
+                <div key={i} className="border border-line rounded-xl p-4 relative">
+                  <button onClick={() => removeAchievement(i)} className="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors">
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                  <div className="grid sm:grid-cols-[1fr_1fr_80px] gap-3 mb-3">
+                    <div>
+                      <label className={label}>Title</label>
+                      <input className={field} value={a.title} onChange={(e) => updateAchievement(i, "title", e.target.value)} placeholder="e.g. Best Teacher Award" />
+                    </div>
+                    <div>
+                      <label className={label}>Issuer / organisation</label>
+                      <input className={field} value={a.issuer} onChange={(e) => updateAchievement(i, "issuer", e.target.value)} placeholder="e.g. CBSE, State Government" />
+                    </div>
+                    <div>
+                      <label className={label}>Year</label>
+                      <input className={field} value={a.year} onChange={(e) => updateAchievement(i, "year", e.target.value)} placeholder="2023" maxLength={4} />
+                    </div>
+                  </div>
+                  <div>
+                    <label className={label}>Description <span className="font-normal text-slate-400">(optional)</span></label>
+                    <textarea rows={2} className={`${field} resize-none`} value={a.description} onChange={(e) => updateAchievement(i, "description", e.target.value)} placeholder="Brief description of the achievement…" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
       </div>
     </div>
   );

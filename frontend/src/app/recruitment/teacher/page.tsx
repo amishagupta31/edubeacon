@@ -1,26 +1,26 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import {
   LayoutGrid, User, FileText, Bookmark, Settings, ClipboardCheck,
   CalendarDays, Briefcase,
 } from "lucide-react";
 import DashboardGuard from "@/features/recruitment/DashboardGuard";
 import DashboardShell, { EmptySection, NavItem } from "@/features/recruitment/DashboardShell";
-import JobBoard from "@/features/recruitment/JobBoard";
 import MyApplications from "@/features/recruitment/MyApplications";
 import TeacherProfile from "@/features/recruitment/TeacherProfile";
 import { useRecruitmentProfile, API } from "@/features/recruitment/useRecruitmentProfile";
 
 const NAV: NavItem[] = [
-  { id: "overview",     label: "Overview",      icon: LayoutGrid,     available: true },
-  { id: "jobs",         label: "Browse Jobs",   icon: Briefcase,      available: true },
-  { id: "applications", label: "My Applications", icon: FileText,     available: true },
-  { id: "profile",      label: "My Profile",    icon: User,           available: true },
-  { id: "saved",        label: "Saved Jobs",    icon: Bookmark,       available: false },
-  { id: "interviews",   label: "Interviews",    icon: CalendarDays,   available: false },
-  { id: "assessments",  label: "Assessments",   icon: ClipboardCheck, available: false },
-  { id: "settings",     label: "Settings",      icon: Settings,       available: false },
+  { id: "overview",     label: "Overview",        icon: LayoutGrid,     available: true },
+  { id: "jobs",         label: "Browse Jobs",     icon: Briefcase,      available: true,  href: "/recruitment/jobs" },
+  { id: "applications", label: "My Applications", icon: FileText,       available: true },
+  { id: "profile",      label: "My Profile",      icon: User,           available: true },
+  { id: "saved",        label: "Saved Jobs",      icon: Bookmark,       available: false },
+  { id: "interviews",   label: "Interviews",      icon: CalendarDays,   available: false },
+  { id: "assessments",  label: "Assessments",     icon: ClipboardCheck, available: false },
+  { id: "settings",     label: "Settings",        icon: Settings,       available: false },
 ];
 
 export default function TeacherDashboardPage() {
@@ -51,10 +51,7 @@ export default function TeacherDashboardPage() {
           active={active}
           onNavigate={setActive}
         >
-          {active === "jobs" ? (
-            <JobBoard authHeader={authHeader} />
-
-          ) : active === "applications" ? (
+          {active === "applications" ? (
             <MyApplications authHeader={authHeader} />
 
           ) : active === "profile" ? (
@@ -95,9 +92,9 @@ export default function TeacherDashboardPage() {
                       <p className="text-[13.5px] text-slate-500 mt-1 leading-relaxed">
                         Browse teaching positions posted by verified institutions across India.
                       </p>
-                      <button onClick={() => setActive("jobs")} className="mt-3 px-5 py-2.5 rounded-xl bg-[#0E733B] text-white text-[13.5px] font-bold hover:bg-[#0B5C2F] shadow-sm transition-all">
+                      <Link href="/recruitment/jobs" className="mt-3 inline-block px-5 py-2.5 rounded-xl bg-[#0E733B] text-white text-[13.5px] font-bold hover:bg-[#0B5C2F] shadow-sm transition-all">
                         Browse jobs
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </div>

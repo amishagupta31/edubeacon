@@ -3,10 +3,10 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useClerk, useSignIn, useSignUp, useAuth } from "@clerk/nextjs";
-import { GraduationCap, Building2, Loader2, CheckCircle2, ArrowLeft } from "lucide-react";
+import { GraduationCap, Building2, Loader2, CheckCircle2, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { API, DASHBOARD_PATH, AccountType } from "@/features/recruitment/useRecruitmentProfile";
 
-type Step = "pick-role" | "details" | "verify" | "creating" | "success";
+type Step = "pick-role" | "details" | "verify" | "creating" | "success" | "signin-email" | "signin-verify";
 
 interface CreatedProfile {
   accountType: AccountType;
@@ -32,6 +32,10 @@ export default function RegisterClient() {
   });
   const [terms, setTerms] = useState(false);
   const [code, setCode] = useState("");
+  const [signInEmail, setSignInEmail] = useState("");
+  const [signInPassword, setSignInPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [signInMethod, setSignInMethod] = useState<"otp" | "password">("otp");
   const [mode, setMode] = useState<"signup" | "signin">("signup");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
@@ -57,6 +61,79 @@ export default function RegisterClient() {
       } catch { /* stay on the form */ }
     })();
   }, [isLoaded, isSignedIn, getToken, router]);
+
+  const goToDashboardAfterSignIn = async () => {
+    const token = await getToken();
+    const res = await fetch(`${API}/api/recruitment/me`, {
+      headers: { Authorization: `Bearer ${token ?? ""}` },
+    });
+    if (res.ok) {
+      const p = await res.json();
+      if (p?.accountType) { router.replace(DASHBOARD_PATH[p.accountType as AccountType]); return; }
+    }
+    router.replace("/recruitment/register");
+  };
+
+  const sendSignInCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!signIn) return;
+    setBusy(true); setErr("");
+    const email = signInEmail.trim();
+    try {
+      if (clerk.session) { try { await clerk.signOut(); } catch { /* ignore */ } }
+
+      if (signInMethod === "password") {
+        // Password sign-in — completes in one step, no OTP needed
+        const { error } = await signIn.create({ identifier: email, password: signInPassword });
+        if (error) {
+          if (error.code === "form_password_incorrect") setErr("Incorrect password. Try again or use the OTP option.");
+          else if (error.code === "form_identifier_not_found") setErr("No account found with that email.");
+          else setErr(error.message || "Sign-in failed.");
+          return;
+        }
+        if (signIn.status === "complete") {
+          const { error: fe } = await signIn.finalize();
+          if (fe) { setErr(fe.message || "Sign-in failed."); return; }
+        }
+        await goToDashboardAfterSignIn();
+        return;
+      }
+
+      // OTP sign-in
+      const { error } = await signIn.create({ identifier: email });
+      if (error) {
+        if (error.code === "form_identifier_not_found") setErr("No account found with that email.");
+        else setErr(error.message || "Could not find that account.");
+        return;
+      }
+      const { error: sendErr } = await signIn.emailCode.sendCode();
+      if (sendErr) { setErr(sendErr.message || "Could not send code."); return; }
+      setMode("signin"); setStep("signin-verify");
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Network error. Try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const verifySignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!signIn || code.length < 6) return;
+    setBusy(true); setErr("");
+    try {
+      const { error } = await signIn.emailCode.verifyCode({ code });
+      if (error) { setErr(error.message || "That code didn't work."); return; }
+      if (signIn.status === "complete") {
+        const { error: fe } = await signIn.finalize();
+        if (fe) { setErr(fe.message || "Sign-in failed."); return; }
+      }
+      await goToDashboardAfterSignIn();
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Something went wrong.");
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const sendCode = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -172,19 +249,39 @@ export default function RegisterClient() {
     form.email.trim() && terms &&
     (isSchool ? form.institutionName.trim() : form.fullName.trim());
 
+  const isSignInStep = step === "signin-email" || step === "signin-verify";
+
   return (
     <div className="min-h-screen bg-[#F8FAF8] py-14 px-4">
       <div className="max-w-md mx-auto">
         <div className="text-center mb-8">
           <h1 className="font-display font-bold text-[26px] text-charcoal">Recruitment Portal</h1>
           <p className="text-[14px] text-slate-600 mt-1.5">
-            {step === "pick-role"
-              ? "Choose how you'd like to join"
-              : step === "success"
-                ? "You're all set"
-                : "Create your account"}
+            {step === "success" ? "You're all set" : isSignInStep ? "Sign in to your account" : "Create your account"}
           </p>
         </div>
+
+        {/* ── Register / Sign In tabs (hidden during success / creating / verify steps) ── */}
+        {(step === "pick-role" || step === "details" || step === "signin-email") && (
+          <div className="flex bg-slate-100 rounded-xl p-1 mb-5">
+            <button
+              onClick={() => { setStep("pick-role"); setErr(""); }}
+              className={`flex-1 py-2 text-[13.5px] font-bold rounded-lg transition-all ${
+                !isSignInStep ? "bg-white shadow-sm text-charcoal" : "text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              Register
+            </button>
+            <button
+              onClick={() => { flowStarted.current = true; setStep("signin-email"); setErr(""); setCode(""); }}
+              className={`flex-1 py-2 text-[13.5px] font-bold rounded-lg transition-all ${
+                isSignInStep ? "bg-white shadow-sm text-charcoal" : "text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              Sign In
+            </button>
+          </div>
+        )}
 
         <div className="bg-white rounded-2xl border border-line shadow-sm p-7">
           {/* ── Step 1: role ── */}
@@ -405,6 +502,102 @@ export default function RegisterClient() {
                 Go to my dashboard →
               </button>
             </div>
+          )}
+
+          {/* ── Sign In: enter email (+ optional password) ── */}
+          {step === "signin-email" && (
+            <form onSubmit={sendSignInCode} className="flex flex-col gap-4">
+
+              {/* OTP / Password toggle */}
+              <div className="flex bg-slate-100 rounded-lg p-0.5">
+                <button type="button"
+                  onClick={() => { setSignInMethod("otp"); setErr(""); }}
+                  className={`flex-1 py-1.5 text-[12.5px] font-bold rounded-md transition-all ${signInMethod === "otp" ? "bg-white shadow text-charcoal" : "text-slate-500"}`}>
+                  Email OTP
+                </button>
+                <button type="button"
+                  onClick={() => { setSignInMethod("password"); setErr(""); }}
+                  className={`flex-1 py-1.5 text-[12.5px] font-bold rounded-md transition-all ${signInMethod === "password" ? "bg-white shadow text-charcoal" : "text-slate-500"}`}>
+                  Password
+                </button>
+              </div>
+
+              <div>
+                <label className={label}>Registered email *</label>
+                <input
+                  required type="email" autoFocus className={input}
+                  value={signInEmail}
+                  placeholder="you@example.com"
+                  onChange={(e) => { setSignInEmail(e.target.value); setErr(""); }}
+                />
+              </div>
+
+              {signInMethod === "password" && (
+                <div>
+                  <label className={label}>Password *</label>
+                  <div className="relative">
+                    <input
+                      required type={showPassword ? "text" : "password"} className={input}
+                      value={signInPassword}
+                      placeholder="Enter your password"
+                      onChange={(e) => { setSignInPassword(e.target.value); setErr(""); }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(v => !v)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {err && (
+                <p className="text-[12.5px] text-red-600 bg-red-50 border border-red-100 px-3 py-2 rounded-lg">{err}</p>
+              )}
+              <div id="clerk-captcha-signin" className="empty:hidden" />
+              <button type="submit" disabled={busy || !signInEmail.trim() || (signInMethod === "password" && !signInPassword)} className={btn}>
+                {busy && <Loader2 className="w-4 h-4 animate-spin" />}
+                {busy
+                  ? (signInMethod === "password" ? "Signing in…" : "Sending code…")
+                  : (signInMethod === "password" ? "Sign In" : "Send sign-in code")}
+              </button>
+              <p className="text-[12px] text-slate-500 text-center">
+                Don&apos;t have an account?{" "}
+                <button type="button" onClick={() => { setStep("pick-role"); setErr(""); }}
+                  className="text-[#0E733B] font-semibold hover:underline">
+                  Register here
+                </button>
+              </p>
+            </form>
+          )}
+
+          {/* ── Sign In: enter OTP ── */}
+          {step === "signin-verify" && (
+            <form onSubmit={verifySignIn} className="flex flex-col gap-4">
+              <p className="text-[13.5px] text-slate-600 text-center">
+                Enter the 6-digit code sent to<br />
+                <strong className="text-charcoal">{signInEmail}</strong>
+              </p>
+              <input
+                type="text" inputMode="numeric" required autoFocus maxLength={6} placeholder="000000"
+                value={code}
+                onChange={(e) => { setCode(e.target.value.replace(/\D/g, "").slice(0, 6)); setErr(""); }}
+                className="w-full border border-line rounded-xl px-4 py-3.5 text-[22px] text-center tracking-[0.45em] font-bold text-charcoal focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/10"
+              />
+              {err && (
+                <p className="text-[12.5px] text-red-600 bg-red-50 border border-red-100 px-3 py-2 rounded-lg">{err}</p>
+              )}
+              <button type="submit" disabled={busy || code.length < 6} className={btn}>
+                {busy && <Loader2 className="w-4 h-4 animate-spin" />}
+                {busy ? "Signing in…" : "Sign in"}
+              </button>
+              <button type="button" onClick={() => { setStep("signin-email"); setCode(""); setErr(""); }}
+                className="text-[12.5px] text-slate-500 hover:text-charcoal transition-colors">
+                ← Use a different email
+              </button>
+            </form>
           )}
         </div>
       </div>

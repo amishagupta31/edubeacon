@@ -80,7 +80,7 @@ export default function MyApplications({
   }
 
   return (
-    <div className="max-w-[1400px]">
+    <div className="w-full">
       <div className="flex items-start justify-between gap-4 flex-wrap mb-6">
         <div>
           <h1 className="font-display font-bold text-[28px] text-charcoal leading-tight tracking-tight">My Applications</h1>

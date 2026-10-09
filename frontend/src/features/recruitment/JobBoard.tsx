@@ -248,7 +248,7 @@ export default function JobBoard({
     const alreadyApplied = appliedIds.has(selected._id);
     return (
       <>
-        <div className="max-w-[900px]">
+        <div className="w-full">
           <button
             onClick={() => setSelected(null)}
             className="flex items-center gap-1.5 text-[13px] font-semibold text-[#0E733B] hover:underline underline-offset-2 mb-5"
@@ -371,7 +371,7 @@ export default function JobBoard({
 
   // ── List View ────────────────────────────────────────────────────────────
   return (
-    <div className="max-w-[1400px]">
+    <div className="w-full">
       <div className="mb-6">
         <h1 className="font-display font-bold text-[28px] text-charcoal leading-tight tracking-tight">Browse Jobs</h1>
         <p className="text-[13.5px] text-slate-500 mt-1">Teaching and school positions posted by verified institutions.</p>

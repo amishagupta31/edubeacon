@@ -2,23 +2,22 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
-import { Briefcase, Building2, Info, ArrowRight, Menu, X } from "lucide-react";
-
-const NAV = [
-  { label: "Find Jobs",   href: "/recruitment/register", icon: Briefcase },
-  { label: "For Schools", href: "/recruitment/register", icon: Building2 },
-  { label: "How it Works", href: "/solutions/recruitment", icon: Info },
-];
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
+import { Menu, X, ChevronDown, User, LayoutGrid, LogOut, Briefcase, Users, FileText, UserCircle } from "lucide-react";
+import { useClerk } from "@clerk/nextjs";
+import { useRecruitmentProfile, DASHBOARD_PATH } from "@/features/recruitment/useRecruitmentProfile";
 
 export default function RecruitmentHeader() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const clerk = useClerk();
+  const { state } = useRecruitmentProfile();
+
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const pathname = usePathname();
-
-  // Always dark green — consistent across all recruitment pages
-  const isDark = !scrolled;
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -32,21 +31,63 @@ export default function RecruitmentHeader() {
     return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
 
+  // Close profile dropdown on outside click
+  useEffect(() => {
+    if (!profileOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [profileOpen]);
+
+  const handleSignOut = async () => {
+    await clerk.signOut();
+    router.push("/solutions/recruitment");
+  };
+
+  const isLoggedIn = state.status === "ready";
+  const isTeacher = isLoggedIn && state.profile.accountType === "TEACHER";
+  const isSchool = isLoggedIn && state.profile.accountType === "SCHOOL_ADMIN";
+  const dashboardPath = isLoggedIn ? DASHBOARD_PATH[state.profile.accountType] : null;
+
+  // Nav items differ by role
+  const desktopNav = isTeacher
+    ? [
+        { label: "Browse Jobs", href: "/recruitment/jobs", icon: Briefcase },
+        { label: "About Us", href: "/about/our-story", icon: null },
+      ]
+    : isSchool
+    ? [
+        { label: "Browse Candidates", href: "/recruitment/teachers", icon: Users },
+        { label: "About Us", href: "/about/our-story", icon: null },
+      ]
+    : [
+        { label: "Find Jobs", href: "/recruitment/jobs", icon: null },
+        { label: "For Schools", href: "/recruitment/teachers", icon: null },
+        { label: "How it Works", href: "/solutions/recruitment", icon: null },
+      ];
+
+  const navLinkCls = (href: string) =>
+    `flex items-center gap-1.5 px-3 py-1.5 rounded-full font-semibold transition-all text-[13px] ${
+      pathname === href
+        ? "bg-emerald-50 text-[#0E733B]"
+        : "text-slate-600 hover:text-[#0E733B] hover:bg-emerald-50"
+    }`;
+
   return (
     <header
       className={`sticky top-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "pt-3 px-3 sm:px-6 pointer-events-none"
-          : isDark
-            ? "bg-[#0C2A1B]"
-            : "bg-white border-b border-slate-100"
+        scrolled ? "pt-3 px-3 sm:px-6 pointer-events-none" : "bg-white border-b border-slate-100"
       }`}
     >
       <div
         className={`mx-auto transition-all duration-500 pointer-events-auto ${
           scrolled
             ? "max-w-[1440px] rounded-full bg-white/95 shadow-2xl backdrop-blur-xl px-4 sm:px-6 py-2 flex items-center justify-between"
-            : "w-full max-w-[1440px] px-5 md:px-10 xl:px-14 flex h-[68px] items-center justify-between"
+            : "w-full max-w-[1440px] px-5 md:px-10 xl:px-14 flex h-[64px] items-center justify-between"
         }`}
       >
         {/* ── Brand ── */}
@@ -56,32 +97,18 @@ export default function RecruitmentHeader() {
             alt="EduBeacon"
             width={130}
             height={36}
-            className={`h-8 w-auto object-contain transition-all ${isDark ? "brightness-0 invert" : ""} ${scrolled ? "h-7" : ""}`}
+            className={`w-auto object-contain transition-all ${scrolled ? "h-7" : "h-8"}`}
             priority
           />
-          <span
-            className={`text-[10px] font-bold uppercase tracking-[0.18em] px-2 py-0.5 rounded-full transition-all ${
-              isDark
-                ? "bg-emerald-500/25 text-white"
-                : "bg-emerald-50 text-emerald-700"
-            }`}
-          >
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 hidden sm:inline">
             Recruitment
           </span>
         </Link>
 
         {/* ── Desktop nav ── */}
-        <nav className="hidden md:flex items-center gap-0.5 text-[13px]">
-          {NAV.map(({ label, href }) => (
-            <Link
-              key={label}
-              href={href}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-semibold transition-all ${
-                isDark
-                  ? "text-white/80 hover:text-white hover:bg-white/10"
-                  : "text-slate-600 hover:text-[#0E733B] hover:bg-emerald-50"
-              }`}
-            >
+        <nav className="hidden md:flex items-center gap-0.5">
+          {desktopNav.map(({ label, href }) => (
+            <Link key={label} href={href} className={navLinkCls(href)}>
               {label}
             </Link>
           ))}
@@ -89,34 +116,100 @@ export default function RecruitmentHeader() {
 
         {/* ── Right CTAs ── */}
         <div className="hidden md:flex items-center gap-2.5">
-          <Link
-            href="/recruitment/register"
-            className={`text-[13px] font-semibold px-3 py-1.5 rounded-full transition-all ${
-              isDark
-                ? "text-white/75 hover:text-white hover:bg-white/10"
-                : "text-[#0E733B] hover:bg-emerald-50"
-            }`}
-          >
-            Sign In
-          </Link>
-          <Link
-            href="/recruitment/register"
-            className="inline-flex items-center gap-2 pl-5 pr-4 py-2.5 rounded-full text-[13px] font-bold text-white bg-[#0E8A45] hover:bg-[#0B6E36] shadow-lg shadow-emerald-950/20 hover:scale-105 active:scale-95 transition-all duration-300"
-          >
-            Get Started <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          {isLoggedIn ? (
+            /* Profile dropdown */
+            <div className="relative" ref={profileRef}>
+              <button
+                onClick={() => setProfileOpen(v => !v)}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 hover:border-[#0E733B] hover:bg-emerald-50 transition-all"
+              >
+                <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center">
+                  <User className="w-3.5 h-3.5 text-[#0E733B]" />
+                </div>
+                <span className="text-[13px] font-semibold text-charcoal max-w-[120px] truncate">
+                  {isTeacher
+                    ? (state.profile.fullName?.split(" ")[0] ?? "Teacher")
+                    : (state.profile.institutionName?.split(" ").slice(0, 2).join(" ") ?? "School")}
+                </span>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${profileOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {profileOpen && (
+                <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl border border-slate-100 shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  {/* Account info */}
+                  <div className="px-4 py-3 border-b border-slate-100 mb-1">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">
+                      {isTeacher ? "Teacher Account" : "School Account"}
+                    </p>
+                    <p className="text-[13.5px] font-bold text-charcoal truncate">
+                      {isTeacher
+                        ? (state.profile.fullName ?? "My Account")
+                        : (state.profile.institutionName ?? "My School")}
+                    </p>
+                    <p className="text-[11.5px] text-slate-400 truncate mt-0.5">{state.profile.email}</p>
+                  </div>
+
+                  {/* Nav links */}
+                  {isTeacher ? (
+                    <>
+                      <Link href="/recruitment/jobs" onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-[13px] font-semibold text-slate-600 hover:bg-emerald-50 hover:text-[#0E733B] transition-colors">
+                        <Briefcase className="w-4 h-4 shrink-0" /> Browse Jobs
+                      </Link>
+                      <Link href={`${dashboardPath}?tab=applications`} onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-[13px] font-semibold text-slate-600 hover:bg-emerald-50 hover:text-[#0E733B] transition-colors">
+                        <FileText className="w-4 h-4 shrink-0" /> My Applications
+                      </Link>
+                      <Link href={`${dashboardPath}?tab=profile`} onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-[13px] font-semibold text-slate-600 hover:bg-emerald-50 hover:text-[#0E733B] transition-colors">
+                        <UserCircle className="w-4 h-4 shrink-0" /> My Profile
+                      </Link>
+                    </>
+                  ) : (
+                    <Link href="/recruitment/teachers" onClick={() => setProfileOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-[13px] font-semibold text-slate-600 hover:bg-emerald-50 hover:text-[#0E733B] transition-colors">
+                      <Users className="w-4 h-4 shrink-0" /> Browse Candidates
+                    </Link>
+                  )}
+
+                  <div className="border-t border-slate-100 mt-1 pt-1">
+                    <Link href={dashboardPath!} onClick={() => setProfileOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-[13px] font-semibold text-slate-600 hover:bg-emerald-50 hover:text-[#0E733B] transition-colors">
+                      <LayoutGrid className="w-4 h-4 shrink-0" /> My Dashboard
+                    </Link>
+                    <button onClick={handleSignOut}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-[13px] font-semibold text-slate-500 hover:bg-red-50 hover:text-red-600 transition-colors">
+                      <LogOut className="w-4 h-4 shrink-0" /> Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <Link
+                href="/recruitment/register"
+                className="text-[13px] font-semibold px-3 py-1.5 rounded-full text-[#0E733B] hover:bg-emerald-50 transition-all"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/recruitment/register"
+                className="inline-flex items-center gap-2 pl-5 pr-4 py-2 rounded-full text-[13px] font-bold text-white bg-[#0E8A45] hover:bg-[#0B6E36] shadow-md hover:scale-105 active:scale-95 transition-all duration-300"
+              >
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
 
         {/* ── Mobile hamburger ── */}
         <button
           aria-label="Toggle menu"
-          onClick={() => setMobileOpen((v) => !v)}
-          className="md:hidden p-2 rounded-lg"
+          onClick={() => setMobileOpen(v => !v)}
+          className="md:hidden p-2 rounded-lg text-slate-700"
         >
-          {mobileOpen
-            ? <X className={`w-5 h-5 ${isDark ? "text-white" : "text-charcoal"}`} />
-            : <Menu className={`w-5 h-5 ${isDark ? "text-white" : "text-charcoal"}`} />
-          }
+          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
@@ -124,32 +217,52 @@ export default function RecruitmentHeader() {
       {mobileOpen && (
         <div className="md:hidden bg-white border-t border-slate-100 shadow-xl pointer-events-auto">
           <div className="px-5 py-4 flex flex-col gap-1">
-            {NAV.map(({ label, href, icon: Icon }) => (
+            {desktopNav.map(({ label, href }) => (
               <Link
                 key={label}
                 href={href}
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-3 px-3 py-3 rounded-xl text-[14px] font-semibold text-slate-700 hover:bg-emerald-50 hover:text-[#0E733B] transition-all"
+                className="flex items-center px-3 py-3 rounded-xl text-[14px] font-semibold text-slate-700 hover:bg-emerald-50 hover:text-[#0E733B] transition-all"
               >
-                <Icon className="w-4 h-4 text-[#0E733B]" />
                 {label}
               </Link>
             ))}
+
             <div className="mt-3 pt-3 border-t border-slate-100 flex flex-col gap-2">
-              <Link
-                href="/recruitment/register"
-                onClick={() => setMobileOpen(false)}
-                className="text-center py-3 rounded-full border border-slate-200 text-[13.5px] font-semibold text-slate-600 hover:bg-slate-50"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/recruitment/register"
-                onClick={() => setMobileOpen(false)}
-                className="text-center py-3 rounded-full text-[13.5px] font-bold text-white bg-[#0E8A45] hover:bg-[#0B6E36]"
-              >
-                Get Started
-              </Link>
+              {isLoggedIn ? (
+                <>
+                  <Link
+                    href={dashboardPath!}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 py-3 rounded-full border border-slate-200 text-[13.5px] font-semibold text-slate-700 justify-center hover:bg-slate-50"
+                  >
+                    <LayoutGrid className="w-4 h-4" /> My Dashboard
+                  </Link>
+                  <button
+                    onClick={handleSignOut}
+                    className="py-3 rounded-full text-[13.5px] font-bold text-red-600 border border-red-100 hover:bg-red-50"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/recruitment/register"
+                    onClick={() => setMobileOpen(false)}
+                    className="text-center py-3 rounded-full border border-slate-200 text-[13.5px] font-semibold text-slate-600 hover:bg-slate-50"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/recruitment/register"
+                    onClick={() => setMobileOpen(false)}
+                    className="text-center py-3 rounded-full text-[13.5px] font-bold text-white bg-[#0E8A45] hover:bg-[#0B6E36]"
+                  >
+                    Get Started
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
