@@ -547,6 +547,7 @@ async function main() {
           teacherName:        teacher.fullName,
           teacherEmail:       teacher.email,
           teacherPhone:       teacher.phone,
+          resumeUrl:          teacher.resumeUrl,
           coverNote:          app.coverNote,
           stages,
           stageIndex:         app.stageIndex,

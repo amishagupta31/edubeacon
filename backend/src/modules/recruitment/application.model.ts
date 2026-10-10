@@ -16,6 +16,7 @@ export interface IApplication extends Document {
   teacherName: string;
   teacherEmail: string;
   teacherPhone: string;
+  resumeUrl: string;
   coverNote: string;
   // Stage tracking — mirrors job.stages array
   stages: string[];        // snapshot of job.stages at apply time
@@ -42,6 +43,7 @@ const schema = new Schema<IApplication>(
     teacherName:        { type: String, required: true },
     teacherEmail:       { type: String, required: true },
     teacherPhone:       { type: String, default: "" },
+    resumeUrl:          { type: String, default: "" },
     coverNote:          { type: String, default: "" },
     stages:             { type: [String], default: [] },
     stageIndex:         { type: Number, default: 0 },

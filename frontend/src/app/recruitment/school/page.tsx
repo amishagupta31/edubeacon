@@ -1,12 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import {
-  LayoutGrid, Building2, Briefcase, Users, Settings, ShieldCheck,
-  FileText, Handshake, CalendarCheck, UserCheck, BarChart3,
-} from "lucide-react";
 import DashboardGuard from "@/features/recruitment/DashboardGuard";
-import DashboardShell, { EmptySection, NavItem } from "@/features/recruitment/DashboardShell";
+import SchoolDashboardShell, { SchoolNavId } from "@/features/recruitment/SchoolDashboardShell";
+
 import InstitutionProfileForm from "@/features/recruitment/InstitutionProfileForm";
 import InstitutionOverview from "@/features/recruitment/InstitutionOverview";
 import PostJobForm from "@/features/recruitment/PostJobForm";
@@ -18,57 +15,52 @@ import SalaryNegotiation from "@/features/recruitment/SalaryNegotiation";
 import CandidateOfferView from "@/features/recruitment/CandidateOfferView";
 import { useRecruitmentProfile } from "@/features/recruitment/useRecruitmentProfile";
 
-const NAV: NavItem[] = [
-  { id: "overview",     label: "Dashboard",           icon: LayoutGrid,    available: true },
-  { id: "profile",      label: "Institution",         icon: Building2,     available: true },
-  { id: "jobs",         label: "Jobs & pipeline",     icon: Briefcase,     available: true },
-  { id: "candidates",   label: "Candidates",          icon: Users,         available: true },
-  { id: "offers",       label: "Offers",              icon: FileText,      available: true },
-  { id: "negotiations", label: "Negotiations",        icon: Handshake,     available: true },
-  { id: "interviews",   label: "Interviews & demos",  icon: CalendarCheck, available: false },
-  { id: "onboarding",   label: "Onboarding",          icon: UserCheck,     available: false },
-  { id: "analytics",    label: "Analytics",           icon: BarChart3,     available: false },
-  { id: "settings",     label: "Settings",            icon: Settings,      available: false },
-];
 
 // Sub-view union — tracks exactly where in the drill-down tree we are
 type SubView =
   | { kind: "none" }
   | { kind: "pipeline"; jobId: string }
-  | { kind: "candidate"; candidateId: string }
+  | { kind: "candidate"; applicationId: string; jobId: string }
   | { kind: "offer-builder"; candidateId?: string }
   | { kind: "candidate-offer-view" };
 
+function EmptySection({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+      <p className="font-display font-bold text-[16px] text-[#1a2332] mb-2">{title}</p>
+      <p className="text-[13.5px] text-slate-500 max-w-md mx-auto leading-relaxed">{body}</p>
+    </div>
+  );
+}
+
 export default function SchoolDashboardPage() {
-  const [active, setActive] = useState("overview");
+  const [active, setActive] = useState<SchoolNavId>("overview");
+  const [postingJob, setPostingJob] = useState(false);
   const { authHeader } = useRecruitmentProfile();
   const [sub, setSub] = useState<SubView>({ kind: "none" });
 
   // Which sidebar item is highlighted when drilling down
-  const shellActive =
-    sub.kind === "pipeline"            ? "jobs" :
-    sub.kind === "candidate"           ? "candidates" :
-    sub.kind === "offer-builder"       ? "offers" :
-    sub.kind === "candidate-offer-view"? "offers" :
+  const shellActive: SchoolNavId =
+    sub.kind === "pipeline"             ? "jobs" :
+    sub.kind === "candidate"            ? "candidates" :
+    sub.kind === "offer-builder"        ? "offers" :
+    sub.kind === "candidate-offer-view" ? "offers" :
     active;
 
   // Navigate top-level — always resets sub-views
-  const navigate = (id: string) => {
+  const navigate = (id: SchoolNavId) => {
     setSub({ kind: "none" });
+    setPostingJob(false);
     setActive(id);
   };
 
   return (
     <DashboardGuard allow="SCHOOL_ADMIN">
       {(profile) => (
-        <DashboardShell
-          title={profile.institutionName || "School Dashboard"}
-          subtitle={profile.email}
-          nav={NAV}
+        <SchoolDashboardShell
           active={shellActive}
           onNavigate={navigate}
           accountName={profile.institutionName || profile.email}
-          accountRole="HR · Admin"
         >
           {/* ═══════════════════════════════════
               SUB-VIEW DRILL-DOWNS (highest priority)
@@ -76,7 +68,10 @@ export default function SchoolDashboardPage() {
 
           {sub.kind === "candidate" ? (
             <CandidateProfile
-              onBack={() => setSub({ kind: "pipeline", jobId: "demo" })}
+              applicationId={sub.applicationId}
+              jobId={sub.jobId}
+              authHeader={authHeader}
+              onBack={() => setSub({ kind: "pipeline", jobId: sub.jobId })}
             />
 
           ) : sub.kind === "pipeline" ? (
@@ -84,7 +79,7 @@ export default function SchoolDashboardPage() {
               jobId={sub.jobId}
               authHeader={authHeader}
               onBack={() => { setSub({ kind: "none" }); setActive("jobs"); }}
-              onViewCandidate={(cId) => setSub({ kind: "candidate", candidateId: cId })}
+              onViewCandidate={(appId) => setSub({ kind: "candidate", applicationId: appId, jobId: sub.jobId })}
             />
 
           ) : sub.kind === "offer-builder" ? (
@@ -104,26 +99,27 @@ export default function SchoolDashboardPage() {
           ) : active === "profile" ? (
             <InstitutionProfileForm authHeader={authHeader} />
 
-          ) : active === "post-job" ? (
+          ) : active === "jobs" && postingJob ? (
             <PostJobForm
               institutionName={profile.institutionName || "Your institution"}
               authHeader={authHeader}
-              onCancel={() => setActive("jobs")}
-              onSaved={() => setActive("jobs")}
+              onCancel={() => setPostingJob(false)}
+              onSaved={() => { setPostingJob(false); }}
               onGoToProfile={() => navigate("profile")}
             />
 
           ) : active === "jobs" ? (
             <SchoolJobList
               authHeader={authHeader}
-              onPostJob={() => setActive("post-job")}
+              onPostJob={() => setPostingJob(true)}
               onViewPipeline={(jobId) => setSub({ kind: "pipeline", jobId })}
               onGoToProfile={() => navigate("profile")}
             />
 
           ) : active === "candidates" ? (
-            <CandidateProfile
-              onBack={() => navigate("jobs")}
+            <EmptySection
+              title="Select a candidate from a job pipeline"
+              body="Open a job from Jobs & pipeline, then click 'View profile' on any applicant card to see their full details here."
             />
 
           ) : active === "offers" ? (
@@ -140,35 +136,20 @@ export default function SchoolDashboardPage() {
 
           ) : active === "overview" ? (
             <>
-              {/* Verification is a separate review workflow — registering does not grant it. */}
-              <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 mb-6 flex items-start gap-3">
-                <ShieldCheck className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" strokeWidth={1.8} />
-                <div className="min-w-0">
-                  <p className="font-bold text-[13.5px] text-amber-900">Institution not yet verified</p>
-                  <p className="text-[12.5px] text-amber-800/80 mt-0.5 leading-relaxed">
-                    Complete your{" "}
-                    <button onClick={() => navigate("profile")} className="font-bold underline underline-offset-2">
-                      institution profile
-                    </button>{" "}
-                    to be considered for verification.
-                  </p>
-                </div>
-              </div>
-
               <InstitutionOverview
-                demo
                 name={profile.contactPerson || profile.institutionName || "there"}
-                onPostJob={() => setActive("post-job")}
-                onViewCandidates={() => navigate("candidates")}
+                authHeader={authHeader}
+                onPostJob={() => { setActive("jobs"); setPostingJob(true); }}
+                onViewPipeline={(jobId) => setSub({ kind: "pipeline", jobId })}
               />
             </>
           ) : (
             <EmptySection
-              title={`${NAV.find((n) => n.id === active)?.label ?? "This section"} is coming soon`}
+              title="This section is coming soon"
               body="This part of the portal has no backend yet. It will appear here as soon as it is built."
             />
           )}
-        </DashboardShell>
+        </SchoolDashboardShell>
       )}
     </DashboardGuard>
   );

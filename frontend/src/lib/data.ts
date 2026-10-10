@@ -80,6 +80,7 @@ export interface SolutionCategoryItem {
   name: SolutionCategory | string;
   description: string;
   color: string;
+  href?: string;
 }
 
 export const solutionCategories: SolutionCategoryItem[] = [

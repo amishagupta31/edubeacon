@@ -496,10 +496,14 @@ export default function RegisterClient() {
               )}
 
               <button
-                onClick={() => router.replace(DASHBOARD_PATH[created.accountType])}
+                onClick={() => router.replace(
+                  created.accountType === "TEACHER"
+                    ? "/recruitment/onboarding"
+                    : DASHBOARD_PATH[created.accountType]
+                )}
                 className={btn}
               >
-                Go to my dashboard →
+                {created.accountType === "TEACHER" ? "Complete your profile →" : "Go to my dashboard →"}
               </button>
             </div>
           )}

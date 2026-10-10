@@ -31,17 +31,6 @@ function record(key: string) {
 }
 
 const str = (v: unknown, max = 200) => String(v ?? "").trim().slice(0, max);
-
-/**
- * POST /api/recruitment/register
- *
- * Creates the caller's recruitment profile. Identity comes from the verified
- * Clerk token, never from the body — the client supplies only profile fields
- * and the requested accountType.
- *
- * accountType is accepted here once, at creation. It is NOT updatable later;
- * there is deliberately no PATCH route for it.
- */
 router.post("/register", requireAuth, async (req: AuthedRequest, res: Response) => {
   if (!req.userId) { res.status(401).json({ error: "Unauthorized" }); return; }
 
@@ -88,10 +77,10 @@ router.post("/register", requireAuth, async (req: AuthedRequest, res: Response) 
       accountType === "TEACHER"
         ? { fullName: str(req.body?.fullName, 120), phone: str(req.body?.phone, 20) }
         : {
-            institutionName: str(req.body?.institutionName, 160),
-            contactPerson: str(req.body?.contactPerson, 120),
-            phone: str(req.body?.phone, 20),
-          };
+          institutionName: str(req.body?.institutionName, 160),
+          contactPerson: str(req.body?.contactPerson, 120),
+          phone: str(req.body?.phone, 20),
+        };
 
     if (accountType === "TEACHER" && !fields.fullName) {
       res.status(400).json({ error: "Full name is required" });
@@ -162,12 +151,12 @@ router.put("/profile/teacher", requireAuth, requireRole("TEACHER"), async (req: 
   const body = (req.body ?? {}) as Record<string, unknown>;
   const update: Record<string, unknown> = {};
 
-  if (body.fullName !== undefined)    update.fullName   = str(body.fullName, 120);
-  if (body.phone !== undefined)       update.phone      = str(body.phone, 20);
-  if (body.resumeUrl !== undefined)   update.resumeUrl  = str(body.resumeUrl, 500);
-  if (body.bio !== undefined)         update.bio        = str(body.bio, 1000);
-  if (body.stetStatus !== undefined)  update.stetStatus = str(body.stetStatus, 100);
-  if (body.currentCTC !== undefined)  update.currentCTC = Number(body.currentCTC) || null;
+  if (body.fullName !== undefined) update.fullName = str(body.fullName, 120);
+  if (body.phone !== undefined) update.phone = str(body.phone, 20);
+  if (body.resumeUrl !== undefined) update.resumeUrl = str(body.resumeUrl, 500);
+  if (body.bio !== undefined) update.bio = str(body.bio, 1000);
+  if (body.stetStatus !== undefined) update.stetStatus = str(body.stetStatus, 100);
+  if (body.currentCTC !== undefined) update.currentCTC = Number(body.currentCTC) || null;
   if (body.expectedCTC !== undefined) update.expectedCTC = Number(body.expectedCTC) || null;
   if (body.availableFrom !== undefined) {
     const d = new Date(str(body.availableFrom, 30));
@@ -226,8 +215,60 @@ router.get("/teacher/overview", requireAuth, requireRole("TEACHER"), (req: RoleR
   res.json({ accountType: req.accountType, sections: [] });
 });
 
-router.get("/school/overview", requireAuth, requireRole("SCHOOL_ADMIN"), (req: RoleRequest, res: Response) => {
-  res.json({ accountType: req.accountType, activeJobs: 0, totalApplications: 0, shortlisted: 0 });
+router.get("/school/overview", requireAuth, requireRole("SCHOOL_ADMIN"), async (req: RoleRequest, res: Response) => {
+  try {
+    const uid = req.userId!;
+
+    // All jobs owned by this school
+    const allJobs = await Job.find({ ownerClerkUserId: uid })
+      .select("_id title board classes roleType applicantCount publishedAt deadline status")
+      .lean() as (IJob & { _id: unknown })[];
+
+    const publishedJobs = allJobs.filter((j) => j.status === "PUBLISHED");
+    const publishedIds   = publishedJobs.map((j) => j._id);
+
+    // Active application count across all published jobs
+    const activeCandidates = await Application.countDocuments({
+      jobId: { $in: publishedIds },
+      status: "active",
+    });
+
+    // Active offer count (sent/viewed but not yet resolved)
+    const offersOut = await Offer.countDocuments({
+      ownerClerkUserId: uid,
+      status: { $in: ["sent", "viewed", "pending_approval", "approved"] },
+    }).catch(() => 0);
+
+    // Furthest pipeline stage per job (highest stageIndex among active apps)
+    const stageAgg = await Application.aggregate([
+      { $match: { jobId: { $in: publishedIds }, status: "active" } },
+      { $group: { _id: "$jobId", maxIdx: { $max: "$stageIndex" }, stageName: { $last: "$currentStage" } } },
+    ]);
+    const stageMap = new Map<string, string>(
+      stageAgg.map((a: { _id: unknown; stageName: string }) => [String(a._id), a.stageName || "Applied"])
+    );
+
+    const rolesList = publishedJobs.map((job) => ({
+      _id:              String(job._id),
+      title:            job.title,
+      board:            [job.board, job.classes].filter(Boolean).join(" · "),
+      applicants:       job.applicantCount || 0,
+      furthestStage:    stageMap.get(String(job._id)) || "Applied",
+      daysSincePublished: job.publishedAt
+        ? Math.floor((Date.now() - new Date(job.publishedAt).getTime()) / 86_400_000)
+        : 0,
+    }));
+
+    res.json({
+      openRoles:        publishedJobs.length,
+      activeCandidates,
+      offersOut,
+      rolesList,
+    });
+  } catch (err) {
+    console.error("School overview error:", err);
+    res.status(500).json({ error: "Could not load overview" });
+  }
 });
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -314,9 +355,9 @@ router.put("/institution", requireAuth, requireRole("SCHOOL_ADMIN"), async (req:
   const achievementsUpdate: { title: string; year: string; description: string }[] | undefined =
     Array.isArray(body.achievements)
       ? (body.achievements as { title?: string; year?: string; description?: string }[])
-          .filter((a) => a?.title)
-          .map((a) => ({ title: str(a.title, 160), year: str(a.year, 4), description: str(a.description, 500) }))
-          .slice(0, 20)
+        .filter((a) => a?.title)
+        .map((a) => ({ title: str(a.title, 160), year: str(a.year, 4), description: str(a.description, 500) }))
+        .slice(0, 20)
       : undefined;
 
   try {
@@ -418,11 +459,11 @@ router.post("/jobs", requireAuth, requireRole("SCHOOL_ADMIN"), async (req: RoleR
 
     const requirements = Array.isArray(body.requirements)
       ? (body.requirements as { text?: string; screening?: string }[])
-          .filter((r) => str(r?.text, 300))
-          .map((r) => ({
-            text: str(r.text, 300),
-            screening: r?.screening === "hard" ? "hard" as const : "scored" as const,
-          }))
+        .filter((r) => str(r?.text, 300))
+        .map((r) => ({
+          text: str(r.text, 300),
+          screening: r?.screening === "hard" ? "hard" as const : "scored" as const,
+        }))
       : [];
 
     const stages = Array.isArray(body.stages)
@@ -691,7 +732,24 @@ router.get("/jobs", async (req: Request, res: Response) => {
       Job.countDocuments(filter),
     ]);
 
-    res.json({ jobs, total, page, pages: Math.ceil(total / limit) });
+    // Enrich each job with institution profile extras (website, type, year)
+    const institutionIds = [...new Set(jobs.map((j) => j.institutionId?.toString()).filter(Boolean))];
+    const institutions = institutionIds.length
+      ? await Institution.find({ _id: { $in: institutionIds } })
+          .select("_id website institutionType establishedYear description")
+          .lean()
+      : [];
+    const instMap = new Map(institutions.map((i) => [i._id.toString(), i]));
+    const enriched = jobs.map((j) => {
+      const inst = j.institutionId ? instMap.get(j.institutionId.toString()) : undefined;
+      return inst
+        ? { ...j, institutionWebsite: (inst as Record<string, unknown>).website ?? null,
+            institutionType: (inst as Record<string, unknown>).institutionType ?? null,
+            establishedYear: (inst as Record<string, unknown>).establishedYear ?? null }
+        : j;
+    });
+
+    res.json({ jobs: enriched, total, page, pages: Math.ceil(total / limit) });
   } catch (err) {
     console.error("Jobs browse error:", err);
     res.status(500).json({ error: "Could not load jobs" });
@@ -764,6 +822,7 @@ router.post("/jobs/:id/apply", requireAuth, requireRole("TEACHER"), async (req: 
       teacherName: profile.fullName || profile.email,
       teacherEmail: profile.email,
       teacherPhone: profile.phone || "",
+      resumeUrl: profile.resumeUrl || "",
       coverNote,
       stages: job.stages.length ? job.stages : ["Applied", "Screening", "Interview", "Offer"],
       stageIndex: 0,
@@ -788,6 +847,35 @@ router.post("/jobs/:id/apply", requireAuth, requireRole("TEACHER"), async (req: 
  * GET /api/recruitment/applications/mine
  * Teacher sees all their own applications with current stage.
  */
+/**
+ * GET /api/recruitment/applications/:id
+ * School admin views a single application for one of its own jobs,
+ * enriched with the teacher's profile bio + CTC fields.
+ */
+router.get("/applications/:id", requireAuth, requireRole("SCHOOL_ADMIN"), async (req: RoleRequest, res: Response) => {
+  try {
+    const app = await Application.findById(req.params.id)
+      .select("_id jobId jobTitle institutionName teacherClerkUserId teacherName teacherEmail teacherPhone resumeUrl coverNote currentStage stageIndex stages status aiScore schoolNotes appliedAt")
+      .lean() as (Record<string, unknown> & { jobId: string; teacherClerkUserId?: string }) | null;
+    if (!app) { res.status(404).json({ error: "Application not found" }); return; }
+    // Verify the school owns the job
+    const job = await Job.findOne({ _id: app.jobId, ownerClerkUserId: req.userId }).lean() as IJob | null;
+    if (!job) { res.status(403).json({ error: "Access denied" }); return; }
+    // Enrich with teacher profile fields the school is entitled to see
+    let teacherExtra: Record<string, unknown> = {};
+    if (app.teacherClerkUserId) {
+      const tp = await RecruitmentProfile.findOne({ clerkUserId: app.teacherClerkUserId })
+        .select("bio qualifications experience currentCTC expectedCTC subjectSpecialisations ctetStatus stetStatus preferredCities availableFrom")
+        .lean() as Record<string, unknown> | null;
+      if (tp) teacherExtra = tp;
+    }
+    res.json({ ...app, teacherProfile: teacherExtra });
+  } catch (err) {
+    console.error("Application detail error:", err);
+    res.status(500).json({ error: "Could not load application" });
+  }
+});
+
 router.get("/applications/mine", requireAuth, requireRole("TEACHER"), async (req: RoleRequest, res: Response) => {
   try {
     const apps = await Application.find({ teacherClerkUserId: req.userId })
@@ -812,7 +900,7 @@ router.get("/jobs/:id/applications", requireAuth, requireRole("SCHOOL_ADMIN"), a
     if (!job) { res.status(404).json({ error: "Job not found" }); return; }
 
     const apps = await Application.find({ jobId: req.params.id })
-      .select("_id teacherName teacherEmail teacherPhone coverNote currentStage stageIndex stages status aiScore schoolNotes appliedAt")
+      .select("_id teacherName teacherEmail teacherPhone resumeUrl coverNote currentStage stageIndex stages status aiScore schoolNotes appliedAt")
       .sort({ stageIndex: -1, appliedAt: -1 })
       .lean();
 
@@ -869,7 +957,7 @@ router.put("/applications/:id/status", requireAuth, async (req: AuthedRequest, r
 
     // Schools can reject/offer; teachers can only withdraw their own
     const isSchool = app.ownerClerkUserId === req.userId;
-    const isOwner  = app.teacherClerkUserId === req.userId;
+    const isOwner = app.teacherClerkUserId === req.userId;
     if (!isSchool && !isOwner) { res.status(403).json({ error: "Forbidden" }); return; }
     if (next === "withdrawn" && !isOwner) { res.status(403).json({ error: "Only the applicant can withdraw" }); return; }
     if ((next === "rejected" || next === "offered") && !isSchool) { res.status(403).json({ error: "Only the school can reject or offer" }); return; }
@@ -912,8 +1000,8 @@ router.post("/offers", requireAuth, requireRole("SCHOOL_ADMIN"), async (req: Rol
 
     const salaryRows = Array.isArray(body.salaryRows)
       ? (body.salaryRows as { label?: string; amount?: number }[])
-          .filter((r) => r?.label)
-          .map((r) => ({ label: str(r.label, 100), amount: Number(r.amount) || 0 }))
+        .filter((r) => r?.label)
+        .map((r) => ({ label: str(r.label, 100), amount: Number(r.amount) || 0 }))
       : [];
 
     const offer = await Offer.create({

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Loader2, Save, ShieldCheck, ShieldAlert, CheckCircle2, Plus, Trash2 } from "lucide-react";
+import { Loader2, Save, CheckCircle2, Plus, Trash2 } from "lucide-react";
 import { API } from "./useRecruitmentProfile";
 
 const INSTITUTION_TYPES = [
@@ -43,12 +43,6 @@ const EMPTY: Institution = {
   verificationStatus: "PENDING",
 };
 
-const VERIFICATION_UI: Record<Verification, { label: string; cls: string; icon: React.ElementType }> = {
-  PENDING:   { label: "Not yet verified", cls: "bg-amber-50 border-amber-200 text-amber-900", icon: ShieldAlert },
-  IN_REVIEW: { label: "Verification in review", cls: "bg-blue-50 border-blue-200 text-blue-900", icon: ShieldAlert },
-  VERIFIED:  { label: "Verified institution", cls: "bg-emerald-50 border-emerald-200 text-emerald-900", icon: ShieldCheck },
-  REJECTED:  { label: "Verification declined", cls: "bg-red-50 border-red-200 text-red-900", icon: ShieldAlert },
-};
 
 /** Completeness across the fields that matter for a credible listing. */
 function completeness(d: Institution) {
@@ -126,8 +120,6 @@ export default function InstitutionProfileForm({
   }
 
   const pct = completeness(data);
-  const v = VERIFICATION_UI[data.verificationStatus] ?? VERIFICATION_UI.PENDING;
-  const VIcon = v.icon;
 
   const input =
     "w-full border border-line rounded-xl px-4 py-2.5 text-[14px] text-charcoal focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/10 transition-all";
@@ -135,17 +127,6 @@ export default function InstitutionProfileForm({
 
   return (
     <div className="w-full">
-      {/* Verification — read only, set by review */}
-      <div className={`rounded-2xl border px-5 py-4 mb-5 flex items-start gap-3 ${v.cls}`}>
-        <VIcon className="w-5 h-5 shrink-0 mt-0.5" strokeWidth={1.8} />
-        <div>
-          <p className="font-bold text-[13.5px]">{v.label}</p>
-          <p className="text-[12.5px] opacity-80 mt-0.5 leading-relaxed">
-            Verification is carried out by the EduBeacon team and can&apos;t be set from this page.
-          </p>
-        </div>
-      </div>
-
       {/* Completeness */}
       <div className="bg-white rounded-2xl border border-line p-5 mb-5">
         <div className="flex items-center justify-between mb-2.5">

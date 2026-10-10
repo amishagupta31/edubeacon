@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   ChevronLeft, Loader2, ChevronRight, ChevronDown,
-  UserCheck, XCircle, ClipboardList,
+  UserCheck, XCircle, ClipboardList, FileText,
 } from "lucide-react";
 import { API } from "./useRecruitmentProfile";
 
@@ -14,6 +14,7 @@ interface Applicant {
   teacherName: string;
   teacherEmail: string;
   teacherPhone: string;
+  resumeUrl: string;
   coverNote: string;
   currentStage: string;
   stageIndex: number;
@@ -278,7 +279,24 @@ export default function JobPipeline({
                       <p className="text-[12.5px] text-slate-500 mt-0.5">{app.teacherEmail} {app.teacherPhone && `· ${app.teacherPhone}`}</p>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-2 shrink-0 flex-wrap">
+                      {app.resumeUrl ? (
+                        <a
+                          href={app.resumeUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-200 text-[11.5px] font-bold text-blue-700 hover:bg-blue-100 transition-all"
+                        >
+                          <FileText className="w-3.5 h-3.5" /> Resume PDF
+                        </a>
+                      ) : (
+                        <span
+                          title="No resume uploaded by candidate"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-[11.5px] font-semibold text-slate-400 cursor-not-allowed"
+                        >
+                          <FileText className="w-3.5 h-3.5" /> No resume
+                        </span>
+                      )}
                       <button
                         onClick={() => onViewCandidate(app._id)}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-[11.5px] font-bold text-emerald-700 hover:bg-emerald-100 transition-all"
