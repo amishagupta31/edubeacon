@@ -38,7 +38,7 @@ const EVENT = {
   venue: "Shivalik University, Dehradun",
   titleSponsor: "Shivalik University",
   goldPartners: ["Deep Connection / KiddiCove Therapy Center", "India Genius Olympiad"],
-  mapQuery: "https://maps.google.com/maps?q=Shivalik+University,+Dehradun,+Uttarakhand&t=&z=13&ie=UTF8&iwloc=&output=embed",
+  mapQuery: "https://maps.google.com/maps?q=Shivalik+University,+Dehradun,+Uttarakhand&output=embed",
   mapLink: "https://www.google.com/maps/search/?api=1&query=Shivalik+University+Dehradun",
 };
 
