@@ -1,9 +1,9 @@
 import { Router, Response } from "express";
 import { requireAdmin, AuthedRequest } from "../middleware/clerkAuth";
-import ConferenceRegistration from "../models/ConferenceRegistration";
-import VendorRegistration from "../models/VendorRegistration";
-import InterestLead from "../models/InterestLead";
-import AwardNomination from "../models/AwardNomination";
+import ConferenceRegistration from "../modules/conference-registrations/model";
+import VendorRegistration from "../modules/vendor-registrations/model";
+import InterestLead from "../modules/interest-leads/model";
+import AwardNomination from "../modules/award-nominations/model";
 import { Model, Document } from "mongoose";
 
 const router = Router();

@@ -5,13 +5,14 @@ import { connectDB } from "./lib/mongodb";
 import { reportMailStatus } from "./lib/mailer";
 
 import webhookRouter from "./routes/webhooks";
-import conferenceRouter from "./routes/conference";
-import vendorRouter from "./routes/vendor";
-import interestRouter from "./routes/interest";
-import awardRouter from "./routes/award";
+import conferenceRouter from "./modules/conference-registrations/routes";
+import vendorRouter from "./modules/vendor-registrations/routes";
+import interestRouter from "./modules/interest-leads/routes";
+import awardRouter from "./modules/award-nominations/routes";
 import adminRouter from "./routes/admin";
 import adminAuthRouter from "./routes/adminAuth";
 import settingsRouter from "./routes/settings";
+import recruitmentRouter from "./modules/recruitment/routes";
 
 const app = express();
 const PORT = Number(process.env.PORT ?? 4000);
@@ -52,6 +53,9 @@ app.use("/api/admin/auth", adminAuthRouter);
 
 // Admin data — accepts the admin JWT or a Clerk session token
 app.use("/api/admin/registrations", adminRouter);
+
+// Recruitment portal — teacher and school endpoints
+app.use("/api/recruitment", recruitmentRouter);
 
 async function start() {
   await connectDB();

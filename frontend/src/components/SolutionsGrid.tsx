@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Container from "./ui/Container";
 import { solutionCategories } from "@/lib/data";
 
@@ -12,7 +13,7 @@ export default function SolutionsGrid() {
   solutionCategories.forEach((c) => { filterLabels[c.id] = c.name; });
 
   const displayFilters = [
-    "All", "stem", "ai", "robotics", "smart-classroom", "edtech", "erp",
+    "All", "recruitment", "stem", "ai", "robotics", "smart-classroom", "edtech", "erp",
     "assessment", "training", "books", "olympiad", "adventure", "awards",
     "healthcare", "other",
   ];
@@ -64,30 +65,40 @@ export default function SolutionsGrid() {
 
         {/* Grid (4 items per row) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {displayed.map((cat, i) => (
-            <div
-              key={cat.id}
-              className={`bg-white border border-line rounded-2xl p-5 flex flex-col gap-3 shadow-sm hover:shadow-xl hover:border-[#0E733B]/40 hover:-translate-y-1 transition-all duration-300 cursor-pointer group reveal reveal-delay-${Math.min(i + 1, 4)}`}
-            >
-              <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center group-hover:bg-[#0E733B] transition-colors duration-300">
-                <cat.icon className="w-5 h-5 text-[#0E733B] group-hover:text-white transition-colors duration-300" strokeWidth={1.75} />
+          {displayed.map((cat, i) => {
+            const cardClass = `bg-white border border-line rounded-2xl p-5 flex flex-col gap-3 shadow-sm hover:shadow-xl hover:border-[#0E733B]/40 hover:-translate-y-1 transition-all duration-300 cursor-pointer group reveal reveal-delay-${Math.min(i + 1, 4)}`;
+
+            const body = (
+              <>
+                <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center group-hover:bg-[#0E733B] transition-colors duration-300">
+                  <cat.icon className="w-5 h-5 text-[#0E733B] group-hover:text-white transition-colors duration-300" strokeWidth={1.75} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-[15px] text-charcoal group-hover:text-[#0E733B] transition-colors">
+                    {cat.name}
+                  </h3>
+                  <p className="text-[12.5px] text-slate-soft leading-snug mt-1.5 line-clamp-2">
+                    {cat.description}
+                  </p>
+                </div>
+                <span className="text-[12px] font-bold text-[#0E733B] group-hover:text-[#0B5C2F] transition-colors flex items-center gap-1 mt-auto pt-1">
+                  Explore →
+                </span>
+              </>
+            );
+
+            // Categories with a destination become real links; the rest keep
+            // their existing non-navigating appearance.
+            return cat.href ? (
+              <Link key={cat.id} href={cat.href} className={cardClass} aria-label={`Explore ${cat.name}`}>
+                {body}
+              </Link>
+            ) : (
+              <div key={cat.id} className={cardClass}>
+                {body}
               </div>
-              <div>
-                <h3 className="font-bold text-[15px] text-charcoal group-hover:text-[#0E733B] transition-colors">
-                  {cat.name}
-                </h3>
-                <p className="text-[12.5px] text-slate-soft leading-snug mt-1.5 line-clamp-2">
-                  {cat.description}
-                </p>
-              </div>
-              <button
-                className="text-[12px] font-bold text-[#0E733B] hover:text-[#0B5C2F] transition-colors flex items-center gap-1 mt-auto pt-1"
-                aria-label={`Explore ${cat.name} solutions`}
-              >
-                Explore →
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Show More Button */}

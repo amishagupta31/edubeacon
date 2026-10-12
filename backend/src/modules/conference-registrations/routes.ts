@@ -1,8 +1,8 @@
 import { Router, Response } from "express";
-import { requireAuth, AuthedRequest } from "../middleware/clerkAuth";
-import ConferenceRegistration from "../models/ConferenceRegistration";
-import { sendMail } from "../lib/mailer";
-import { conferenceEmail } from "../lib/emailTemplates";
+import { requireAuth, AuthedRequest } from "../../middleware/clerkAuth";
+import ConferenceRegistration from "./model";
+import { sendMail } from "../../lib/mailer";
+import { conferenceEmail } from "../../lib/emailTemplates";
 
 const router = Router();
 

@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
-import InterestLead from "../models/InterestLead";
-import { sendMail } from "../lib/mailer";
-import { interestEmail } from "../lib/emailTemplates";
+import InterestLead from "./model";
+import { sendMail } from "../../lib/mailer";
+import { interestEmail } from "../../lib/emailTemplates";
 
 const router = Router();
 
