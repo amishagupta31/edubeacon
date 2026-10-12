@@ -58,6 +58,7 @@ const FOOTER_COLS = [
   {
     title: "EduBeacon",
     links: [
+      { label: "How it works", href: "/recruitment/how-it-works" },
       { label: "About us", href: "/about/our-story" },
       { label: "Events", href: "/events" },
       { label: "Contact", href: "/contact" },

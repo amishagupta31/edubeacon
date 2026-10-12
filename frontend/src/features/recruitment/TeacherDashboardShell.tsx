@@ -31,11 +31,13 @@ export default function TeacherDashboardShell({
   onNavigate,
   children,
   badges,
+  fullBleed = false,
 }: {
   active: TeacherNavId;
   onNavigate: (id: TeacherNavId) => void;
   children: React.ReactNode;
   badges?: Partial<Record<TeacherNavId, number>>;
+  fullBleed?: boolean;
 }) {
   const { signOut } = useClerk();
   const router = useRouter();
@@ -125,9 +127,11 @@ export default function TeacherDashboardShell({
 
       {/* ── Page content ───────────────────────────────────────────────────── */}
       <main className="flex-1">
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 py-6">
-          {children}
-        </div>
+        {fullBleed ? children : (
+          <div className="max-w-[1280px] mx-auto px-4 sm:px-6 py-6">
+            {children}
+          </div>
+        )}
       </main>
     </div>
   );

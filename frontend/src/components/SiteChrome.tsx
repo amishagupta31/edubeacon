@@ -9,10 +9,12 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
   const pathname = usePathname();
 
   // Full-screen app shells — no chrome at all
+  // Match whole segments: "/recruitment/teacher" is the dashboard, "/recruitment/teachers" is public.
+  const under = (base: string) => pathname === base || pathname?.startsWith(base + "/");
   const isAppShell =
     pathname?.startsWith("/admin") ||
-    pathname?.startsWith("/recruitment/teacher") ||
-    pathname?.startsWith("/recruitment/school");
+    under("/recruitment/teacher") ||
+    under("/recruitment/school");
 
   if (isAppShell) return <>{children}</>;
 

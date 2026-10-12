@@ -67,7 +67,7 @@ export default function RecruitmentHeader() {
     : [
         { label: "Find Jobs", href: "/recruitment/jobs", icon: null },
         { label: "For Schools", href: "/recruitment/employers", icon: null },
-        { label: "How It Works", href: "/solutions/recruitment", icon: null },
+        { label: "How It Works", href: "/recruitment/how-it-works", icon: null },
         { label: "Pricing", href: "/recruitment/pricing", icon: null },
       ];
 

@@ -633,7 +633,7 @@ router.get("/teachers", async (_req: Request, res: Response) => {
         { subjectSpecialisations: { $exists: true, $not: { $size: 0 } } },
       ],
     })
-      .select("_id fullName bio subjectSpecialisations ctetStatus preferredCities availableFrom currentCTC expectedCTC achievements")
+      .select("_id fullName bio subjectSpecialisations ctetStatus preferredCities availableFrom currentCTC expectedCTC achievements qualifications experience")
       .sort({ updatedAt: -1 })
       .limit(60)
       .lean();
