@@ -5,9 +5,10 @@ import Link from "next/link";
 import {
   ChevronLeft, Loader2, FileText, MapPin, Mail, Phone,
   Briefcase, GraduationCap, ClipboardList, ChevronRight,
-  ChevronDown, XCircle, ExternalLink,
+  ChevronDown, XCircle, ExternalLink, Sparkles, CheckCircle2, AlertTriangle,
 } from "lucide-react";
 import { API } from "./useRecruitmentProfile";
+import { Screening, VERDICT, scoreBg } from "./screeningTypes";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -42,6 +43,7 @@ interface ApplicationDetail {
   stages: string[];
   status: "active" | "rejected" | "withdrawn" | "offered";
   aiScore: number | null;
+  screening?: Screening | null;
   schoolNotes: string;
   appliedAt: string;
   teacherProfile?: TeacherProfile;
@@ -51,12 +53,6 @@ interface ApplicationDetail {
 
 function initials(name: string) {
   return name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
-}
-
-function scoreColor(s: number) {
-  if (s >= 80) return "bg-emerald-500";
-  if (s >= 65) return "bg-amber-400";
-  return "bg-slate-300";
 }
 
 function fmt(n?: number) {
@@ -314,23 +310,73 @@ export default function CandidateProfile({
         {/* Left */}
         <div className="flex flex-col gap-5 min-w-0">
 
-          {/* AI score */}
+          {/* Screening */}
           {app.aiScore !== null && (
-            <section className="bg-white rounded-2xl border border-line shadow-sm p-6">
+            <section className="bg-white rounded-2xl border border-line shadow-sm p-6 flex flex-col gap-5">
               <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h2 className="font-display font-bold text-[17px] text-charcoal">AI fit score</h2>
-                  <p className="text-[12.5px] text-slate-500 mt-0.5">
-                    Automatically computed at the time of screening.
+                <div className="min-w-0">
+                  <h2 className="font-display font-bold text-[17px] text-charcoal flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-[#0E733B]" /> Screening
+                  </h2>
+                  <p className="text-[12.5px] text-slate-600 mt-0.5">
+                    {app.screening?.method === "ai" ? "AI assessment" : "Smart screening"}
+                    {app.screening?.screenedAt && ` · ${new Date(app.screening.screenedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`}
+                    {" "}· supports your decision, never rejects automatically
                   </p>
+                  {app.screening && (
+                    <span className={`inline-block mt-2.5 text-[11.5px] font-bold px-2 py-0.5 rounded-full border ${VERDICT[app.screening.verdict].cls}`}>
+                      {VERDICT[app.screening.verdict].label}
+                    </span>
+                  )}
                 </div>
-                <div className="text-right shrink-0">
-                  <span className={`inline-flex items-center justify-center w-16 h-16 rounded-full text-white font-display font-bold text-[26px] ${scoreColor(app.aiScore)}`}>
+                <div className="text-center shrink-0">
+                  <span className={`inline-flex items-center justify-center w-16 h-16 rounded-full font-display font-bold text-[26px] ${scoreBg(app.aiScore)}`}>
                     {app.aiScore}
                   </span>
-                  <p className="text-[11px] text-slate-400 mt-1 text-center">/ 100</p>
+                  <p className="text-[11px] text-slate-500 mt-1">/ 100</p>
                 </div>
               </div>
+
+              {app.screening && (
+                <>
+                  <p className="text-[13.5px] text-slate-700 leading-relaxed">{app.screening.summary}</p>
+
+                  <div className="grid sm:grid-cols-2 gap-x-6 gap-y-3">
+                    {app.screening.criteria.map((c) => (
+                      <div key={c.key} className="flex flex-col gap-1">
+                        <div className="flex items-baseline justify-between gap-2 text-[12.5px]">
+                          <span className="font-semibold text-charcoal">{c.label}</span>
+                          <span className="tabular-nums text-slate-600">{c.points}/{c.max}</span>
+                        </div>
+                        <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                          <div className="h-full rounded-full bg-[#0E733B]" style={{ width: `${(c.points / c.max) * 100}%` }} />
+                        </div>
+                        <span className="text-[11.5px] text-slate-600">{c.note}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {app.screening.requirements.length > 0 && (
+                    <div className="flex flex-col gap-2">
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Your requirements</p>
+                      {app.screening.requirements.map((r) => (
+                        <div key={r.text} className="flex items-start gap-2.5 text-[13px]">
+                          {r.met
+                            ? <CheckCircle2 className="w-4 h-4 mt-0.5 text-[#0E733B] shrink-0" />
+                            : <AlertTriangle className="w-4 h-4 mt-0.5 text-amber-600 shrink-0" />}
+                          <div className="min-w-0">
+                            <span className="font-semibold text-charcoal">{r.text}</span>
+                            <span className={`ml-2 text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${r.screening === "hard" ? "bg-[#0C2A1B] text-white" : "bg-emerald-50 text-emerald-800"}`}>
+                              {r.screening === "hard" ? "Must-have" : "Preferred"}
+                            </span>
+                            <p className="text-[12px] text-slate-600 mt-0.5">{r.evidence}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
             </section>
           )}
 
@@ -466,7 +512,7 @@ export default function CandidateProfile({
                     </div>
                   </div>
                 ) : null}
-                {tp?.availableFrom && <Row label="Available from" value={tp.availableFrom} />}
+                {tp?.availableFrom && <Row label="Available from" value={new Date(tp.availableFrom).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })} />}
                 {tp?.preferredCities?.length ? (
                   <div>
                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-1.5">Preferred cities</p>

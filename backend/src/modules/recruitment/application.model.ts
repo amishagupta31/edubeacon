@@ -1,4 +1,5 @@
 import { Schema, model, models, Document, Types } from "mongoose";
+import type { ScreeningResult } from "./screening";
 
 export const APPLICATION_STATUSES = ["active", "rejected", "withdrawn", "offered"] as const;
 export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number];
@@ -24,6 +25,7 @@ export interface IApplication extends Document {
   currentStage: string;    // convenience denorm
   status: ApplicationStatus;
   aiScore: number | null;
+  screening: ScreeningResult | null;
   schoolNotes: string;
   appliedAt: Date;
   createdAt: Date;
@@ -50,6 +52,7 @@ const schema = new Schema<IApplication>(
     currentStage:       { type: String, default: "" },
     status:             { type: String, enum: APPLICATION_STATUSES, default: "active" },
     aiScore:            { type: Number, default: null },
+    screening:          { type: Schema.Types.Mixed, default: null },
     schoolNotes:        { type: String, default: "" },
     appliedAt:          { type: Date, default: Date.now },
   },

@@ -3,9 +3,10 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   ChevronLeft, Loader2, ChevronRight, ChevronDown,
-  UserCheck, XCircle, ClipboardList, FileText,
+  UserCheck, XCircle, ClipboardList, FileText, Sparkles, AlertTriangle, Columns3, X, Check, Minus,
 } from "lucide-react";
 import { API } from "./useRecruitmentProfile";
+import { Screening, VERDICT, scoreBg, CTET_LABEL } from "./screeningTypes";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -21,27 +22,29 @@ interface Applicant {
   stages: string[];
   status: "active" | "rejected" | "withdrawn" | "offered";
   aiScore: number | null;
+  screening: Screening | null;
   schoolNotes: string;
   appliedAt: string;
 }
 
 interface PipelineData {
-  job: { title: string; stages: string[] };
+  job: { title: string; stages: string[]; requirements: { text: string; screening: "hard" | "scored" }[] };
   applications: Applicant[];
+  aiEnabled: boolean;
 }
 
 // ── Score circle ───────────────────────────────────────────────────────────
 
 function ScoreCircle({ score }: { score: number | null }) {
   if (score === null) return (
-    <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center">
-      <span className="text-[10px] font-bold text-slate-400">—</span>
+    <div className="w-11 h-11 rounded-full bg-slate-100 flex items-center justify-center shrink-0" title="Not screened yet">
+      <span className="text-[11px] font-bold text-slate-500">—</span>
     </div>
   );
-  const color = score >= 80 ? "bg-emerald-500" : score >= 70 ? "bg-amber-400" : "bg-slate-300";
   return (
-    <div className={`w-9 h-9 rounded-full ${color} flex items-center justify-center`}>
-      <span className="text-[11px] font-bold text-white tabular-nums">{score}</span>
+    <div className={`w-11 h-11 rounded-full ${scoreBg(score)} flex flex-col items-center justify-center shrink-0`} title="Match score out of 100">
+      <span className="text-[14px] font-bold leading-none tabular-nums">{score}</span>
+      <span className="text-[8px] font-semibold opacity-80 leading-none mt-0.5">/100</span>
     </div>
   );
 }
@@ -137,6 +140,81 @@ function StageActions({
   );
 }
 
+// ── Side-by-side comparison ────────────────────────────────────────────────
+
+function CompareModal({ apps, onClose }: { apps: Applicant[]; onClose: () => void }) {
+  const reqs = apps.find((a) => a.screening)?.screening?.requirements.map((r) => ({ text: r.text, screening: r.screening })) ?? [];
+  const fmt = (n: number | null) => (n ? `₹${n.toLocaleString("en-IN")}` : "—");
+  const rows: { label: string; render: (a: Applicant) => React.ReactNode }[] = [
+    { label: "Match score", render: (a) => <span className={`inline-flex px-2.5 py-1 rounded-lg text-[13px] font-bold tabular-nums ${scoreBg(a.aiScore)}`}>{a.aiScore ?? "—"}</span> },
+    { label: "Verdict", render: (a) => a.screening ? <span className={`text-[11.5px] font-bold px-2 py-0.5 rounded-full border ${VERDICT[a.screening.verdict].cls}`}>{VERDICT[a.screening.verdict].label}</span> : "—" },
+    { label: "Subjects", render: (a) => a.screening?.facts.subjects.join(", ") || "—" },
+    { label: "Experience", render: (a) => a.screening ? `${a.screening.facts.experienceYears} yrs` : "—" },
+    { label: "CTET", render: (a) => a.screening ? CTET_LABEL[a.screening.facts.ctetStatus] ?? a.screening.facts.ctetStatus : "—" },
+    { label: "Qualifications", render: (a) => a.screening?.facts.qualifications.join("; ") || "—" },
+    { label: "Preferred cities", render: (a) => a.screening?.facts.preferredCities.join(", ") || "—" },
+    { label: "Expected CTC", render: (a) => fmt(a.screening?.facts.expectedCTC ?? null) },
+    { label: "Current stage", render: (a) => a.currentStage || "—" },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6">
+      <div className="absolute inset-0 bg-black/40 modal-backdrop" onClick={onClose} />
+      <div className="relative bg-white w-full sm:max-w-5xl max-h-[90vh] rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-line">
+          <div>
+            <h2 className="font-display font-bold text-[19px] text-charcoal">Compare candidates</h2>
+            <p className="text-[12.5px] text-slate-600">Side by side on the points you hire on</p>
+          </div>
+          <button onClick={onClose} aria-label="Close" className="w-9 h-9 rounded-full hover:bg-slate-100 flex items-center justify-center">
+            <X className="w-5 h-5 text-slate-600" />
+          </button>
+        </div>
+        <div className="overflow-auto">
+          <table className="w-full text-[13px] border-collapse min-w-[560px]">
+            <thead className="sticky top-0 bg-white">
+              <tr>
+                <th className="text-left font-semibold text-slate-500 px-6 py-3 w-[170px]"></th>
+                {apps.map((a) => (
+                  <th key={a._id} className="text-left px-4 py-3 font-display font-bold text-[15px] text-charcoal">{a.teacherName}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => (
+                <tr key={r.label} className="border-t border-line align-top">
+                  <td className="px-6 py-3 text-[12px] font-bold uppercase tracking-wide text-slate-500">{r.label}</td>
+                  {apps.map((a) => <td key={a._id} className="px-4 py-3 text-slate-800">{r.render(a)}</td>)}
+                </tr>
+              ))}
+              {reqs.map((q) => (
+                <tr key={q.text} className="border-t border-line align-top">
+                  <td className="px-6 py-3 text-[12.5px] text-slate-700">
+                    <span className={`mr-1.5 text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${q.screening === "hard" ? "bg-[#0C2A1B] text-white" : "bg-emerald-50 text-emerald-800"}`}>
+                      {q.screening === "hard" ? "Must" : "Pref"}
+                    </span>
+                    {q.text}
+                  </td>
+                  {apps.map((a) => {
+                    const r = a.screening?.requirements.find((x) => x.text === q.text);
+                    return (
+                      <td key={a._id} className="px-4 py-3">
+                        {!r ? <Minus className="w-4 h-4 text-slate-400" /> : r.met
+                          ? <span className="inline-flex items-center gap-1 text-emerald-700 font-semibold"><Check className="w-4 h-4" /> Met</span>
+                          : <span className="inline-flex items-center gap-1 text-amber-700 font-semibold"><X className="w-4 h-4" /> Not shown</span>}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Main Component ─────────────────────────────────────────────────────────
 
 export default function JobPipeline({
@@ -154,6 +232,12 @@ export default function JobPipeline({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeStage, setActiveStage] = useState(0);
+  const [sortBy, setSortBy] = useState<"score" | "newest">("score");
+  const [mustHaveOnly, setMustHaveOnly] = useState(false);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [showCompare, setShowCompare] = useState(false);
+  const [screening, setScreening] = useState(false);
+  const [screenMsg, setScreenMsg] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -173,7 +257,27 @@ export default function JobPipeline({
 
   useEffect(() => { load(); }, [load]);
 
-  if (loading) {
+  const runScreening = async () => {
+    setScreening(true);
+    setScreenMsg(null);
+    try {
+      const headers = await authHeader();
+      const res = await fetch(`${API}/api/recruitment/jobs/${jobId}/screen`, { method: "POST", headers });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error || "Screening failed");
+      setScreenMsg(`Screened ${body.screened} applicant${body.screened === 1 ? "" : "s"}${body.method === "ai" ? " with AI" : ""}.`);
+      await load();
+    } catch (err) {
+      setScreenMsg(err instanceof Error ? err.message : "Screening failed");
+    } finally {
+      setScreening(false);
+    }
+  };
+
+  const toggleCompare = (id: string) =>
+    setCompareIds((ids) => ids.includes(id) ? ids.filter((x) => x !== id) : ids.length >= 3 ? ids : [...ids, id]);
+
+  if (loading && !data) {
     return (
       <div className="flex items-center justify-center py-24">
         <Loader2 className="w-6 h-6 text-[#0E733B] animate-spin" />
@@ -204,7 +308,13 @@ export default function JobPipeline({
   const rejected = applications.filter((a) => a.status === "rejected");
   const offered = applications.filter((a) => a.status === "offered");
 
-  const stageApps = byStage[activeStage] || [];
+  const stageApps = (byStage[activeStage] || [])
+    .filter((a) => !mustHaveOnly || (a.screening && a.screening.verdict !== "missing_must_have"))
+    .sort((a, b) => sortBy === "score"
+      ? (b.aiScore ?? -1) - (a.aiScore ?? -1)
+      : new Date(b.appliedAt).getTime() - new Date(a.appliedAt).getTime());
+  const unscreened = applications.filter((a) => a.aiScore === null).length;
+  const compareApps = applications.filter((a) => compareIds.includes(a._id));
 
   return (
     <div className="max-w-full">
@@ -219,7 +329,15 @@ export default function JobPipeline({
         </div>
 
         {/* Summary pills */}
-        <div className="flex gap-2 shrink-0 flex-wrap">
+        <div className="flex gap-2 shrink-0 flex-wrap items-center">
+          <button
+            onClick={runScreening}
+            disabled={screening || applications.length === 0}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0C2A1B] text-white text-[13px] font-bold hover:bg-[#0E733B] transition-colors disabled:opacity-50"
+          >
+            {screening ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4 text-[#8FE3B0]" />}
+            {screening ? "Screening…" : unscreened ? `Screen ${unscreened} new` : "Re-run AI screening"}
+          </button>
           {offered.length > 0 && (
             <span className="px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-200 text-[12px] font-bold text-blue-700">
               {offered.length} offered
@@ -257,6 +375,46 @@ export default function JobPipeline({
           );
         })}
       </div>
+
+      {/* Screening info + toolbar */}
+      <div className="flex flex-col gap-3 mb-4">
+        <div className="flex items-start gap-2.5 rounded-xl bg-emerald-50/70 border border-emerald-100 px-4 py-3 text-[12.5px] text-emerald-900">
+          <Sparkles className="w-4 h-4 mt-0.5 shrink-0 text-[#0E733B]" />
+          <p className="leading-relaxed">
+            {data.aiEnabled
+              ? "AI screening is on: each applicant is scored against this job's requirements, with a written summary."
+              : "Smart screening scores each applicant on subject fit, experience, CTET, qualifications, location and your requirements. Add an Anthropic API key on the server to upgrade to AI-written assessments."}
+            {" "}Scores support your judgement — they never reject anyone automatically.
+            {screenMsg && <span className="block mt-1 font-semibold">{screenMsg}</span>}
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="inline-flex rounded-xl border border-line bg-white p-0.5">
+            {(["score", "newest"] as const).map((k) => (
+              <button
+                key={k}
+                onClick={() => setSortBy(k)}
+                className={`px-3 py-1.5 rounded-lg text-[12.5px] font-semibold transition-colors ${sortBy === k ? "bg-[#0C2A1B] text-white" : "text-slate-600 hover:text-charcoal"}`}
+              >
+                {k === "score" ? "Best match" : "Newest"}
+              </button>
+            ))}
+          </div>
+          <label className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-line bg-white text-[12.5px] font-semibold text-slate-700 cursor-pointer select-none">
+            <input type="checkbox" checked={mustHaveOnly} onChange={(e) => setMustHaveOnly(e.target.checked)} className="accent-[#0E733B]" />
+            Meets all must-haves
+          </label>
+          <button
+            onClick={() => setShowCompare(true)}
+            disabled={compareIds.length < 2}
+            className="ml-auto inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-[#0E733B]/40 bg-white text-[12.5px] font-bold text-[#0E733B] hover:bg-emerald-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Columns3 className="w-4 h-4" /> Compare ({compareIds.length}/3)
+          </button>
+        </div>
+      </div>
+
+      {showCompare && compareApps.length >= 2 && <CompareModal apps={compareApps} onClose={() => setShowCompare(false)} />}
 
       {/* Applicant cards */}
       {stageApps.length === 0 ? (
@@ -307,15 +465,47 @@ export default function JobPipeline({
                     </div>
                   </div>
 
+                  {app.screening && (
+                    <div className="mt-3 flex flex-col gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className={`text-[11.5px] font-bold px-2 py-0.5 rounded-full border ${VERDICT[app.screening.verdict].cls}`}>
+                          {VERDICT[app.screening.verdict].label}
+                        </span>
+                        <span className="text-[11px] font-semibold text-slate-500">
+                          {app.screening.method === "ai" ? "AI assessment" : "Smart screening"}
+                        </span>
+                      </div>
+                      <p className="text-[13px] text-slate-700 leading-relaxed">{app.screening.summary}</p>
+                      {app.screening.requirements.some((r) => r.screening === "hard" && !r.met) && (
+                        <p className="flex items-start gap-1.5 text-[12.5px] text-amber-800">
+                          <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                          Not shown: {app.screening.requirements.filter((r) => r.screening === "hard" && !r.met).map((r) => r.text).join("; ")}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
                   {app.coverNote && (
                     <p className="mt-2.5 text-[13px] text-slate-600 bg-slate-50 rounded-xl px-3.5 py-2.5 leading-relaxed line-clamp-3 border border-slate-100">
                       {app.coverNote}
                     </p>
                   )}
 
-                  <p className="text-[11.5px] text-slate-400 mt-2">
-                    Applied {new Date(app.appliedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
-                  </p>
+                  <div className="flex items-center justify-between gap-3 mt-2.5">
+                    <p className="text-[11.5px] text-slate-500">
+                      Applied {new Date(app.appliedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                    </p>
+                    <label className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-slate-600 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={compareIds.includes(app._id)}
+                        disabled={!compareIds.includes(app._id) && compareIds.length >= 3}
+                        onChange={() => toggleCompare(app._id)}
+                        className="accent-[#0E733B]"
+                      />
+                      Compare
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>

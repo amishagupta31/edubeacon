@@ -8,6 +8,7 @@ import Application, { IApplication } from "./application.model";
 import Offer, { OFFER_STATUSES, OfferStatus, IOffer } from "./offer.model";
 import NegotiationMessage from "./negotiation.model";
 import { IJob } from "./job.model";
+import { screenApplication, screenWithRules } from "./screening";
 
 const router = Router();
 const attempts = new Map<string, { count: number; until: number }>();
@@ -111,11 +112,7 @@ router.post("/register", requireAuth, async (req: AuthedRequest, res: Response) 
   }
 });
 
-/**
- * GET /api/recruitment/me
- * Returns the caller's own profile. Scoped to req.userId — a caller can never
- * read another account's profile through this route.
- */
+
 router.get("/me", requireAuth, async (req: AuthedRequest, res: Response) => {
   if (!req.userId) { res.status(401).json({ error: "Unauthorized" }); return; }
   try {
@@ -219,7 +216,7 @@ router.get("/school/overview", requireAuth, requireRole("SCHOOL_ADMIN"), async (
     // All jobs owned by this school
     const allJobs = await Job.find({ ownerClerkUserId: uid })
       .select("_id title board classes roleType applicantCount publishedAt deadline status")
-      .lean() as (IJob & { _id: unknown })[];
+      .lean() as unknown as (IJob & { _id: unknown })[];
 
     const publishedJobs = allJobs.filter((j) => j.status === "PUBLISHED");
     const publishedIds = publishedJobs.map((j) => j._id);
@@ -380,7 +377,7 @@ router.put("/institution", requireAuth, requireRole("SCHOOL_ADMIN"), async (req:
  */
 router.get("/institutions/:id", async (req: Request, res: Response) => {
   try {
-    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+    if (!String(req.params.id).match(/^[0-9a-fA-F]{24}$/)) {
       res.status(400).json({ error: "Invalid institution id" });
       return;
     }
@@ -706,8 +703,10 @@ router.get("/jobs", async (req: Request, res: Response) => {
     if (q.board && typeof q.board === "string") filter.board = q.board;
     if (q.employment && typeof q.employment === "string") filter.employment = q.employment;
 
+    if (q.institution && typeof q.institution === "string") filter.institutionName = q.institution;
+
     if (q.city && typeof q.city === "string") {
-      filter.city = { $regex: q.city, $options: "i" };
+      filter.city = { $regex: q.city.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), $options: "i" };
     }
 
     if (q.search && typeof q.search === "string") {
@@ -736,7 +735,7 @@ router.get("/jobs", async (req: Request, res: Response) => {
         .select("_id website institutionType establishedYear description")
         .lean()
       : [];
-    const instMap = new Map(institutions.map((i) => [i._id.toString(), i]));
+    const instMap = new Map(institutions.map((i) => [String(i._id), i]));
     const enriched = jobs.map((j) => {
       const inst = j.institutionId ? instMap.get(j.institutionId.toString()) : undefined;
       return inst
@@ -752,6 +751,58 @@ router.get("/jobs", async (req: Request, res: Response) => {
   } catch (err) {
     console.error("Jobs browse error:", err);
     res.status(500).json({ error: "Could not load jobs" });
+  }
+});
+
+/**
+ * GET /api/recruitment/stats
+ * Public, live platform counts for marketing pages.
+ */
+router.get("/stats", async (_req: Request, res: Response) => {
+  try {
+    const [schools, teachers, openJobs, applications, cities] = await Promise.all([
+      Institution.countDocuments({}),
+      RecruitmentProfile.countDocuments({ accountType: "TEACHER", active: true }),
+      Job.countDocuments({ status: "PUBLISHED" }),
+      Application.countDocuments({}),
+      Job.distinct("city", { status: "PUBLISHED", city: { $ne: "" } }),
+    ]);
+    res.set("Cache-Control", "public, max-age=300");
+    res.json({ schools, teachers, openJobs, applications, cities: cities.length });
+  } catch (err) {
+    console.error("Stats error:", err);
+    res.status(500).json({ error: "Could not load stats" });
+  }
+});
+
+/**
+ * GET /api/recruitment/jobs/organizations
+ * Institutions with at least one PUBLISHED job, with open-role counts.
+ */
+router.get("/jobs/organizations", async (_req: Request, res: Response) => {
+  try {
+    const rows = await Job.aggregate([
+      { $match: { status: "PUBLISHED", institutionName: { $ne: "" } } },
+      {
+        $group: {
+          _id: "$institutionName",
+          institutionId: { $first: "$institutionId" },
+          city: { $first: "$city" },
+          board: { $first: "$board" },
+          openRoles: { $sum: 1 },
+          latest: { $max: "$publishedAt" },
+        },
+      },
+      { $sort: { openRoles: -1, latest: -1 } },
+      { $limit: 100 },
+    ]);
+    res.json(rows.map((r) => ({
+      name: r._id as string, institutionId: r.institutionId ?? null,
+      city: r.city ?? "", board: r.board ?? "", openRoles: r.openRoles as number,
+    })));
+  } catch (err) {
+    console.error("Organizations error:", err);
+    res.status(500).json({ error: "Could not load organizations" });
   }
 });
 
@@ -808,8 +859,11 @@ router.post("/jobs/:id/apply", requireAuth, requireRole("TEACHER"), async (req: 
     if (existing) { res.status(409).json({ error: "You have already applied for this job" }); return; }
 
     const coverNote = str(req.body?.coverNote, 1000);
+    const ruleScreening = screenWithRules(job, profile, coverNote);
 
     const app = await Application.create({
+      aiScore: ruleScreening.score,
+      screening: ruleScreening,
       jobId: job._id,
       jobTitle: job.title,
       institutionName: job.institutionName,
@@ -832,6 +886,12 @@ router.post("/jobs/:id/apply", requireAuth, requireRole("TEACHER"), async (req: 
     await Job.updateOne({ _id: job._id }, { $inc: { applicantCount: 1 } });
 
     res.status(201).json({ applied: true, applicationId: app._id, stage: app.currentStage });
+
+    if (process.env.ANTHROPIC_API_KEY) {
+      screenApplication(job, profile, coverNote)
+        .then(async (r) => { if (r.method === "ai") await Application.updateOne({ _id: app._id }, { aiScore: r.score, screening: r }); })
+        .catch((e) => console.error("Background screening error:", e));
+    }
   } catch (err: unknown) {
     if ((err as { code?: number })?.code === 11000) {
       res.status(409).json({ error: "You have already applied for this job" });
@@ -846,6 +906,20 @@ router.post("/jobs/:id/apply", requireAuth, requireRole("TEACHER"), async (req: 
  * GET /api/recruitment/applications/mine
  * Teacher sees all their own applications with current stage.
  */
+router.get("/applications/mine", requireAuth, requireRole("TEACHER"), async (req: RoleRequest, res: Response) => {
+  try {
+    const apps = await Application.find({ teacherClerkUserId: req.userId })
+      .select("jobId jobTitle institutionName city state board currentStage stageIndex stages status appliedAt")
+      .sort({ appliedAt: -1 })
+      .limit(100)
+      .lean();
+    res.json(apps);
+  } catch (err) {
+    console.error("My applications error:", err);
+    res.status(500).json({ error: "Could not load applications" });
+  }
+});
+
 /**
  * GET /api/recruitment/applications/:id
  * School admin views a single application for one of its own jobs,
@@ -854,7 +928,7 @@ router.post("/jobs/:id/apply", requireAuth, requireRole("TEACHER"), async (req: 
 router.get("/applications/:id", requireAuth, requireRole("SCHOOL_ADMIN"), async (req: RoleRequest, res: Response) => {
   try {
     const app = await Application.findById(req.params.id)
-      .select("_id jobId jobTitle institutionName teacherClerkUserId teacherName teacherEmail teacherPhone resumeUrl coverNote currentStage stageIndex stages status aiScore schoolNotes appliedAt")
+      .select("_id jobId jobTitle institutionName teacherClerkUserId teacherName teacherEmail teacherPhone resumeUrl coverNote currentStage stageIndex stages status aiScore screening schoolNotes appliedAt")
       .lean() as (Record<string, unknown> & { jobId: string; teacherClerkUserId?: string }) | null;
     if (!app) { res.status(404).json({ error: "Application not found" }); return; }
     // Verify the school owns the job
@@ -875,20 +949,6 @@ router.get("/applications/:id", requireAuth, requireRole("SCHOOL_ADMIN"), async 
   }
 });
 
-router.get("/applications/mine", requireAuth, requireRole("TEACHER"), async (req: RoleRequest, res: Response) => {
-  try {
-    const apps = await Application.find({ teacherClerkUserId: req.userId })
-      .select("jobId jobTitle institutionName city state board currentStage stageIndex stages status appliedAt")
-      .sort({ appliedAt: -1 })
-      .limit(100)
-      .lean();
-    res.json(apps);
-  } catch (err) {
-    console.error("My applications error:", err);
-    res.status(500).json({ error: "Could not load applications" });
-  }
-});
-
 /**
  * GET /api/recruitment/jobs/:id/applications
  * School fetches all applicants for one of its jobs, grouped by stage.
@@ -899,14 +959,54 @@ router.get("/jobs/:id/applications", requireAuth, requireRole("SCHOOL_ADMIN"), a
     if (!job) { res.status(404).json({ error: "Job not found" }); return; }
 
     const apps = await Application.find({ jobId: req.params.id })
-      .select("_id teacherName teacherEmail teacherPhone resumeUrl coverNote currentStage stageIndex stages status aiScore schoolNotes appliedAt")
+      .select("_id teacherName teacherEmail teacherPhone resumeUrl coverNote currentStage stageIndex stages status aiScore screening schoolNotes appliedAt")
       .sort({ stageIndex: -1, appliedAt: -1 })
       .lean();
 
-    res.json({ job: { title: job.title, stages: job.stages }, applications: apps });
+    res.json({
+      job: { title: job.title, stages: job.stages, requirements: job.requirements ?? [] },
+      applications: apps,
+      aiEnabled: Boolean(process.env.ANTHROPIC_API_KEY),
+    });
   } catch (err) {
     console.error("Job applications error:", err);
     res.status(500).json({ error: "Could not load applications" });
+  }
+});
+
+/**
+ * POST /api/recruitment/jobs/:id/screen
+ * School (re)screens every applicant for one of its jobs — e.g. after editing requirements.
+ */
+router.post("/jobs/:id/screen", requireAuth, requireRole("SCHOOL_ADMIN"), async (req: RoleRequest, res: Response) => {
+  try {
+    const job = await Job.findOne({ _id: req.params.id, ownerClerkUserId: req.userId }).lean() as IJob | null;
+    if (!job) { res.status(404).json({ error: "Job not found" }); return; }
+
+    const apps = await Application.find({ jobId: job._id, status: { $in: ["active", "offered"] } })
+      .select("_id teacherClerkUserId coverNote").lean() as unknown as { _id: unknown; teacherClerkUserId: string; coverNote?: string }[];
+    const profiles = await RecruitmentProfile.find({ clerkUserId: { $in: apps.map((a) => a.teacherClerkUserId) } }).lean();
+    const byUser = new Map(profiles.map((p) => [p.clerkUserId as string, p]));
+
+    let screened = 0;
+    let aiCount = 0;
+    const queue = [...apps];
+    const worker = async () => {
+      for (let a = queue.shift(); a; a = queue.shift()) {
+        const p = byUser.get(a.teacherClerkUserId);
+        if (!p) continue;
+        const r = await screenApplication(job, p as never, a.coverNote ?? "");
+        await Application.updateOne({ _id: a._id }, { aiScore: r.score, screening: r });
+        screened++;
+        if (r.method === "ai") aiCount++;
+      }
+    };
+    await Promise.all([worker(), worker(), worker()]);
+
+    res.json({ screened, method: aiCount ? "ai" : "rules", aiCount });
+  } catch (err) {
+    console.error("Screening error:", err);
+    res.status(500).json({ error: "Could not screen applicants" });
   }
 });
 

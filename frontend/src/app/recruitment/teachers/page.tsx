@@ -42,25 +42,35 @@ export default function PublicTeacherDirectoryPage() {
   const [filtered, setFiltered] = useState<Teacher[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [city, setCity] = useState("");
 
   useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
     fetch(`${API}/api/recruitment/teachers`)
       .then(r => r.json())
-      .then(data => { setTeachers(data ?? []); setFiltered(data ?? []); })
+      .then(data => {
+        setTeachers(data ?? []);
+        setFiltered(data ?? []);
+        setSearch(p.get("q") ?? "");
+        setCity(p.get("city") ?? "");
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
     const q = search.toLowerCase();
-    if (!q) { setFiltered(teachers); return; }
+    const c = city.toLowerCase();
+    if (!q && !c) { setFiltered(teachers); return; }
     setFiltered(teachers.filter(t =>
-      t.fullName?.toLowerCase().includes(q) ||
-      t.subjectSpecialisations?.some(s => s.toLowerCase().includes(q)) ||
-      t.preferredCities?.some(c => c.toLowerCase().includes(q)) ||
-      t.bio?.toLowerCase().includes(q)
+      (!q ||
+        t.fullName?.toLowerCase().includes(q) ||
+        t.subjectSpecialisations?.some(s => s.toLowerCase().includes(q)) ||
+        t.preferredCities?.some(pc => pc.toLowerCase().includes(q)) ||
+        t.bio?.toLowerCase().includes(q)) &&
+      (!c || t.preferredCities?.some(pc => pc.toLowerCase().includes(c)))
     ));
-  }, [search, teachers]);
+  }, [search, city, teachers]);
 
   const isSchool = state.status === "ready" && state.profile.accountType === "SCHOOL_ADMIN";
 
@@ -82,6 +92,14 @@ export default function PublicTeacherDirectoryPage() {
               className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg text-[13.5px] focus:outline-none focus:border-[#0E733B] focus:ring-2 focus:ring-[#0E733B]/10"
             />
           </div>
+          {city && (
+            <button
+              onClick={() => setCity("")}
+              className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-100 px-3 py-1 text-[12.5px] font-semibold text-[#0E733B] hover:bg-emerald-100"
+            >
+              City: {city} <span aria-hidden>×</span><span className="sr-only">remove city filter</span>
+            </button>
+          )}
         </div>
       </div>
 

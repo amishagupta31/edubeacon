@@ -66,8 +66,9 @@ export default function RecruitmentHeader() {
       ]
     : [
         { label: "Find Jobs", href: "/recruitment/jobs", icon: null },
-        { label: "For Schools", href: "/recruitment/teachers", icon: null },
-        { label: "How it Works", href: "/solutions/recruitment", icon: null },
+        { label: "For Schools", href: "/recruitment/employers", icon: null },
+        { label: "How It Works", href: "/solutions/recruitment", icon: null },
+        { label: "Pricing", href: "/recruitment/pricing", icon: null },
       ];
 
   const navLinkCls = (href: string) =>
@@ -79,17 +80,11 @@ export default function RecruitmentHeader() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-500 ${
-        scrolled ? "pt-3 px-3 sm:px-6 pointer-events-none" : "bg-white border-b border-slate-100"
+      className={`sticky top-0 z-50 bg-white border-b border-slate-100 transition-shadow duration-300 ${
+        scrolled ? "shadow-[0_4px_20px_rgba(12,42,27,0.08)]" : ""
       }`}
     >
-      <div
-        className={`mx-auto transition-all duration-500 pointer-events-auto ${
-          scrolled
-            ? "max-w-[1440px] rounded-full bg-white/95 shadow-2xl backdrop-blur-xl px-4 sm:px-6 py-2 flex items-center justify-between"
-            : "w-full max-w-[1440px] px-5 md:px-10 xl:px-14 flex h-[64px] items-center justify-between"
-        }`}
-      >
+      <div className="mx-auto w-full max-w-[1440px] px-5 md:px-10 xl:px-14 flex h-[64px] items-center justify-between">
         {/* ── Brand ── */}
         <Link href="/solutions/recruitment" className="flex items-center gap-2.5 shrink-0 py-1">
           <Image
@@ -97,16 +92,16 @@ export default function RecruitmentHeader() {
             alt="EduBeacon"
             width={130}
             height={36}
-            className={`w-auto object-contain transition-all ${scrolled ? "h-7" : "h-8"}`}
+            className="w-auto object-contain h-8"
             priority
           />
-          <span className="text-[10px] font-bold uppercase tracking-[0.18em] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 hidden sm:inline">
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em] px-2 py-0.5 rounded-full hidden sm:inline bg-emerald-50 text-emerald-700">
             Recruitment
           </span>
         </Link>
 
         {/* ── Desktop nav ── */}
-        <nav className="hidden md:flex items-center gap-0.5">
+        <nav className="hidden md:flex items-center whitespace-nowrap gap-0.5">
           {desktopNav.map(({ label, href }) => (
             <Link key={label} href={href} className={navLinkCls(href)}>
               {label}
@@ -121,7 +116,7 @@ export default function RecruitmentHeader() {
             <div className="relative" ref={profileRef}>
               <button
                 onClick={() => setProfileOpen(v => !v)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 hover:border-[#0E733B] hover:bg-emerald-50 transition-all"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:border-[#0E733B] hover:bg-emerald-50 transition-all"
               >
                 <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center">
                   <User className="w-3.5 h-3.5 text-[#0E733B]" />
