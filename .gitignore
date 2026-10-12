@@ -63,3 +63,5 @@ desktop.ini
 
 # ── Claude Code local state ──
 .claude/settings.local.json
+
+frontend/DEPLOYMENT.md
