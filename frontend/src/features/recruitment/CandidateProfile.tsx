@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import {
   ChevronLeft, Loader2, FileText, MapPin, Mail, Phone,
   Briefcase, GraduationCap, ClipboardList, ChevronRight,
-  ChevronDown, XCircle,
+  ChevronDown, XCircle, ExternalLink,
 } from "lucide-react";
 import { API } from "./useRecruitmentProfile";
 
@@ -14,6 +15,7 @@ interface Qualification { degree?: string; institution?: string; year?: string }
 interface Experience    { school?: string; role?: string; from?: string; to?: string }
 
 interface TeacherProfile {
+  _id?: string;
   bio?: string;
   qualifications?: Qualification[];
   experience?: Experience[];
@@ -261,6 +263,16 @@ export default function CandidateProfile({
 
         {/* Actions */}
         <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+          {tp?._id && (
+            <Link
+              href={`/recruitment/teachers/${tp._id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-[13px] font-bold text-slate-700 hover:bg-slate-50 shadow-sm transition-all"
+            >
+              <ExternalLink className="w-4 h-4" /> Public profile
+            </Link>
+          )}
           {app.resumeUrl && (
             <a
               href={app.resumeUrl}

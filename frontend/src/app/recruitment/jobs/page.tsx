@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Search, MapPin, Briefcase, Clock, Building2,
   Loader2, ArrowRight, BookOpen, Users, CalendarDays,
@@ -384,8 +385,15 @@ function SchoolProfileModal({ institutionId, institutionName, onClose }: {
             </div>
           )}
         </div>
-        <div className="border-t border-slate-100 px-6 py-4 shrink-0">
-          <button onClick={onClose} className="w-full py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-[13.5px] font-semibold text-slate-700 transition-colors">Close</button>
+        <div className="border-t border-slate-100 px-6 py-4 shrink-0 flex gap-3">
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-[13.5px] font-semibold text-slate-700 transition-colors">Close</button>
+          <Link
+            href={`/recruitment/schools/${institutionId}`}
+            onClick={onClose}
+            className="flex-1 py-2.5 rounded-2xl bg-[#0E733B] hover:bg-[#0B5C2F] text-[13.5px] font-bold text-white text-center transition-colors"
+          >
+            View full profile →
+          </Link>
         </div>
       </div>
     </div>

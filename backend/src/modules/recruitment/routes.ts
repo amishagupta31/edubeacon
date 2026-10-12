@@ -10,9 +10,6 @@ import NegotiationMessage from "./negotiation.model";
 import { IJob } from "./job.model";
 
 const router = Router();
-
-// Simple in-memory throttle on registration, mirroring the admin-login approach.
-// Per-instance only — see docs for the limitation.
 const attempts = new Map<string, { count: number; until: number }>();
 const MAX_REGISTRATIONS = 5;
 const WINDOW_MS = 15 * 60 * 1000;
@@ -225,7 +222,7 @@ router.get("/school/overview", requireAuth, requireRole("SCHOOL_ADMIN"), async (
       .lean() as (IJob & { _id: unknown })[];
 
     const publishedJobs = allJobs.filter((j) => j.status === "PUBLISHED");
-    const publishedIds   = publishedJobs.map((j) => j._id);
+    const publishedIds = publishedJobs.map((j) => j._id);
 
     // Active application count across all published jobs
     const activeCandidates = await Application.countDocuments({
@@ -249,18 +246,18 @@ router.get("/school/overview", requireAuth, requireRole("SCHOOL_ADMIN"), async (
     );
 
     const rolesList = publishedJobs.map((job) => ({
-      _id:              String(job._id),
-      title:            job.title,
-      board:            [job.board, job.classes].filter(Boolean).join(" · "),
-      applicants:       job.applicantCount || 0,
-      furthestStage:    stageMap.get(String(job._id)) || "Applied",
+      _id: String(job._id),
+      title: job.title,
+      board: [job.board, job.classes].filter(Boolean).join(" · "),
+      applicants: job.applicantCount || 0,
+      furthestStage: stageMap.get(String(job._id)) || "Applied",
       daysSincePublished: job.publishedAt
         ? Math.floor((Date.now() - new Date(job.publishedAt).getTime()) / 86_400_000)
         : 0,
     }));
 
     res.json({
-      openRoles:        publishedJobs.length,
+      openRoles: publishedJobs.length,
       activeCandidates,
       offersOut,
       rolesList,
@@ -736,16 +733,18 @@ router.get("/jobs", async (req: Request, res: Response) => {
     const institutionIds = [...new Set(jobs.map((j) => j.institutionId?.toString()).filter(Boolean))];
     const institutions = institutionIds.length
       ? await Institution.find({ _id: { $in: institutionIds } })
-          .select("_id website institutionType establishedYear description")
-          .lean()
+        .select("_id website institutionType establishedYear description")
+        .lean()
       : [];
     const instMap = new Map(institutions.map((i) => [i._id.toString(), i]));
     const enriched = jobs.map((j) => {
       const inst = j.institutionId ? instMap.get(j.institutionId.toString()) : undefined;
       return inst
-        ? { ...j, institutionWebsite: (inst as Record<string, unknown>).website ?? null,
-            institutionType: (inst as Record<string, unknown>).institutionType ?? null,
-            establishedYear: (inst as Record<string, unknown>).establishedYear ?? null }
+        ? {
+          ...j, institutionWebsite: (inst as Record<string, unknown>).website ?? null,
+          institutionType: (inst as Record<string, unknown>).institutionType ?? null,
+          establishedYear: (inst as Record<string, unknown>).establishedYear ?? null
+        }
         : j;
     });
 
@@ -865,7 +864,7 @@ router.get("/applications/:id", requireAuth, requireRole("SCHOOL_ADMIN"), async 
     let teacherExtra: Record<string, unknown> = {};
     if (app.teacherClerkUserId) {
       const tp = await RecruitmentProfile.findOne({ clerkUserId: app.teacherClerkUserId })
-        .select("bio qualifications experience currentCTC expectedCTC subjectSpecialisations ctetStatus stetStatus preferredCities availableFrom")
+        .select("_id bio qualifications experience currentCTC expectedCTC subjectSpecialisations ctetStatus stetStatus preferredCities availableFrom")
         .lean() as Record<string, unknown> | null;
       if (tp) teacherExtra = tp;
     }
